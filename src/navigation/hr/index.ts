@@ -7,6 +7,7 @@ import GoogleCirclesExtended from 'mdi-material-ui/GoogleCirclesExtended'
 
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
+import { AccountGroup, Balloon, FileDocumentEditOutline, TableAccount, TextAccount } from 'mdi-material-ui'
 
 const navigation = (): VerticalNavItemsType => {
   return [
@@ -17,7 +18,7 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Ajukan Cuti',
-      icon: AccountPlusOutline,
+      icon: Balloon,
       path: '/hr/ajukan-cuti'
       // openInNewTab: true
     },
@@ -26,13 +27,13 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Approval Cuti',
-      icon: Login,
+      icon: FileDocumentEditOutline,
       path: '/hr/approval-cuti'
       // openInNewTab: true
     },
     {
       title: 'Data Karyawan',
-      icon: AccountPlusOutline,
+      icon: AccountGroup,
       path: '/hr/data-karyawan'
       // openInNewTab: true
     },
@@ -42,13 +43,13 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Cuti Karyawan',
-      icon: FormatLetterCase,
+      icon: TableAccount,
       path: '/hr/cuti-karyawan'
     },
     {
       title: 'Cuti Pribadi',
       path: '/hr/cuti-pribadi',
-      icon: GoogleCirclesExtended
+      icon: TextAccount
     },
   ]
 }

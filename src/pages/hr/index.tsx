@@ -2,6 +2,8 @@ import Grid from '@mui/material/Grid'
 import HrLayout from '../../layouts/HrLayout'
 import KaryawanCuti from 'src/views/card/KaryawanCuti'
 import PermintaanCuti from 'src/views/card/PermintaanCuti'
+import Ditolak from 'src/views/card/Ditolak'
+import Diterima from 'src/views/card/Diterima'
 
 const index = () => {
   return (
@@ -13,10 +15,10 @@ const index = () => {
         <PermintaanCuti />
       </Grid>
       <Grid item xs={12} sm={6}>
-        <PermintaanCuti />
+        <Diterima />
       </Grid>
       <Grid item xs={12} sm={6}>
-        <PermintaanCuti />
+        <Ditolak />
       </Grid>
     </Grid>
   )

@@ -9,7 +9,7 @@ import { useTheme } from '@mui/material/styles'
 import { Settings } from 'src/@core/context/settingsContext'
 
 // ** Footer Content Component
-import FooterContent from './FooterContent'
+// import FooterContent from './FooterContent'
 
 interface Props {
   settings: Settings
@@ -48,7 +48,7 @@ const Footer = (props: Props) => {
           ...(contentWidth === 'boxed' && { '@media (min-width:1440px)': { maxWidth: 1440 } })
         }}
       >
-        {userFooterContent ? userFooterContent(props) : <FooterContent />}
+        {/* {userFooterContent ? userFooterContent(props) : <FooterContent />} */}
       </Box>
     </Box>
   )
