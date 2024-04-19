@@ -12,6 +12,7 @@ import CardStatisticsVerticalComponent from 'src/@core/components/card-statistic
 
 // ** Styled Component Import
 import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
+import Link from 'next/link'
 
 // ** Demo Components Imports
 import Table from 'src/views/dashboard/Table'
@@ -24,77 +25,36 @@ import SalesByCountries from 'src/views/dashboard/SalesByCountries'
 
 const Dashboard = () => {
   return (
-    <ApexChartWrapper>
-      <Grid container spacing={6}>
-        <Grid item xs={12} md={4}>
-          <Trophy />
-        </Grid>
-        <Grid item xs={12} md={8}>
-          <StatisticsCard />
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <WeeklyOverview />
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <TotalEarning />
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <Grid container spacing={6}>
-            <Grid item xs={6}>
-              <CardStatisticsVerticalComponent
-                stats='$25.6k'
-                icon={<Poll />}
-                color='success'
-                trendNumber='+42%'
-                title='Total Profit'
-                subtitle='Weekly Profit'
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <CardStatisticsVerticalComponent
-                stats='$78'
-                title='Refunds'
-                trend='negative'
-                color='secondary'
-                trendNumber='-15%'
-                subtitle='Past Month'
-                icon={<CurrencyUsd />}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <CardStatisticsVerticalComponent
-                stats='862'
-                trend='negative'
-                trendNumber='-18%'
-                title='New Project'
-                subtitle='Yearly Project'
-                icon={<BriefcaseVariantOutline />}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <CardStatisticsVerticalComponent
-                stats='15'
-                color='warning'
-                trend='negative'
-                trendNumber='-18%'
-                subtitle='Last Week'
-                title='Sales Queries'
-                icon={<HelpCircleOutline />}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <SalesByCountries />
-        </Grid>
-        <Grid item xs={12} md={12} lg={8}>
-          <DepositWithdraw />
-        </Grid>
-        <Grid item xs={12}>
-          <Table />
-        </Grid>
-      </Grid>
-    </ApexChartWrapper>
+    <main className='flex min-h-screen flex-col items-center pt-20'>
+      <div className='fixed w-full top-0 border-b-4 border-white'>
+        <div className='bg-dep p-4'>
+          <div className='items-center'></div>
+        </div>
+      </div>
+      <div className='flex flex-col md:flex-row-reverse justify-around  mx-auto w-full md:w-11/12'>
+        <div className='my-0 md:my-5 justify-center items-center md:w-[500px] w-full'>
+          <div></div>
+          <Link href='/pages/login'>LOGIN</Link>
+
+          <div className='flex flex-row gap-5 font-bold text-sm'>
+            <Link href='/karyawan'>Karyawan</Link>
+            <Link href='/staff'>Staff</Link>
+            <Link href='/hr'>HR</Link>
+            <Link href='/owner'>Owner</Link>
+          </div>
+        </div>
+        {/* <div className='flex items-center justify-end '>
+          <Image src='/first.svg' width={500} height={500} className='hidden md:block' alt='first dekstop photo' />
+          <Image
+            src='/first-m.svg'
+            width={400}
+            height={400}
+            className='block md:hidden mx-auto my-5'
+            alt='first dekstop photo'
+          />
+        </div> */}
+      </div>
+    </main>
   )
 }
 

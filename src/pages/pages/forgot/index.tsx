@@ -62,7 +62,7 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   }
 }))
 
-const LoginPage = () => {
+const ForgotPage = () => {
   // ** State
   const [values, setValues] = useState<State>({
     password: '',
@@ -159,18 +159,18 @@ const LoginPage = () => {
                 fontSize: '1.5rem !important'
               }}
             >
-              Login
+              Forgot Password
             </Typography>
           </Box>
           <Box sx={{ mb: 6 }}>
             {/* <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
               Pengajuan Cuti
             </Typography> */}
-            <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
+            <Typography variant='body2'>please enter your email</Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
             <TextField autoFocus fullWidth id='email' label='Email' sx={{ marginBottom: 4 }} />
-            <FormControl fullWidth>
+            {/* <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
               <OutlinedInput
                 label='Password'
@@ -191,23 +191,23 @@ const LoginPage = () => {
                   </InputAdornment>
                 }
               />
-            </FormControl>
-            <Box
+            </FormControl> */}
+            {/* <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
               <FormControlLabel control={<Checkbox />} label='Remember Me' />
-              <Link passHref href='/pages/forgot'>
-                <LinkStyled>Forgot Password?</LinkStyled>
+              <Link passHref href='/'>
+                <LinkStyled onClick={e => e.preventDefault()}>Forgot Password?</LinkStyled>
               </Link>
-            </Box>
+            </Box> */}
             <Button
               fullWidth
               size='large'
               variant='contained'
               sx={{ marginBottom: 7 }}
-              onClick={() => router.push('/')}
+              // onClick={() => router.push('/')}
             >
-              Login
+              Reset Password
             </Button>
             {/* <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
               <Typography variant='body2' sx={{ marginRight: 2 }}>
@@ -252,6 +252,6 @@ const LoginPage = () => {
   )
 }
 
-LoginPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
+ForgotPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 
-export default LoginPage
+export default ForgotPage

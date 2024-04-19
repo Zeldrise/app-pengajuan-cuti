@@ -42,6 +42,8 @@ import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 interface State {
   password: string
   showPassword: boolean
+  confirmPassword: string
+  showConfirmPassword: boolean
 }
 
 // ** Styled Components
@@ -62,11 +64,13 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   }
 }))
 
-const LoginPage = () => {
+const ResetPassPage = () => {
   // ** State
   const [values, setValues] = useState<State>({
     password: '',
-    showPassword: false
+    showPassword: false,
+    confirmPassword: '',
+    showConfirmPassword: false
   })
 
   // ** Hook
@@ -80,8 +84,14 @@ const LoginPage = () => {
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword })
   }
+  const handleClickShowConfirmPassword = () => {
+    setValues({ ...values, showConfirmPassword: !values.showConfirmPassword })
+  }
 
   const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+  }
+  const handleMouseDownConfirmPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
   }
 
@@ -159,23 +169,22 @@ const LoginPage = () => {
                 fontSize: '1.5rem !important'
               }}
             >
-              Login
+              Change Password
             </Typography>
           </Box>
           <Box sx={{ mb: 6 }}>
             {/* <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
               Pengajuan Cuti
             </Typography> */}
-            <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
+            <Typography variant='body2'>create a strong password 💪</Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='email' label='Email' sx={{ marginBottom: 4 }} />
-            <FormControl fullWidth>
-              <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
+            <FormControl fullWidth sx={{ marginBottom: 4 }}>
+              <InputLabel htmlFor='auth-reset-password'>Password</InputLabel>
               <OutlinedInput
                 label='Password'
                 value={values.password}
-                id='auth-login-password'
+                id='auth-reset-password'
                 onChange={handleChange('password')}
                 type={values.showPassword ? 'text' : 'password'}
                 endAdornment={
@@ -192,22 +201,44 @@ const LoginPage = () => {
                 }
               />
             </FormControl>
-            <Box
+            <FormControl fullWidth sx={{ marginBottom: 4 }}>
+              <InputLabel htmlFor='auth-reset-confirm'>Confirm Password</InputLabel>
+              <OutlinedInput
+                label='ConfirmPassword'
+                value={values.confirmPassword}
+                id='auth-reset-confirm'
+                onChange={handleChange('confirmPassword')}
+                type={values.showConfirmPassword ? 'text' : 'password'}
+                endAdornment={
+                  <InputAdornment position='end'>
+                    <IconButton
+                      edge='end'
+                      onClick={handleClickShowConfirmPassword}
+                      onMouseDown={handleMouseDownConfirmPassword}
+                      aria-label='toggle confirmPassword visibility'
+                    >
+                      {values.showConfirmPassword ? <EyeOutline /> : <EyeOffOutline />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+            {/* <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
               <FormControlLabel control={<Checkbox />} label='Remember Me' />
               <Link passHref href='/pages/forgot'>
                 <LinkStyled>Forgot Password?</LinkStyled>
               </Link>
-            </Box>
+            </Box> */}
             <Button
               fullWidth
               size='large'
               variant='contained'
               sx={{ marginBottom: 7 }}
-              onClick={() => router.push('/')}
+              // onClick={() => router.push('/')}
             >
-              Login
+              Change Password
             </Button>
             {/* <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
               <Typography variant='body2' sx={{ marginRight: 2 }}>
@@ -252,6 +283,6 @@ const LoginPage = () => {
   )
 }
 
-LoginPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
+ResetPassPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 
-export default LoginPage
+export default ResetPassPage

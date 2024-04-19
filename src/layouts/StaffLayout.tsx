@@ -10,7 +10,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import VerticalLayout from 'src/@core/layouts/VerticalLayout'
 
 // ** Navigation Imports
-import VerticalNavItems from 'src/navigation/hr'
+import VerticalNavItems from 'src/navigation/staff'
 
 // ** Component Import
 // import UpgradeToProButton from './components/UpgradeToProButton'
@@ -23,7 +23,7 @@ interface Props {
   children: ReactNode
 }
 
-const HrLayout = ({ children }: Props) => {
+const StaffLayout = ({ children }: Props) => {
   // ** Hooks
   const { settings, saveSettings } = useSettings()
 
@@ -75,4 +75,4 @@ const HrLayout = ({ children }: Props) => {
   )
 }
 
-export default HrLayout
+export default StaffLayout

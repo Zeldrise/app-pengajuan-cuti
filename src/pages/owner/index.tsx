@@ -1,0 +1,20 @@
+import Grid from '@mui/material/Grid'
+import KaryawanCuti from 'src/views/card/KaryawanCuti'
+import PermintaanCuti from 'src/views/card/PermintaanCuti'
+import OwnerLayout from 'src/layouts/OwnerLayout'
+
+const index = () => {
+  return (
+    <Grid container spacing={3}>
+      <Grid item xs={12} sm={6}>
+        <KaryawanCuti />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <PermintaanCuti />
+      </Grid>
+    </Grid>
+  )
+}
+index.getLayout = (page: React.ReactNode) => <OwnerLayout>{page}</OwnerLayout>
+
+export default index
