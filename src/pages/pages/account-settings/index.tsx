@@ -22,7 +22,6 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
-import HrLayout from 'src/layouts/HrLayout'
 
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -100,5 +99,5 @@ const AccountSettings = () => {
     </Card>
   )
 }
-AccountSettings.getLayout = (page: React.ReactNode) => <HrLayout>{page}</HrLayout>
+
 export default AccountSettings

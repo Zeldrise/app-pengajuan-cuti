@@ -13,15 +13,14 @@ import MuiTab, { TabProps } from '@mui/material/Tab'
 // ** Icons Imports
 import AccountOutline from 'mdi-material-ui/AccountOutline'
 import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
-import InformationOutline from 'mdi-material-ui/InformationOutline'
 
 // ** Demo Tabs Imports
-import TabInfo from 'src/views/account-settings/TabInfo'
 import TabAccount from 'src/views/account-settings/TabAccount'
 import TabSecurity from 'src/views/account-settings/TabSecurity'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
+import UserLayout from 'src/layouts/UserLayout'
 
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -75,15 +74,6 @@ const AccountSettings = () => {
               </Box>
             }
           />
-          <Tab
-            value='info'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <InformationOutline />
-                <TabName>Info</TabName>
-              </Box>
-            }
-          />
         </TabList>
 
         <TabPanel sx={{ p: 0 }} value='account'>
@@ -92,12 +82,9 @@ const AccountSettings = () => {
         <TabPanel sx={{ p: 0 }} value='security'>
           <TabSecurity />
         </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='info'>
-          <TabInfo />
-        </TabPanel>
       </TabContext>
     </Card>
   )
 }
-
+AccountSettings.getLayout = (page: React.ReactNode) => <UserLayout>{page}</UserLayout>
 export default AccountSettings

@@ -2,7 +2,7 @@ import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import CutiKaryawan from 'src/views/table/cuti-karyawan'
-import OwnerLayout from 'src/layouts/OwnerLayout'
+import UserLayout from 'src/layouts/UserLayout'
 
 const index = () => {
   return (
@@ -16,5 +16,5 @@ const index = () => {
     </Grid>
   )
 }
-index.getLayout = (page: React.ReactNode) => <OwnerLayout>{page}</OwnerLayout>
+index.getLayout = (page: React.ReactNode) => <UserLayout>{page}</UserLayout>
 export default index

@@ -1,5 +1,6 @@
 // ** React Imports
-import { forwardRef, useState } from 'react'
+import React, { forwardRef, useState, useEffect } from 'react'
+import { startOfToday, differenceInDays } from 'date-fns'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
@@ -14,7 +15,7 @@ import CardContent from '@mui/material/CardContent'
 import CardActions from '@mui/material/CardActions'
 import FormControl from '@mui/material/FormControl'
 import InputAdornment from '@mui/material/InputAdornment'
-import Select from '@mui/material/Select'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 
 // ** Third Party Imports
 import DatePicker from 'react-datepicker'
@@ -37,12 +38,42 @@ const FormPengajuanCuti = () => {
   // ** States
   const [startDate, setStartDate] = useState<Date | null | undefined>(null)
   const [endDate, setEndDate] = useState<Date | null | undefined>(null)
+  const [cutiType, setCutiType] = useState<string>('')
 
+  const [showUrgencyFields, setShowUrgencyFields] = useState<boolean>(false)
+  const [showDoctorNoteField, setShowDoctorNoteField] = useState<boolean>(false)
 
+  const [doctorNoteImage, setDoctorNoteImage] = useState<string | null>(null)
+  
 
+  const handleCutiTypeChange = (event: SelectChangeEvent<string>) => {
+    const selectedType = event.target.value as string
+    setCutiType(selectedType)
 
+    setShowUrgencyFields(selectedType === 'Cuti Urgensi')
+    setShowDoctorNoteField(selectedType === 'Cuti Sakit')
+    
+  }
+  useEffect(() => {
+    // Set showDoctorNoteField to true if cutiType is 'Cuti Sakit' and duration is more than 1 day
+    if (cutiType === 'Cuti Sakit' && startDate && endDate) {
+      const duration = differenceInDays(endDate, startDate)
+      setShowDoctorNoteField(duration > 0)
+    } else {
+      setShowDoctorNoteField(false)
+    }
+  }, [cutiType, startDate, endDate])
+ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files && event.target.files[0]
+  if (file) {
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setDoctorNoteImage(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+ }
  
-
   return (
     <Card>
       <Card sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -53,7 +84,7 @@ const FormPengajuanCuti = () => {
             display: 'flex',
             fontWeight: 'medium',
             marginRight: 5,
-            alignItems: 'center',
+            alignItems: 'center'
           }}
         >
           Sisa cuti : 10
@@ -131,6 +162,7 @@ const FormPengajuanCuti = () => {
                   defaultValue=''
                   id='form-layouts-separator-select'
                   labelId='form-layouts-separator-select-label'
+                  onChange={handleCutiTypeChange}
                 >
                   <MenuItem value='Cuti Tahunan'>Cuti Tahunan</MenuItem>
                   <MenuItem value='Cuti Urgensi'>Cuti Urgensi</MenuItem>
@@ -155,6 +187,47 @@ const FormPengajuanCuti = () => {
                 }}
               />
             </Grid>
+            {showUrgencyFields && (
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel id='form-layouts-separator-select-label'>Cuti Urgensi</InputLabel>
+                  <Select
+                    label='Tipe Urgensi'
+                    defaultValue=''
+                    id='form-layouts-separator-select'
+                    labelId='form-layouts-separator-select-label'
+                  >
+                    <MenuItem value='Cuti Tahunan'>keluarga meninggal</MenuItem>
+                    <MenuItem value='Cuti Urgensi'>melahirkan</MenuItem>
+                    <MenuItem value='Cuti Sakit'>kehilangan</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            )}
+            {showDoctorNoteField && (
+              <Grid item xs={12}>
+                {/* Additional field for Cuti Sakit */}
+                <input
+                  accept='image/*'
+                  id='contained-button-file'
+                  type='file'
+                  style={{ display: 'none' }}
+                  onChange={handleDoctorNoteChange}
+                />
+                <label htmlFor='contained-button-file'>
+                  <Button variant='contained' component='span'>
+                    Upload Surat Dokter
+                  </Button>
+                </label>
+                {doctorNoteImage && (
+                  <img
+                    src={doctorNoteImage}
+                    alt='Doctor Note Preview'
+                    style={{ marginTop: '10px', maxWidth: '100%' }}
+                  />
+                )}
+              </Grid>
+            )}
             <Grid item xs={12} sm={6}>
               <DatePicker
                 selected={startDate}
@@ -164,6 +237,7 @@ const FormPengajuanCuti = () => {
                 customInput={<TglAwal />}
                 id='form-layouts-separator-date'
                 onChange={(date: Date) => setStartDate(date)}
+                minDate={startOfToday()}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -175,6 +249,7 @@ const FormPengajuanCuti = () => {
                 customInput={<TglAkhir />}
                 id='form-layouts-separator-date'
                 onChange={(date: Date) => setEndDate(date)}
+                minDate={startOfToday()}
               />
             </Grid>
           </Grid>

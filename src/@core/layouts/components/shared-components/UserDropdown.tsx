@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, SyntheticEvent, Fragment } from 'react'
+import { useState, SyntheticEvent, Fragment, useEffect } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -36,8 +36,7 @@ const UserDropdown = () => {
   // ** States
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
 
-  // ** Hooks
-  const router = useRouter()
+
 
   const handleDropdownOpen = (event: SyntheticEvent) => {
     setAnchorEl(event.currentTarget)
@@ -61,6 +60,23 @@ const UserDropdown = () => {
     '& svg': {
       fontSize: '1.375rem',
       color: 'text.secondary'
+    }
+  }
+  const [urlPrefix, setUrlPrefix] = useState<string>('')
+  const router = useRouter()
+
+  useEffect(() => {
+    const currentUrl = window.location.href
+    const regex = /\/\/[^/]+\/([^/]+)\// // Regex untuk menemukan potongan URL setelah domain dan sebelum path
+    const match = currentUrl.match(regex)
+    if (match && match[1]) {
+      setUrlPrefix(match[1])
+    }
+  }, [])
+
+  const handleUserProfile = () => {
+    if (urlPrefix) {
+      router.push(`/${urlPrefix}/user-profile`) // Navigasi ke /hr/account-settings
     }
   }
 
@@ -106,7 +122,7 @@ const UserDropdown = () => {
           </Box>
         </Box>
         <Divider sx={{ mt: 0, mb: 1 }} />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/user-profile')}>
           <Box sx={styles}>
             <AccountOutline sx={{ marginRight: 2 }} />
             Profile

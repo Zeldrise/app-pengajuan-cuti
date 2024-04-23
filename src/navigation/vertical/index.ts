@@ -1,80 +1,140 @@
 // ** Icon imports
-import Login from 'mdi-material-ui/Login'
-import Table from 'mdi-material-ui/Table'
-import CubeOutline from 'mdi-material-ui/CubeOutline'
 import HomeOutline from 'mdi-material-ui/HomeOutline'
-import FormatLetterCase from 'mdi-material-ui/FormatLetterCase'
-import AccountCogOutline from 'mdi-material-ui/AccountCogOutline'
-import CreditCardOutline from 'mdi-material-ui/CreditCardOutline'
-import AccountPlusOutline from 'mdi-material-ui/AccountPlusOutline'
-import AlertCircleOutline from 'mdi-material-ui/AlertCircleOutline'
-import GoogleCirclesExtended from 'mdi-material-ui/GoogleCirclesExtended'
 
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
+import { AccountGroup, Balloon, FileDocumentEditOutline, TableAccount, TextAccount } from 'mdi-material-ui'
 
-const navigation = (): VerticalNavItemsType => {
-  return [
+const position = 'hr'
+var menu: VerticalNavItemsType = []
+if (position == 'hr') {
+  menu = [
     {
-      title: 'Dashboard',
+      title: 'Home',
       icon: HomeOutline,
-      path: '/'
+      path: '/home'
     },
     {
-      title: 'Account Settings',
-      icon: AccountCogOutline,
-      path: '/account-settings'
+      title: 'Ajukan Cuti',
+      icon: Balloon,
+      path: '/ajukan-cuti'
     },
     {
-      sectionTitle: 'Pages'
+      sectionTitle: 'Manajemen Cuti'
     },
     {
-      title: 'Login',
-      icon: Login,
-      path: '/pages/login',
-      openInNewTab: true
+      title: 'Approval Cuti',
+      icon: FileDocumentEditOutline,
+      path: '/approval-cuti'
     },
     {
-      title: 'Register',
-      icon: AccountPlusOutline,
-      path: '/pages/register',
-      openInNewTab: true
+      title: 'Data Karyawan',
+      icon: AccountGroup,
+      path: '/data-karyawan'
+    },
+
+    {
+      sectionTitle: 'Laporan Cuti'
     },
     {
-      title: 'Error',
-      icon: AlertCircleOutline,
-      path: '/pages/error',
-      openInNewTab: true
+      title: 'Cuti Karyawan',
+      icon: TableAccount,
+      path: '/cuti-karyawan'
     },
     {
-      sectionTitle: 'User Interface'
-    },
-    {
-      title: 'Typography',
-      icon: FormatLetterCase,
-      path: '/typography'
-    },
-    {
-      title: 'Icons',
-      path: '/icons',
-      icon: GoogleCirclesExtended
-    },
-    {
-      title: 'Cards',
-      icon: CreditCardOutline,
-      path: '/cards'
-    },
-    {
-      title: 'Tables',
-      icon: Table,
-      path: '/tables'
-    },
-    {
-      icon: CubeOutline,
-      title: 'Form Layouts',
-      path: '/form-layouts'
+      title: 'Cuti Pribadi',
+      path: '/cuti-pribadi',
+      icon: TextAccount
     }
   ]
+} else if (position == 'staff') {
+  menu = [
+    {
+      title: 'Home',
+      icon: HomeOutline,
+      path: '/home'
+    },
+    {
+      title: 'Ajukan Cuti',
+      icon: Balloon,
+      path: '/ajukan-cuti'
+    },
+    {
+      sectionTitle: 'Manajemen Cuti'
+    },
+    {
+      title: 'Data Karyawan',
+      icon: AccountGroup,
+      path: '/data-karyawan'
+    },
+
+    {
+      sectionTitle: 'Laporan Cuti'
+    },
+    {
+      title: 'Cuti Karyawan',
+      icon: TableAccount,
+      path: '/cuti-karyawan'
+    },
+    {
+      title: 'Cuti Pribadi',
+      path: '/cuti-pribadi',
+      icon: TextAccount
+    }
+  ]
+} else if (position == 'karyawan') {
+  menu = [
+    {
+      title: 'Home',
+      icon: HomeOutline,
+      path: '/home'
+    },
+    {
+      title: 'Ajukan Cuti',
+      icon: Balloon,
+      path: '/ajukan-cuti'
+    },
+    {
+      title: 'Laporan Cuti',
+      path: '/cuti-pribadi',
+      icon: TextAccount
+    }
+  ]
+} else if (position == 'owner') {
+  menu = [
+    {
+      title: 'Home',
+      icon: HomeOutline,
+      path: '/home'
+    },
+    {
+      sectionTitle: 'Manajemen Cuti'
+    },
+    {
+      title: 'Approval Cuti',
+      icon: FileDocumentEditOutline,
+      path: '/approval-cuti'
+    },
+    {
+      title: 'Data Karyawan',
+      icon: AccountGroup,
+      path: '/data-karyawan'
+    },
+
+    {
+      sectionTitle: 'Laporan Cuti'
+    },
+    {
+      title: 'Cuti Karyawan',
+      icon: TableAccount,
+      path: '/cuti-karyawan'
+    }
+  ]
+}
+
+
+const navigation = (): VerticalNavItemsType => {
+  return menu;
 }
 
 export default navigation

@@ -7,7 +7,7 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
 import FormPengajuanCuti from 'src/views/form/FormPengajuanCuti'
-import HrLayout from '../../../layouts/HrLayout'
+import UserLayout from 'src/layouts/UserLayout'
 
 const index = () => {
   return (
@@ -20,5 +20,5 @@ const index = () => {
     </DatePickerWrapper>
   )
 }
-index.getLayout = (page: React.ReactNode) => <HrLayout>{page}</HrLayout>
+index.getLayout = (page: React.ReactNode) => <UserLayout>{page}</UserLayout>
 export default index
