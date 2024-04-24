@@ -9,6 +9,7 @@ import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import Button from '@mui/material/Button'
 import { FileEye } from 'mdi-material-ui'
+import CutiKaryawanDetail from './cuti-k-detail'
 
 interface Column {
   id:
@@ -37,27 +38,6 @@ const columns: readonly Column[] = [
   { id: 'status', label: 'Status', minWidth: 100 },
   { id: 'approved_by', label: 'Approved By', minWidth: 100 },
   { id: 'actions', label: 'Actions', minWidth: 100 }
-  // {
-  //   id: 'population',
-  //   label: 'Population',
-  //   minWidth: 170,
-  //   align: 'right',
-  //   format: (value: number) => value.toLocaleString('en-US')
-  // },
-  // {
-  //   id: 'size',
-  //   label: 'Size\u00a0(km\u00b2)',
-  //   minWidth: 170,
-  //   align: 'right',
-  //   format: (value: number) => value.toLocaleString('en-US')
-  // },
-  // {
-  //   id: 'density',
-  //   label: 'Density',
-  //   minWidth: 170,
-  //   align: 'right',
-  //   format: (value: number) => value.toFixed(2)
-  // }
 ]
 
 interface Data {
@@ -80,28 +60,136 @@ interface Data {
 function createData(
   nama: string,
   tgl_penyerahan: string,
+  no_telephone: string,
+  telephone_darurat: string,
+  posisi: string,
+  departemen: string,
   tgl_mulai: string,
   tgl_akhir: string,
   lama_cuti: number,
   tipe_cuti: string,
+  deskripsi: string,
   status: string,
   approved_by: string
 ) {
-  return { nama, tgl_penyerahan, tgl_mulai, tgl_akhir, lama_cuti, tipe_cuti, status, approved_by }
+  return {
+    nama,
+    tgl_penyerahan,
+    no_telephone,
+    telephone_darurat,
+    posisi,
+    departemen,
+    tgl_mulai,
+    tgl_akhir,
+    lama_cuti,
+    tipe_cuti,
+    deskripsi,
+    status,
+    approved_by
+  }
 }
 
 const rows = [
-  createData('Kyujin', '20 Maret 2024', '	25 maret 2024', '30 maret 2024', 5, 'liburan', 'Diterima', 'HR'),
-  createData('Jennie', '20 Januari 2024', '	25 Januari 2024', '30 Januari 2024', 2, 'liburan', 'Diterima', 'HR'),
-  createData('Wonhee', '20 Maret 2024', '	25 maret 2024', '30 maret 2024', 3, 'liburan', "Diterima", "HR"),
-  createData('Haerin', '20 Maret 2024', '	25 maret 2024', '30 maret 2024', 3, 'liburan', "Diterima", "HR"),
-  createData('Chaewon', '20 Maret 2024', '	25 maret 2024', '30 maret 2024', 3, 'liburan', "Diterima", "HR"),
-  createData('Pharita ', '20 Maret 2024', '	25 maret 2024', '30 maret 2024', 3, 'liburan', "Diterima", "HR")
+  createData(
+    'Kyujin',
+    '20 Januari 2024',
+    '+62 987-654-321',
+    '+62 123-456-789',
+    'Developer',
+    'IT',
+    '25 Januari 2024',
+    '30 Januari 2024',
+    5,
+    'liburan',
+    'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged It was popularised in',
+    'Diterima',
+    'HR'
+  ),
+  createData(
+    'Jennie',
+    '20 Februari 2024',
+    '+62 987-654-321',
+    '+62 123-456-789',
+    'Developer',
+    'IT',
+    '	25 Februari 2024',
+    '30 Februari 2024',
+    5,
+    'liburan',
+    'test',
+    'Diterima',
+    'HR'
+  ),
+  createData(
+    'Wonhee',
+    '20 Maret 2024',
+    '+62 987-654-321',
+    '+62 123-456-789',
+    'Developer',
+    'IT',
+    '	25 maret 2024',
+    '30 maret 2024',
+    5,
+    'liburan',
+    'test',
+    'Diterima',
+    'HR'
+  ),
+  createData(
+    'Haerin',
+    '20 April 2024',
+    '+62 987-654-321',
+    '+62 123-456-789',
+    'Developer',
+    'IT',
+    '	25 April 2024',
+    '30 April 2024',
+    5,
+    'liburan',
+    'test',
+    'Diterima',
+    'HR'
+  ),
+  createData(
+    'Chaewon',
+    '20 Mei 2024',
+    '+62 987-654-321',
+
+    '+62 123-456-789',
+    'Developer',
+    'IT',
+    '	25 Mei 2024',
+    '30 Mei 2024',
+    5,
+    'liburan',
+    'test',
+    'Diterima',
+    'HR'
+  ),
+  createData(
+    'Pharita ',
+    '20 Juni 2024',
+    '+62 987-654-321',
+    '+62 123-456-789',
+    'Developer',
+    'IT',
+    '	25 Juni 2024',
+    '30 Juni 2024',
+    5,
+    'liburan',
+    'test',
+    'Diterima',
+    'HR'
+  )
 ]
 
 const CutiKaryawan = () => {
   const [page, setPage] = useState<number>(0)
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
+  const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
+  const [isCutiKaryawanDetailOpen, setIsCutiKaryawanDetailOpen] = useState<boolean>(false)
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc')
+  const [orderBy, setOrderBy] = useState<'tgl_penyerahan' | ''>('')
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
@@ -112,9 +200,21 @@ const CutiKaryawan = () => {
     setPage(0)
   }
   const handleActionClick = (rowData: Data) => {
-    // Implement logic to open modal or perform any action
-    console.log('Action clicked for:', rowData.nama)
+    setSelectedRowData(rowData)
+    setIsCutiKaryawanDetailOpen(true)
   }
+  const handleCloseDetailCuti = () => {
+    setIsCutiKaryawanDetailOpen(false)
+  }
+  const handleSort = (property: keyof Data) => {
+    const isAsc = orderBy === property && order == 'asc'
+    setOrder(isAsc ? 'desc' : 'asc')
+    setOrderBy(property)
+  }
+  const sortedRows =
+    order === 'asc'
+      ? [...rows].sort((a, b) => new Date(a.tgl_penyerahan).getTime() - new Date(b.tgl_penyerahan).getTime())
+      : [...rows].sort((a, b) => new Date(b.tgl_penyerahan).getTime() - new Date(a.tgl_penyerahan).getTime())
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
@@ -122,14 +222,20 @@ const CutiKaryawan = () => {
           <TableHead>
             <TableRow>
               {columns.map(column => (
-                <TableCell key={column.id} align={column.align} sx={{ minWidth: column.minWidth }}>
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  sx={{ minWidth: column.minWidth }}
+                  onClick={() => column.id === 'tgl_penyerahan' && handleSort(column.id)}
+                >
                   {column.label}
+                  {orderBy === column.id ? <span>{order === 'asc' ? '↓' : '↑'}</span> : null}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
+            {sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
               return (
                 <TableRow hover role='checkbox' tabIndex={-1} key={row.nama}>
                   {columns.map(column => {
@@ -165,6 +271,7 @@ const CutiKaryawan = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+      <CutiKaryawanDetail open={isCutiKaryawanDetailOpen} onClose={handleCloseDetailCuti} rowData={selectedRowData}/>
     </Paper>
   )
 }

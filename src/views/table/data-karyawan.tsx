@@ -8,7 +8,9 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import Button from '@mui/material/Button'
-import { PencilBox, TrashCan } from 'mdi-material-ui'
+import { PencilBox, PlusCircle, TrashCan } from 'mdi-material-ui'
+import EditDataKaryawan from './data-edit'
+import AddDataKaryawan from './add-karyawan'
 
 interface Column {
   id: 'nama' | 'email' | 'no_telephone' | 'posisi' | 'departemen' | 'sisa_cuti' | 'actions'
@@ -26,27 +28,6 @@ const columns: readonly Column[] = [
   { id: 'departemen', label: 'Departemen', minWidth: 100 },
   { id: 'sisa_cuti', label: 'Sisa Cuti', minWidth: 100 },
   { id: 'actions', label: 'Actions', minWidth: 100 }
-  // {
-  //   id: 'population',
-  //   label: 'Population',
-  //   minWidth: 170,
-  //   align: 'right',
-  //   format: (value: number) => value.toLocaleString('en-US')
-  // },
-  // {
-  //   id: 'size',
-  //   label: 'Size\u00a0(km\u00b2)',
-  //   minWidth: 170,
-  //   align: 'right',
-  //   format: (value: number) => value.toLocaleString('en-US')
-  // },
-  // {
-  //   id: 'density',
-  //   label: 'Density',
-  //   minWidth: 170,
-  //   align: 'right',
-  //   format: (value: number) => value.toFixed(2)
-  // }
 ]
 
 interface Data {
@@ -80,6 +61,9 @@ const rows = [
 const DataKaryawan = () => {
   const [page, setPage] = useState<number>(0)
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
+  const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
+  const [isEditDataKaryawanOpen, setIsEditDataKaryawanOpen] = useState<boolean>(false)
+  const [isAddDataKaryawanOpen, setIsAddDataKaryawanOpen] = useState<boolean>(false)
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
@@ -89,10 +73,21 @@ const DataKaryawan = () => {
     setRowsPerPage(+event.target.value)
     setPage(0)
   }
-  const handleActionClick = (rowData: Data) => {
-    // Implement logic to open modal or perform any action
-    console.log('Action clicked for:', rowData.nama)
-  }
+   const handleActionClick = (rowData: Data) => {
+     setSelectedRowData(rowData)
+     setIsEditDataKaryawanOpen(true)
+   }
+   
+   const handleCloseEditDataKaryawan = () => {
+     setIsEditDataKaryawanOpen(false)
+   }
+   const handleAddDataKaryawan = () => {
+     setIsAddDataKaryawanOpen(true)
+   }
+   const handleCloseAddDataKaryawan = () => {
+     setIsAddDataKaryawanOpen(false)
+   }
+
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
@@ -148,9 +143,18 @@ const DataKaryawan = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      <Button size='large' type='submit' sx={{ ml: 5, mb: 5 }} variant='contained'>
+      <Button
+        size='large'
+        type='submit'
+        sx={{ ml: 5, mb: 5 }}
+        variant='contained'
+        onClick={handleAddDataKaryawan}
+        startIcon={<PlusCircle />}
+      >
         Tambah karyawan
       </Button>
+      <EditDataKaryawan open={isEditDataKaryawanOpen} onClose={handleCloseEditDataKaryawan} rowData={selectedRowData} />
+      <AddDataKaryawan open={isAddDataKaryawanOpen} onClose={handleCloseAddDataKaryawan} />
     </Paper>
   )
   //  <Butto

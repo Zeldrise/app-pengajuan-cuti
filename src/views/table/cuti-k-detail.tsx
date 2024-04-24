@@ -6,7 +6,6 @@ import DialogActions from '@mui/material/DialogActions'
 import Button from '@mui/material/Button'
 import Slide from '@mui/material/Slide'
 
-
 import { TransitionProps } from '@mui/material/transitions'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
@@ -21,23 +20,14 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction='up' ref={ref} {...props} />
 })
 
-interface PropsApprovalDetail {
+interface PropsCutiKaryawanDetail {
   open: boolean
   onClose: () => void
   rowData: Data | null
 }
 
-
-const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData }) => {
+const CutiKaryawanDetail: React.FC<PropsCutiKaryawanDetail> = ({ open, onClose, rowData }) => {
   const handleClose = () => {
-    onClose()
-  }
-  const handleAccept = () => {
-    window.alert('pengajuan Cuti Telah Diterima')
-    onClose()
-  }
-  const handleReject = () => {
-    window.alert('pengajuan Cuti Ditolak')
     onClose()
   }
   const theme = useTheme()
@@ -53,7 +43,7 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData 
       keepMounted
     >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        Detail Peangajuan Cuti
+        Informasi Detail
         <Button onClick={handleClose} color='inherit'>
           <CloseCircle />
         </Button>
@@ -73,16 +63,8 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData 
           <p>Deskripsi: {rowData?.deskripsi}</p>
         </div>
       </DialogContent>
-      <DialogActions>
-        <Button variant='contained' color='success' onClick={handleAccept}>
-          Terima
-        </Button>
-        <Button variant='contained' color='error' onClick={handleReject}>
-          Tolak
-        </Button>
-      </DialogActions>
     </Dialog>
   )
 }
 
-export default ApprovalDetail
+export default CutiKaryawanDetail
