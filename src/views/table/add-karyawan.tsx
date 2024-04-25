@@ -39,12 +39,25 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
   const [posisi, setPosisi] = useState('')
   const [departemen, setDepartemen] = useState('')
   const [tanggalBergabung, setTanggalBergabung] = useState('')
+  const [errors, setErrors] = useState<any>({})
 
   const handleClose = () => {
     onClose()
   }
-
-  const handleSubmit = () => {
+   const validateForm = () => {
+     const errors: any = {}
+     if (!nama) errors.nama = 'Nama harus diisi'
+     if (!email) errors.email = 'Email harus diisi'
+     if (!noTelepon) errors.noTelepon = 'Nomor telepon darurat harus diisi'
+     if (!posisi) errors.posisi = 'Posisi harus diisi'
+     if (!departemen) errors.departemen = 'Departemen harus diisi'
+     if (!tanggalBergabung) errors.tanggalBergabung = 'Tanggal bergabung harus diisi'
+     setErrors(errors)
+     return Object.keys(errors).length === 0
+   }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (validateForm()) {
     const newEmployeeData = {
       nama,
       email,
@@ -57,6 +70,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
     window.alert('Data karyawan berhasil ditambahkan')
     // Lakukan sesuatu dengan data karyawan, seperti mengirimnya ke server
     onClose()
+  }
   }
 
   const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,6 +122,8 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
             sx={{ marginTop: 2 }}
             fullWidth
             label='Nama'
+            error={!!errors.nama}
+            helperText={errors.nama}
             value={nama}
             onChange={handleChangeNama}
             InputProps={{
@@ -123,6 +139,8 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
             fullWidth
             sx={{ marginTop: 2 }}
             label='Email'
+            error={!!errors.email}
+            helperText={errors.email}
             value={email}
             onChange={handleChangeEmail}
             InputProps={{
@@ -139,6 +157,8 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
             sx={{ marginTop: 2 }}
             label='No Telephone'
             type='number'
+            error={!!errors.noTelepon}
+            helperText={errors.noTelepon}
             value={noTelepon}
             onChange={handleChangeNoTelepon}
             InputProps={{
@@ -154,6 +174,8 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
             fullWidth
             sx={{ marginTop: 2 }}
             label='Posisi'
+            error={!!errors.posisi}
+            helperText={errors.posisi}
             value={posisi}
             onChange={handleChangePosisi}
             InputProps={{
@@ -169,6 +191,8 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
             fullWidth
             sx={{ marginTop: 2 }}
             label='Departemen'
+            error={!!errors.departemen}
+            helperText={errors.departemen}
             value={departemen}
             onChange={handleChangeDepartemen}
             InputProps={{
@@ -185,6 +209,8 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
             sx={{ marginTop: 2 }}
             type='date'
             label='Tanggal Bergabung'
+            error={!!errors.tanggalBergabung}
+            helperText={errors.tanggalBergabung}
             value={tanggalBergabung}
             onChange={handleChangeTanggalBergabung}
             InputProps={{

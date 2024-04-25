@@ -18,6 +18,7 @@ import { useTheme } from '@mui/material/styles'
 import { AccountTie, BadgeAccount, CalendarAccount, CloseCircle, Grid, Margin, MessageOutline } from 'mdi-material-ui'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
+import FormHelperText from '@mui/material/FormHelperText'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -48,10 +49,27 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
   const [showUrgencyFields, setShowUrgencyFields] = useState<boolean>(false)
   const [showDoctorNoteField, setShowDoctorNoteField] = useState<boolean>(false)
   const [doctorNoteImage, setDoctorNoteImage] = useState<string | null>(null)
+  const [urgency, setUrgency] = useState<string>('')
+  const [errors, setErrors] = useState<any>({})
 
   const handleClose = () => {
     onClose()
   }
+
+    const validateForm = () => {
+      const errors: any = {}
+      if (!cutiType) errors.cutiType = 'Tipe cuti harus dipilih'
+      if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
+      if (cutiType === 'Cuti Sakit' && !doctorNoteImage) errors.doctorNote = 'Surat dokter harus diunggah'
+      if (cutiType === 'Cuti Urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
+      if (!startDate) errors.startDate = 'Tanggal awal harus diisi'
+      if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
+
+      if (startDate && endDate && startDate > endDate)
+        errors.date = 'Tanggal awal tidak boleh lebih besar dari tanggal akhir'
+      setErrors(errors)
+      return Object.keys(errors).length === 0
+    }
 
   const handleCutiTypeChange = (event: SelectChangeEvent<string>) => {
     const selectedType = event.target.value as string
@@ -81,10 +99,13 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
     }
   }
 
-  const handleSubmit = () => {
-    console.log('Data yang akan disubmit:', { cutiType, deskripsi, startDate, endDate}) // Menampilkan data yang akan disubmit pada console
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (validateForm()) {
+    console.log('Data yang akan disubmit:', { cutiType, deskripsi, startDate, endDate, doctorNoteImage, urgency }) // Menampilkan data yang akan disubmit pada console
     window.alert('Data karyawan berhasil diedit')
     onClose()
+    }
   }
 
   const handleChangeDeskripsi = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,6 +118,9 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
 
   const handleChangeEndDate = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEndDate(event.target.value)
+  }
+  const handleChangeUrgency = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUrgency(event.target.value)
   }
 
 
@@ -129,6 +153,8 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
               id='form-layouts-separator-select'
               labelId='form-layouts-separator-select-label'
               onChange={handleCutiTypeChange}
+              error={!!errors.cutiType}
+              value={cutiType}
             >
               <MenuItem value='Cuti Tahunan'>Cuti Tahunan</MenuItem>
               <MenuItem value='Cuti Urgensi'>Cuti Urgensi</MenuItem>
@@ -146,11 +172,15 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
                 defaultValue=''
                 id='form-layouts-separator-select'
                 labelId='form-layouts-separator-select-label'
+                error={!!errors.urgency}
+                onChange={handleChangeUrgency}
+                value={urgency}
               >
-                <MenuItem value='Cuti Tahunan'>keluarga meninggal</MenuItem>
-                <MenuItem value='Cuti Urgensi'>melahirkan</MenuItem>
-                <MenuItem value='Cuti Sakit'>kehilangan</MenuItem>
+                <MenuItem value='keluarga meninggal'>keluarga meninggal</MenuItem>
+                <MenuItem value='melahirkan'>melahirkan</MenuItem>
+                <MenuItem value='kehilangan'>kehilangan</MenuItem>
               </Select>
+              {errors.urgency && <FormHelperText error>{errors.urgency}</FormHelperText>}
             </FormControl>
           )}
           {showDoctorNoteField && (
@@ -172,11 +202,14 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
               )}
             </div>
           )}
+          {errors.doctorNote && <FormHelperText error>{errors.doctorNote}</FormHelperText>}
           <TextField
             fullWidth
             multiline
             minRows={3}
             label='Deskripsi'
+            error={!!errors.deskripsi}
+            helperText={errors.deskripsi}
             value={deskripsi}
             onChange={handleChangeDeskripsi}
             placeholder='...'
@@ -204,6 +237,8 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
               )
             }}
           />
+          {errors.startDate && <FormHelperText error>{errors.startDate}</FormHelperText>}
+          {errors.date && <FormHelperText error>{errors.date}</FormHelperText>}
           <TextField
             fullWidth
             sx={{ marginTop: 2 }}
@@ -219,6 +254,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
               )
             }}
           />
+          {errors.endDate && <FormHelperText error>{errors.endDate}</FormHelperText>}
         </div>
       </DialogContent>
       <DialogActions>

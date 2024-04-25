@@ -31,13 +31,23 @@ interface PropsEditDataKaryawan {
 const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowData }) => {
     const [posisi, setPosisi] = useState(rowData?.posisi || '')
     const [departemen, setDepartemen] = useState(rowData?.departemen || '')
+    const [errors, setErrors] = useState<any>({})
   const handleClose = () => {
     onClose()
   }
- const handleSubmit = () => {
-   console.log('Data yang akan disubmit:', { posisi, departemen }) // Menampilkan data yang akan disubmit pada console
+   const validateForm = () => {
+     const errors: any = {}
+     if (!posisi) errors.posisi = 'Posisi harus diisi'
+     if (!departemen) errors.departemen = 'Departemen harus diisi'
+     setErrors(errors)
+     return Object.keys(errors).length === 0
+   }
+ const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault()
+  if (validateForm()) { console.log('Data yang akan disubmit:', { posisi, departemen }) // Menampilkan data yang akan disubmit pada console
    window.alert('Data karyawan berhasil diedit')
    onClose()
+ }
  }
 
   const handleChangePosisi = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,6 +84,8 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
             label='Posisi'
             value={posisi} // Ubah placeholder menjadi value agar nilai yang diinput terpantau
             onChange={handleChangePosisi}
+            error={!!errors.posisi}
+            helperText={errors.posisi}
             placeholder={rowData?.posisi}
             InputProps={{
               startAdornment: (
@@ -90,6 +102,8 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
             label='Departemen'
             value={departemen} // Menambahkan value dan onChange untuk input departemen
             onChange={handleChangeDepartemen}
+            error={!!errors.departemen}
+            helperText={errors.departemen}
             placeholder={rowData?.departemen}
             InputProps={{
               startAdornment: (

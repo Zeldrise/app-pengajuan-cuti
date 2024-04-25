@@ -4,6 +4,8 @@ import { ChangeEvent, MouseEvent, ReactNode, useState } from 'react'
 // ** Next Imports
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import axios from 'axios'
+import { AxiosError } from 'axios'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -21,7 +23,6 @@ import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormCo
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 
-
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
@@ -34,6 +35,7 @@ interface State {
   showPassword: boolean
   emailError: string
   passwordError: string
+  serverError: string | null
 }
 
 // ** Styled Components
@@ -61,8 +63,10 @@ const LoginPage = () => {
     password: '',
     showPassword: false,
     emailError: '',
-    passwordError: ''
+    passwordError: '',
+    serverError: null
   })
+  const [loginError, setLoginError] = useState<string>('')
 
   // ** Hook
   const theme = useTheme()
@@ -97,13 +101,42 @@ const LoginPage = () => {
     return isValid
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if ( validateForm()) {
-      // Perform your login logic here
-      router.push('/')
+    if (validateForm()) {
+      try {
+        const response = await axios.post('http://192.168.10.26:3000/auth/login', {
+          email: values.email,
+          password: values.password
+        })
+        if (response.status === 200) {
+          // Login successful, save token to local storage
+          localStorage.setItem('token', response.data.token)
+          // Redirect to home page
+          router.push('/home')
+        } else {
+          // Handle other response statuses if needed
+          setValues(prevState => ({ ...prevState, serverError: 'An unexpected error occurred' }))
+        }
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          if (error.response) {
+            const errorMessage = error.response.data.error
+            if (errorMessage === 'User not found') {
+              setValues(prevState => ({ ...prevState, emailError: errorMessage, passwordError: '' }))
+            } else if (errorMessage === 'Incorrect password') {
+              setValues(prevState => ({ ...prevState, emailError: '', passwordError: errorMessage }))
+            } else {
+              console.log('An unexpected error occurred')
+            }
+          } else {
+            console.log('An unexpected error occurred')
+          }
+        }
+      }
     }
   }
+
 
   return (
     <Box className='content-center'>
@@ -163,7 +196,7 @@ const LoginPage = () => {
                     </InputAdornment>
                   )
                 }}
-              />
+              />{' '}
             </div>
             <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
@@ -183,7 +216,6 @@ const LoginPage = () => {
     </Box>
   )
 }
-
 
 LoginPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 

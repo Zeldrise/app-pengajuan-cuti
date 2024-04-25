@@ -25,6 +25,7 @@ import Phone from 'mdi-material-ui/Phone'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import { Account, AccountTie, BadgeAccount } from 'mdi-material-ui'
 import Typography from '@mui/material/Typography'
+import FormHelperText from '@mui/material/FormHelperText'
 
 
 const TglAwal = forwardRef((props, ref) => {
@@ -39,12 +40,55 @@ const FormPengajuanCuti = () => {
   const [startDate, setStartDate] = useState<Date | null | undefined>(null)
   const [endDate, setEndDate] = useState<Date | null | undefined>(null)
   const [cutiType, setCutiType] = useState<string>('')
-
+  const [nama, setNama] = useState<string>('')
+  const [telepon, setTelepon] = useState<string>('')
+  const [posisi, setPosisi] = useState('')
+  const [departemen, setDepartemen] = useState('')
+  const [deskripsi, setDeskripsi] = useState<string>('')
   const [showUrgencyFields, setShowUrgencyFields] = useState<boolean>(false)
   const [showDoctorNoteField, setShowDoctorNoteField] = useState<boolean>(false)
-
   const [doctorNoteImage, setDoctorNoteImage] = useState<string | null>(null)
+  const [urgency, setUrgency] = useState<string>('')
+  const [errors, setErrors] = useState<any>({})
+
+  const validateForm = () => {
+    const errors: any = {}
+    if (!nama) errors.nama = 'Nama harus diisi'
+    if (!telepon) errors.telepon = 'Nomor telepon darurat harus diisi'
+    if (!posisi) errors.posisi = 'Posisi harus diisi'
+    if (!departemen) errors.departemen = 'Departemen harus diisi'
+    if (!cutiType) errors.cutiType = 'Tipe cuti harus dipilih'
+    if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
+    if (cutiType === 'Cuti Sakit' && !doctorNoteImage) errors.doctorNote = 'Surat dokter harus diunggah'
+    if (cutiType === 'Cuti Urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
+    if (!startDate) errors.startDate = 'Tanggal awal harus diisi'
+    if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
+    
+    if (startDate && endDate && startDate > endDate)
+      errors.date = 'Tanggal awal tidak boleh lebih besar dari tanggal akhir'
+    setErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
   
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (validateForm()) {
+      const dataPengajuan = {
+        nama,
+        telepon,
+        posisi,
+        departemen,
+        cutiType,
+        urgency,
+        deskripsi,
+        startDate,
+        doctorNoteImage,
+        endDate
+      }
+      console.log('Data yang akan disubmit:', dataPengajuan) 
+    }
+  }
 
   const handleCutiTypeChange = (event: SelectChangeEvent<string>) => {
     const selectedType = event.target.value as string
@@ -52,7 +96,6 @@ const FormPengajuanCuti = () => {
 
     setShowUrgencyFields(selectedType === 'Cuti Urgensi')
     setShowDoctorNoteField(selectedType === 'Cuti Sakit')
-    
   }
   useEffect(() => {
     // Set showDoctorNoteField to true if cutiType is 'Cuti Sakit' and duration is more than 1 day
@@ -70,9 +113,29 @@ const FormPengajuanCuti = () => {
     reader.onloadend = () => {
       setDoctorNoteImage(reader.result as string)
     }
+    setDoctorNoteImage(event.target.value)
     reader.readAsDataURL(file)
   }
  }
+   const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
+     setNama(event.target.value)
+   }
+   const handleChangeTeleponDarurat = (event: React.ChangeEvent<HTMLInputElement>) => {
+     setTelepon(event.target.value)
+   }
+     const handleChangePosisi = (event: React.ChangeEvent<HTMLInputElement>) => {
+       setPosisi(event.target.value)
+     }
+
+     const handleChangeDepartemen = (event: React.ChangeEvent<HTMLInputElement>) => {
+       setDepartemen(event.target.value)
+     }
+     const handleChangeDeskripsi = (event: React.ChangeEvent<HTMLInputElement>) => {
+       setDeskripsi(event.target.value)
+     }
+     const handleChangeUrgency = (event: React.ChangeEvent<HTMLInputElement>) => {
+       setUrgency(event.target.value)
+     }
  
   return (
     <Card>
@@ -91,7 +154,7 @@ const FormPengajuanCuti = () => {
         </Typography>
       </Card>
       <Divider sx={{ margin: 0 }} />
-      <form onSubmit={e => e.preventDefault()}>
+      <form onSubmit={handleSubmit}>
         <CardContent>
           <Grid container spacing={5}>
             <Grid item xs={12} sm={6}>
@@ -99,6 +162,10 @@ const FormPengajuanCuti = () => {
                 fullWidth
                 label='Nama'
                 placeholder='Monkey D Luffy'
+                error={!!errors.nama}
+                helperText={errors.nama}
+                value={nama}
+                onChange={handleChangeNama}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -114,6 +181,10 @@ const FormPengajuanCuti = () => {
                 type='number'
                 label='Telephone Darurat'
                 placeholder='+62-123-456-8790'
+                error={!!errors.telepon}
+                helperText={errors.telepon}
+                value={telepon}
+                onChange={handleChangeTeleponDarurat}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -131,6 +202,10 @@ const FormPengajuanCuti = () => {
                 fullWidth
                 label='Posisi'
                 placeholder='Developer'
+                error={!!errors.posisi}
+                helperText={errors.posisi}
+                value={posisi}
+                onChange={handleChangePosisi}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -145,6 +220,10 @@ const FormPengajuanCuti = () => {
                 fullWidth
                 label='Departemen'
                 placeholder='IT'
+                error={!!errors.departemen}
+                helperText={errors.departemen}
+                value={departemen}
+                onChange={handleChangeDepartemen}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -163,11 +242,14 @@ const FormPengajuanCuti = () => {
                   id='form-layouts-separator-select'
                   labelId='form-layouts-separator-select-label'
                   onChange={handleCutiTypeChange}
+                  error={!!errors.cutiType}
+                  value={cutiType}
                 >
                   <MenuItem value='Cuti Tahunan'>Cuti Tahunan</MenuItem>
                   <MenuItem value='Cuti Urgensi'>Cuti Urgensi</MenuItem>
                   <MenuItem value='Cuti Sakit'>Cuti Sakit</MenuItem>
                 </Select>
+                {errors.cutiType && <FormHelperText error>{errors.cutiType}</FormHelperText>}
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -176,6 +258,10 @@ const FormPengajuanCuti = () => {
                 multiline
                 minRows={3}
                 label='Deskripsi'
+                error={!!errors.deskripsi}
+                helperText={errors.deskripsi}
+                value={deskripsi}
+                onChange={handleChangeDeskripsi}
                 placeholder='...'
                 sx={{ '& .MuiOutlinedInput-root': { alignItems: 'baseline' } }}
                 InputProps={{
@@ -196,11 +282,15 @@ const FormPengajuanCuti = () => {
                     defaultValue=''
                     id='form-layouts-separator-select'
                     labelId='form-layouts-separator-select-label'
+                    error={!!errors.urgency}
+                    onChange={handleChangeUrgency}
+                    value={urgency}
                   >
-                    <MenuItem value='Cuti Tahunan'>keluarga meninggal</MenuItem>
-                    <MenuItem value='Cuti Urgensi'>melahirkan</MenuItem>
-                    <MenuItem value='Cuti Sakit'>kehilangan</MenuItem>
+                    <MenuItem value='keluarga meninggal'>keluarga meninggal</MenuItem>
+                    <MenuItem value='melahirkan'>melahirkan</MenuItem>
+                    <MenuItem value='kehilangan'>kehilangan</MenuItem>
                   </Select>
+                  {errors.urgency && <FormHelperText error>{errors.urgency}</FormHelperText>}
                 </FormControl>
               </Grid>
             )}
@@ -226,6 +316,7 @@ const FormPengajuanCuti = () => {
                     style={{ marginTop: '10px', maxWidth: '100%' }}
                   />
                 )}
+                {errors.doctorNote && <FormHelperText error>{errors.doctorNote}</FormHelperText>}
               </Grid>
             )}
             <Grid item xs={12} sm={6}>
@@ -239,6 +330,7 @@ const FormPengajuanCuti = () => {
                 onChange={(date: Date) => setStartDate(date)}
                 minDate={startOfToday()}
               />
+              {errors.startDate && <FormHelperText error>{errors.startDate}</FormHelperText>}
             </Grid>
             <Grid item xs={12} sm={6}>
               <DatePicker
@@ -251,6 +343,7 @@ const FormPengajuanCuti = () => {
                 onChange={(date: Date) => setEndDate(date)}
                 minDate={startOfToday()}
               />
+              {errors.endDate && <FormHelperText error>{errors.endDate}</FormHelperText>}
             </Grid>
           </Grid>
         </CardContent>

@@ -4,6 +4,8 @@ import PermintaanCuti from 'src/views/card/PermintaanCuti'
 import Ditolak from 'src/views/card/Ditolak'
 import Diterima from 'src/views/card/Diterima'
 import UserLayout from 'src/layouts/UserLayout'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 const position = 'hr';
 var dashboard: JSX.Element[]=[]
@@ -62,6 +64,14 @@ if (position == 'hr') {
   ]
 }
 const index = () => {
+  const router = useRouter()
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    // Redirect user to login page if token is not present
+    if (!token) {
+      router.push('/pages/login')
+    }
+  }, [router])
   return dashboard;
 }
 index.getLayout = (page: React.ReactNode) => <UserLayout>{page}</UserLayout>
