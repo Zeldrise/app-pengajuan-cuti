@@ -1,5 +1,7 @@
 // ** React Imports
 import { SyntheticEvent, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -48,6 +50,13 @@ const AccountSettings = () => {
     setValue(newValue)
   }
 
+  const router = useRouter()
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      router.push('/pages/login')
+    }
+  }, [router])
   return (
     <Card>
       <TabContext value={value}>

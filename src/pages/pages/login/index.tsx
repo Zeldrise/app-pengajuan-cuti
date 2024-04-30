@@ -110,12 +110,9 @@ const LoginPage = () => {
           password: values.password
         })
         if (response.status === 200) {
-          // Login successful, save token to local storage
           localStorage.setItem('token', response.data.token)
-          // Redirect to home page
           router.push('/home')
         } else {
-          // Handle other response statuses if needed
           setValues(prevState => ({ ...prevState, serverError: 'An unexpected error occurred' }))
         }
       } catch (error: unknown) {

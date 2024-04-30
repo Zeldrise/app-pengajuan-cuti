@@ -67,7 +67,6 @@ const index = () => {
   const router = useRouter()
   useEffect(() => {
     const token = localStorage.getItem('token')
-    // Redirect user to login page if token is not present
     if (!token) {
       router.push('/pages/login')
     }

@@ -60,17 +60,40 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData 
       </DialogTitle>
       <DialogContent>
         <div>
-          <p>Nama: {rowData?.nama}</p>
-          <p>Tanggal Penyerahan: {rowData?.tgl_penyerahan}</p>
-          <p>Telephone Darurat: {rowData?.telephone_darurat}</p>
-          <p>Posisi: {rowData?.posisi}</p>
-          <p>Departemen: {rowData?.departemen}</p>
-          <p>Tanggal Mulai: {rowData?.tgl_mulai}</p>
-          <p>Tanggal Akhir: {rowData?.tgl_akhir}</p>
-          <p>Lama Cuti: {rowData?.lama_cuti}</p>
-          <p>Tipe Cuti: {rowData?.tipe_cuti}</p>
-          <p>Sisa Cuti: {rowData?.sisa_cuti}</p>
-          <p>Deskripsi: {rowData?.deskripsi}</p>
+          <p>
+            <span style={{ display: 'inline-block', width: 180 }}>Nama</span>: {rowData?.nama}
+          </p>
+          <p>
+            <span style={{ display: 'inline-block', width: 180 }}>Tanggal Penyerahan</span>: {rowData?.tgl_penyerahan}
+          </p>
+          <p>
+            <span style={{ display: 'inline-block', width: 180 }}>Telephone Darurat</span>: {rowData?.telephone_darurat}
+          </p>
+          <p>
+            <span style={{ display: 'inline-block', width: 180 }}>Posisi</span>: {rowData?.posisi}
+          </p>
+          <p>
+            <span style={{ display: 'inline-block', width: 180 }}>Departemen</span>: {rowData?.departemen}
+          </p>
+          <p>
+            <span style={{ display: 'inline-block', width: 180 }}>Tanggal Mulai</span>: {rowData?.tgl_mulai}
+          </p>
+          <p>
+            <span style={{ display: 'inline-block', width: 180 }}>Tanggal Akhir</span>: {rowData?.tgl_akhir}
+          </p>
+          <p>
+            <span style={{ display: 'inline-block', width: 180 }}>Lama Cuti</span>: {rowData?.lama_cuti}
+          </p>
+          <p>
+            <span style={{ display: 'inline-block', width: 180 }}>Tipe Cuti</span>: {rowData?.tipe_cuti}
+          </p>
+          <p>
+            <span style={{ display: 'inline-block', width: 180 }}>Sisa Cuti</span>: {rowData?.sisa_cuti}
+          </p>
+          <p>
+            <span style={{ display: 'inline-block', width: 180 }}>Deskripsi</span>:{' '}
+            <span style={{ display: 'inline-flex', width: 300 }}>{rowData?.deskripsi}</span>
+          </p>
         </div>
       </DialogContent>
       <DialogActions>

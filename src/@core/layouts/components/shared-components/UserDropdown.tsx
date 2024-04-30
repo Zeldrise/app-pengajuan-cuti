@@ -35,6 +35,7 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 const UserDropdown = () => {
   // ** States
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
+  
 
 
 
@@ -74,10 +75,11 @@ const UserDropdown = () => {
     }
   }, [])
 
-  const handleUserProfile = () => {
-    if (urlPrefix) {
-      router.push(`/${urlPrefix}/user-profile`) // Navigasi ke /hr/account-settings
-    }
+  const handleLogout = () => {
+    // Clear token from local storage or state
+    localStorage.removeItem('token')
+    // Redirect to logout page or any other page
+    router.push('/')
   }
 
   return (
@@ -129,7 +131,7 @@ const UserDropdown = () => {
           </Box>
         </MenuItem>
         <Divider />
-        <MenuItem sx={{ py: 2 }} onClick={() => handleDropdownClose('/pages/login')}>
+        <MenuItem sx={{ py: 2 }} onClick={handleLogout}>
           <LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
           Logout
         </MenuItem>

@@ -9,7 +9,7 @@ import Slide from '@mui/material/Slide'
 import { TransitionProps } from '@mui/material/transitions'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
-import { AccountTie, BadgeAccount, CloseCircle, Margin } from 'mdi-material-ui'
+import { Account, AccountTie, BadgeAccount, CalendarAccount, CloseCircle, Email, Margin, Phone } from 'mdi-material-ui'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 
@@ -29,26 +29,55 @@ interface PropsEditDataKaryawan {
 }
 
 const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowData }) => {
-    const [posisi, setPosisi] = useState(rowData?.posisi || '')
-    const [departemen, setDepartemen] = useState(rowData?.departemen || '')
-    const [errors, setErrors] = useState<any>({})
+     const [nama, setNama] = useState('')
+     const [email, setEmail] = useState('')
+     const [noTelepon, setNoTelepon] = useState('')
+     const [posisi, setPosisi] = useState('')
+     const [departemen, setDepartemen] = useState('')
+     const [tanggalBergabung, setTanggalBergabung] = useState('')
+     const [errors, setErrors] = useState<any>({})
   const handleClose = () => {
     onClose()
   }
    const validateForm = () => {
      const errors: any = {}
-     if (!posisi) errors.posisi = 'Posisi harus diisi'
-     if (!departemen) errors.departemen = 'Departemen harus diisi'
+         if (!nama) errors.nama = 'Nama harus diisi'
+         if (!email) errors.email = 'Email harus diisi'
+         if (!noTelepon) errors.noTelepon = 'Nomor telepon darurat harus diisi'
+         if (!posisi) errors.posisi = 'Posisi harus diisi'
+         if (!departemen) errors.departemen = 'Departemen harus diisi'
+         if (!tanggalBergabung) errors.tanggalBergabung = 'Tanggal bergabung harus diisi'
      setErrors(errors)
      return Object.keys(errors).length === 0
    }
  const handleSubmit = (e: React.FormEvent) => {
   e.preventDefault()
-  if (validateForm()) { console.log('Data yang akan disubmit:', { posisi, departemen }) // Menampilkan data yang akan disubmit pada console
+  if (validateForm()) {    
+    const editEmployeeData = {
+    nama,
+    email,
+    noTelepon,
+    posisi,
+    departemen,
+    tanggalBergabung
+  }
+  console.log('Data yang akan disubmit:', editEmployeeData) // Menampilkan data yang akan disubmit pada console
    window.alert('Data karyawan berhasil diedit')
    onClose()
  }
  }
+
+  const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNama(event.target.value)
+  }
+
+  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value)
+  }
+
+  const handleChangeNoTelepon = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNoTelepon(event.target.value)
+  }
 
   const handleChangePosisi = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPosisi(event.target.value)
@@ -57,6 +86,10 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
   const handleChangeDepartemen = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDepartemen(event.target.value)
   }
+  const handleChangeTanggalBergabung = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTanggalBergabung(event.target.value)
+  }
+
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -77,10 +110,61 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
       </DialogTitle>
       <DialogContent>
         <div>
-          <p>Nama: {rowData?.nama}</p>
-          <p>Email: {rowData?.email}</p>
+          <TextField
+            sx={{ marginTop: 2 }}
+            fullWidth
+            label='Nama'
+            error={!!errors.nama}
+            helperText={errors.nama}
+            value={nama}
+            onChange={handleChangeNama}
+            placeholder={rowData?.nama}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Account />
+                </InputAdornment>
+              )
+            }}
+          />
           <TextField
             fullWidth
+            sx={{ marginTop: 2 }}
+            label='Email'
+            error={!!errors.email}
+            helperText={errors.email}
+            value={email}
+            onChange={handleChangeEmail}
+            placeholder={rowData?.email}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Email />
+                </InputAdornment>
+              )
+            }}
+          />
+          <TextField
+            fullWidth
+            sx={{ marginTop: 2 }}
+            label='No Telephone'
+            type='number'
+            error={!!errors.noTelepon}
+            helperText={errors.noTelepon}
+            value={noTelepon}
+            onChange={handleChangeNoTelepon}
+            placeholder={rowData?.no_telephone}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Phone />
+                </InputAdornment>
+              )
+            }}
+          />
+          <TextField
+            fullWidth
+            sx={{ marginTop: 2 }}
             label='Posisi'
             value={posisi} // Ubah placeholder menjadi value agar nilai yang diinput terpantau
             onChange={handleChangePosisi}
@@ -109,6 +193,23 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
               startAdornment: (
                 <InputAdornment position='start'>
                   <AccountTie />
+                </InputAdornment>
+              )
+            }}
+          />
+          <TextField
+            fullWidth
+            sx={{ marginTop: 2 }}
+            type='date'
+            label='Tanggal Bergabung'
+            error={!!errors.tanggalBergabung}
+            helperText={errors.tanggalBergabung}
+            value={tanggalBergabung}
+            onChange={handleChangeTanggalBergabung}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <CalendarAccount />
                 </InputAdornment>
               )
             }}

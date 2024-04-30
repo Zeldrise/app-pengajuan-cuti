@@ -9,6 +9,7 @@ import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import Button from '@mui/material/Button'
 import { FileEye } from 'mdi-material-ui'
+import Chip from '@mui/material/Chip'
 import CutiKaryawanDetail from './cuti-k-detail'
 
 interface Column {
@@ -102,7 +103,7 @@ const rows = [
     5,
     'liburan',
     'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged It was popularised in',
-    'Diterima',
+    'Ditolak',
     'HR'
   ),
   createData(
@@ -183,6 +184,12 @@ const rows = [
   )
 ]
 
+const statusObj: { [key: string]: { color: string } } = {
+  Diterima: { color: 'success' },
+  Ditolak: { color: 'error' },
+  Pending: { color: 'warning' }
+}
+
 const CutiKaryawan = () => {
   const [page, setPage] = useState<number>(0)
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
@@ -199,22 +206,27 @@ const CutiKaryawan = () => {
     setRowsPerPage(+event.target.value)
     setPage(0)
   }
+
   const handleActionClick = (rowData: Data) => {
     setSelectedRowData(rowData)
     setIsCutiKaryawanDetailOpen(true)
   }
+
   const handleCloseDetailCuti = () => {
     setIsCutiKaryawanDetailOpen(false)
   }
+
   const handleSort = (property: keyof Data) => {
-    const isAsc = orderBy === property && order == 'asc'
+    const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
   }
+
   const sortedRows =
     order === 'asc'
       ? [...rows].sort((a, b) => new Date(a.tgl_penyerahan).getTime() - new Date(b.tgl_penyerahan).getTime())
       : [...rows].sort((a, b) => new Date(b.tgl_penyerahan).getTime() - new Date(a.tgl_penyerahan).getTime())
+
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
@@ -249,7 +261,22 @@ const CutiKaryawan = () => {
                         </TableCell>
                       )
                     }
-
+                    if (column.id === 'status') {
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          <Chip
+                            label={value}
+                            color={statusObj[value].color}
+                            sx={{
+                              height: 24,
+                              fontSize: '0.75rem',
+                              textTransform: 'capitalize',
+                              '& .MuiChip-label': { fontWeight: 500 }
+                            }}
+                          />
+                        </TableCell>
+                      )
+                    }
                     return (
                       <TableCell key={column.id} align={column.align}>
                         {column.format && typeof value === 'number' ? column.format(value) : value}
@@ -271,7 +298,7 @@ const CutiKaryawan = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      <CutiKaryawanDetail open={isCutiKaryawanDetailOpen} onClose={handleCloseDetailCuti} rowData={selectedRowData}/>
+      <CutiKaryawanDetail open={isCutiKaryawanDetailOpen} onClose={handleCloseDetailCuti} rowData={selectedRowData} />
     </Paper>
   )
 }

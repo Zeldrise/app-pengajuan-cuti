@@ -10,6 +10,7 @@ import TablePagination from '@mui/material/TablePagination'
 import Button from '@mui/material/Button'
 import { PencilBox, TrashCan } from 'mdi-material-ui'
 import EditCutiPribadi from './cuti-edit'
+import Chip from '@mui/material/Chip'
 
 interface Column {
   id:
@@ -134,6 +135,11 @@ const rows = [
     'HR'
   )
 ]
+const statusObj: { [key: string]: { color: string } } = {
+  Diterima: { color: 'success' },
+  Ditolak: { color: 'error' },
+  Pending: { color: 'warning' }
+}
 
 const CutiPribadi = () => {
   const [page, setPage] = useState<number>(0)
@@ -203,6 +209,22 @@ const CutiPribadi = () => {
                               <TrashCan />
                             </Button>
                           </div>
+                        </TableCell>
+                      )
+                    }
+                    if (column.id === 'status') {
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          <Chip
+                            label={value}
+                            color={statusObj[value].color}
+                            sx={{
+                              height: 24,
+                              fontSize: '0.75rem',
+                              textTransform: 'capitalize',
+                              '& .MuiChip-label': { fontWeight: 500 }
+                            }}
+                          />
                         </TableCell>
                       )
                     }

@@ -47,6 +47,19 @@ const ResetButtonStyled = styled(Button)<ButtonProps>(({ theme }) => ({
 const TabAccount = () => {
   // ** State
   const [imgSrc, setImgSrc] = useState<string>('/images/avatars/1.png')
+  const [nama, setNama] = useState('')
+  const [email, setEmail] = useState('')
+  const [noTelepon, setNoTelepon] = useState('')
+  const [errors, setErrors] = useState<any>({})
+
+     const validateForm = () => {
+       const errors: any = {}
+       if (!nama) errors.nama = 'Nama harus diisi'
+       if (!email) errors.email = 'Email harus diisi'
+       if (!noTelepon) errors.noTelepon = 'Nomor telepon harus diisi'
+       setErrors(errors)
+       return Object.keys(errors).length === 0
+     }
 
   const onChange = (file: ChangeEvent) => {
     const reader = new FileReader()
@@ -57,6 +70,31 @@ const TabAccount = () => {
       reader.readAsDataURL(files[0])
     }
   }
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault()
+      if (validateForm()) {
+        const editProfile = {
+          nama,
+          email,
+          noTelepon,
+        }
+        console.log('Data yang akan disubmit:', editProfile) // Menampilkan data yang akan disubmit pada console
+        window.alert('Profile berhasil diedit')
+        // Lakukan sesuatu dengan data karyawan, seperti mengirimnya ke server
+      }
+    }
+
+    const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNama(event.target.value)
+    }
+
+    const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setEmail(event.target.value)
+    }
+
+    const handleChangeNoTelepon = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNoTelepon(event.target.value)
+    }
 
   return (
     <CardContent>
@@ -90,6 +128,10 @@ const TabAccount = () => {
             <TextField
               fullWidth
               label='Full Name'
+              error={!!errors.nama}
+              helperText={errors.nama}
+              value={nama}
+              onChange={handleChangeNama}
               placeholder='Monkey D Luffy'
               InputProps={{
                 startAdornment: (
@@ -105,8 +147,11 @@ const TabAccount = () => {
               fullWidth
               type='email'
               label='Email'
+              error={!!errors.email}
+              helperText={errors.email}
+              value={email}
+              onChange={handleChangeEmail}
               placeholder='bakasenchou@gmail.com'
-              helperText='You can use letters, numbers & periods'
               InputProps={{
                 startAdornment: (
                   <InputAdornment position='start'>
@@ -121,6 +166,10 @@ const TabAccount = () => {
               fullWidth
               type='number'
               label='Phone No.'
+              error={!!errors.noTelepon}
+              helperText={errors.noTelepon}
+              value={noTelepon}
+              onChange={handleChangeNoTelepon}
               placeholder='+62-123-456-8790'
               InputProps={{
                 startAdornment: (
@@ -132,9 +181,8 @@ const TabAccount = () => {
             />
           </Grid>
 
-
           <Grid item xs={12}>
-            <Button variant='contained' sx={{ marginRight: 3.5 }}>
+            <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
               Save Changes
             </Button>
             <Button type='reset' variant='outlined' color='secondary'>

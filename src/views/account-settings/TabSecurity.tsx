@@ -20,6 +20,7 @@ import EyeOutline from 'mdi-material-ui/EyeOutline'
 import KeyOutline from 'mdi-material-ui/KeyOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
+import { FormHelperText } from '@mui/material'
 
 interface State {
   newPassword: string
@@ -28,6 +29,9 @@ interface State {
   confirmNewPassword: string
   showCurrentPassword: boolean
   showConfirmNewPassword: boolean
+  passwordError: string
+  newPasswordError: string
+  confirmPasswordError: string
 }
 
 const TabSecurity = () => {
@@ -38,7 +42,10 @@ const TabSecurity = () => {
     showNewPassword: false,
     confirmNewPassword: '',
     showCurrentPassword: false,
-    showConfirmNewPassword: false
+    showConfirmNewPassword: false,
+    passwordError: '',
+    newPasswordError: '',
+    confirmPasswordError: ''
   })
 
   // Handle Current Password
@@ -74,6 +81,40 @@ const TabSecurity = () => {
     event.preventDefault()
   }
 
+    const validationForm = () => {
+      let isValid = true
+
+      setValues(prevState => ({ ...prevState, newPasswordError: '', confirmPasswordError: '' }))
+
+      if (!values.currentPassword.trim()) {
+        setValues(prevState => ({ ...prevState, passwordError: 'Current password is required'}))
+        isValid = false
+      } else {
+        setValues(prevState => ({ ...prevState, passwordError: ''}))
+      }
+
+      if (!values.newPassword.trim()) {
+        setValues(prevState => ({ ...prevState, newPasswordError: 'New password is required' }))
+        isValid = false
+      } else if (values.newPassword.length < 8) {
+        setValues(prevState => ({ ...prevState, newPasswordError: 'Password must be at least 8 character' }))
+        isValid = false
+      }
+      if (!values.confirmNewPassword.trim()) {
+        setValues(prevState => ({ ...prevState, confirmPasswordError: 'Confirm password is required' }))
+        isValid = false
+      } else if (values.confirmNewPassword !== values.newPassword) {
+        setValues(prevState => ({ ...prevState, confirmPasswordError: 'Password do not match' }))
+      }
+
+      return isValid
+    }
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault()
+      if(validationForm()) {
+
+      }
+    }
   return (
     <form>
       <CardContent sx={{ paddingBottom: 0 }}>
@@ -86,6 +127,7 @@ const TabSecurity = () => {
                   <OutlinedInput
                     label='Current Password'
                     value={values.currentPassword}
+                    error={!!values.passwordError}
                     id='account-settings-current-password'
                     type={values.showCurrentPassword ? 'text' : 'password'}
                     onChange={handleCurrentPasswordChange('currentPassword')}
@@ -102,15 +144,17 @@ const TabSecurity = () => {
                       </InputAdornment>
                     }
                   />
+                  {values.passwordError && <FormHelperText error>{values.passwordError}</FormHelperText>}
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} sx={{ marginTop: 6 }}>
+              <Grid item xs={12} >
                 <FormControl fullWidth>
                   <InputLabel htmlFor='account-settings-new-password'>New Password</InputLabel>
                   <OutlinedInput
                     label='New Password'
                     value={values.newPassword}
+                    error={!!values.newPasswordError}
                     id='account-settings-new-password'
                     onChange={handleNewPasswordChange('newPassword')}
                     type={values.showNewPassword ? 'text' : 'password'}
@@ -127,6 +171,7 @@ const TabSecurity = () => {
                       </InputAdornment>
                     }
                   />
+                  {values.newPasswordError && <FormHelperText error>{values.newPasswordError}</FormHelperText>}
                 </FormControl>
               </Grid>
 
@@ -136,6 +181,7 @@ const TabSecurity = () => {
                   <OutlinedInput
                     label='Confirm New Password'
                     value={values.confirmNewPassword}
+                    error={!!values.confirmPasswordError}
                     id='account-settings-confirm-new-password'
                     type={values.showConfirmNewPassword ? 'text' : 'password'}
                     onChange={handleConfirmNewPasswordChange('confirmNewPassword')}
@@ -152,6 +198,7 @@ const TabSecurity = () => {
                       </InputAdornment>
                     }
                   />
+                  {values.confirmPasswordError && <FormHelperText error>{values.confirmPasswordError}</FormHelperText>}
                 </FormControl>
               </Grid>
             </Grid>
@@ -171,11 +218,11 @@ const TabSecurity = () => {
       <Divider sx={{ margin: 0 }} />
 
       <CardContent>
-        <Box sx={{ mt: 1.75, display: 'flex', alignItems: 'center' }}>
+        {/* <Box sx={{ mt: 1.75, display: 'flex', alignItems: 'center' }}>
           <KeyOutline sx={{ marginRight: 3 }} />
           <Typography variant='h6'>Two-factor authentication</Typography>
-        </Box>
-
+        </Box> */}
+        {/* 
         <Box sx={{ mt: 5.75, display: 'flex', justifyContent: 'center' }}>
           <Box
             sx={{
@@ -200,10 +247,10 @@ const TabSecurity = () => {
               a password to log in. Learn more.
             </Typography>
           </Box>
-        </Box>
+        </Box> */}
 
-        <Box sx={{ mt: 11 }}>
-          <Button variant='contained' sx={{ marginRight: 3.5 }}>
+        <Box>
+          <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
             Save Changes
           </Button>
           <Button
