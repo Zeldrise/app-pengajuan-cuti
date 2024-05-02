@@ -26,6 +26,7 @@ import MessageOutline from 'mdi-material-ui/MessageOutline'
 import { Account, AccountTie, BadgeAccount } from 'mdi-material-ui'
 import Typography from '@mui/material/Typography'
 import FormHelperText from '@mui/material/FormHelperText'
+import Swal from 'sweetalert2'
 
 
 const TglAwal = forwardRef((props, ref) => {
@@ -61,7 +62,7 @@ const FormPengajuanCuti = () => {
     if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
     if (cutiType === 'Cuti Sakit' && !doctorNoteImage) errors.doctorNote = 'Surat dokter harus diunggah'
     if (cutiType === 'Cuti Urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
-    if (!startDate) errors.startDate = 'Tanggal awal harus diisi'
+    if (!startDate) errors.startDate = 'Tanggal awal harus diisi' 
     if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
     
     if (startDate && endDate && startDate > endDate)
@@ -74,21 +75,58 @@ const FormPengajuanCuti = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (validateForm()) {
-      const dataPengajuan = {
-        nama,
-        telepon,
-        posisi,
-        departemen,
-        cutiType,
-        urgency,
-        deskripsi,
-        startDate,
-        doctorNoteImage,
-        endDate
-      }
-      console.log('Data yang akan disubmit:', dataPengajuan) 
+          Swal.fire({
+            title: 'Apa Pengajuan Sudah Benar?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#6AD01F',
+            cancelButtonColor: '#FF6166',
+            confirmButtonText: 'Ajukan',
+            cancelButtonText: 'Batal',
+            customClass: {
+              container: 'full-screen-alert'
+            }
+          }).then(result => {
+            if (result.isConfirmed) {
+              Swal.fire({
+                title: 'Pengajuan Berhasil Disubmit!',
+                icon: 'success',
+                confirmButtonColor: '#6AD01F',
+                customClass: {
+                  container: 'full-screen-alert'
+                }
+              })
+              const dataPengajuan = {
+                nama,
+                telepon,
+                posisi,
+                departemen,
+                cutiType,
+                urgency,
+                deskripsi,
+                startDate,
+                doctorNoteImage,
+                endDate
+              }
+              console.log('Data yang akan disubmit:', dataPengajuan)
+            }
+          })
+
     }
   }
+    const handleChangeStartDate = (date: Date | null) => {
+      setStartDate(date)
+      if (errors.startDate) {
+        setErrors({ ...errors, startDate: '' }) 
+      }
+    }
+
+    const handleChangeEndDate = (date: Date | null) => {
+      setEndDate(date)
+      if (errors.endDate) {
+        setErrors({ ...errors, endDate: '' }) 
+      }
+    }
 
   const handleCutiTypeChange = (event: SelectChangeEvent<string>) => {
     const selectedType = event.target.value as string
@@ -96,6 +134,9 @@ const FormPengajuanCuti = () => {
 
     setShowUrgencyFields(selectedType === 'Cuti Urgensi')
     setShowDoctorNoteField(selectedType === 'Cuti Sakit')
+    if (errors.cutiType) {
+      setErrors({ ...errors, cutiType: '' })
+    }
   }
   useEffect(() => {
     // Set showDoctorNoteField to true if cutiType is 'Cuti Sakit' and duration is more than 1 day
@@ -116,25 +157,47 @@ const FormPengajuanCuti = () => {
     setDoctorNoteImage(event.target.value)
     reader.readAsDataURL(file)
   }
+  if (errors.doctorNote) {
+    setErrors({ ...errors, doctorNote: '' })
+  }
  }
    const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
      setNama(event.target.value)
+     if (errors.nama) {
+       setErrors({ ...errors, nama: '' })
+     }
    }
    const handleChangeTeleponDarurat = (event: React.ChangeEvent<HTMLInputElement>) => {
      setTelepon(event.target.value)
+     if (errors.telepon) {
+       setErrors({ ...errors, telepon: '' })
+     }
    }
      const handleChangePosisi = (event: React.ChangeEvent<HTMLInputElement>) => {
        setPosisi(event.target.value)
+       if (errors.posisi) {
+         setErrors({ ...errors, posisi: '' })
+       }
      }
 
      const handleChangeDepartemen = (event: React.ChangeEvent<HTMLInputElement>) => {
        setDepartemen(event.target.value)
+       if (errors.departemen) {
+         setErrors({ ...errors, departemen: '' })
+       }
+       
      }
      const handleChangeDeskripsi = (event: React.ChangeEvent<HTMLInputElement>) => {
        setDeskripsi(event.target.value)
+       if (errors.deskripsi) {
+         setErrors({ ...errors, deskripsi: '' })
+       }
      }
      const handleChangeUrgency = (event: React.ChangeEvent<HTMLInputElement>) => {
        setUrgency(event.target.value)
+       if (errors.urgency) {
+         setErrors({ ...errors, urgency: '' })
+       }
      }
  
   return (
@@ -324,10 +387,11 @@ const FormPengajuanCuti = () => {
                 selected={startDate}
                 showYearDropdown
                 showMonthDropdown
+                error={!!errors.startDate}
                 placeholderText='MM-DD-YYYY'
                 customInput={<TglAwal />}
                 id='form-layouts-separator-date'
-                onChange={(date: Date) => setStartDate(date)}
+                onChange={handleChangeStartDate}
                 minDate={startOfToday()}
               />
               {errors.startDate && <FormHelperText error>{errors.startDate}</FormHelperText>}
@@ -340,7 +404,7 @@ const FormPengajuanCuti = () => {
                 placeholderText='MM-DD-YYYY'
                 customInput={<TglAkhir />}
                 id='form-layouts-separator-date'
-                onChange={(date: Date) => setEndDate(date)}
+                onChange={handleChangeEndDate}
                 minDate={startOfToday()}
               />
               {errors.endDate && <FormHelperText error>{errors.endDate}</FormHelperText>}

@@ -12,6 +12,7 @@ import { useTheme } from '@mui/material/styles'
 import { Account, AccountTie, BadgeAccount, CalendarAccount, CloseCircle, Email, Margin, Phone } from 'mdi-material-ui'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
+import Swal from 'sweetalert2'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -42,7 +43,11 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
    const validateForm = () => {
      const errors: any = {}
          if (!nama) errors.nama = 'Nama harus diisi'
-         if (!email) errors.email = 'Email harus diisi'
+        if (!email.trim()) {
+          errors.email = 'Email harus diisi'
+        } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
+          errors.email = 'Format email tidak valid'
+        }
          if (!noTelepon) errors.noTelepon = 'Nomor telepon darurat harus diisi'
          if (!posisi) errors.posisi = 'Posisi harus diisi'
          if (!departemen) errors.departemen = 'Departemen harus diisi'
@@ -52,42 +57,84 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
    }
  const handleSubmit = (e: React.FormEvent) => {
   e.preventDefault()
-  if (validateForm()) {    
-    const editEmployeeData = {
-    nama,
-    email,
-    noTelepon,
-    posisi,
-    departemen,
-    tanggalBergabung
-  }
-  console.log('Data yang akan disubmit:', editEmployeeData) // Menampilkan data yang akan disubmit pada console
-   window.alert('Data karyawan berhasil diedit')
-   onClose()
+  if (validateForm()) { 
+      Swal.fire({
+        title: 'Apa Anda yakin?',
+        text: 'Data Karyawan Akan Diedit',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#6AD01F',
+        cancelButtonColor: '#FF6166',
+        confirmButtonText: 'Edit',
+        cancelButtonText: 'Batal',
+        customClass: {
+          container: 'full-screen-alert'
+        }
+      }).then(result => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Data karyawan berhasil diedit!',
+            icon: 'success',
+            confirmButtonColor: '#6AD01F',
+            customClass: {
+              container: 'full-screen-alert'
+            }
+          })
+          const editEmployeeData = {
+            nama,
+            email,
+            noTelepon,
+            posisi,
+            departemen,
+            tanggalBergabung
+          }
+          console.log('Data yang akan disubmit:', editEmployeeData)
+          onClose()
+        }
+      })   
+   
  }
  }
 
   const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNama(event.target.value)
+    if (errors.nama) {
+      setErrors({ ...errors, nama: '' })
+    }
   }
 
   const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value)
+    if (errors.email) {
+      setErrors({ ...errors, email: '' })
+    }
   }
 
   const handleChangeNoTelepon = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNoTelepon(event.target.value)
+    if (errors.noTelepon) {
+      setErrors({ ...errors, noTelepon: '' })
+    }
   }
 
   const handleChangePosisi = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPosisi(event.target.value)
+    if (errors.posisi) {
+      setErrors({ ...errors, posisi: '' })
+    }
   }
 
   const handleChangeDepartemen = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDepartemen(event.target.value)
+    if (errors.departemen) {
+      setErrors({ ...errors, departemen: '' })
+    }
   }
   const handleChangeTanggalBergabung = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTanggalBergabung(event.target.value)
+    if (errors.tanggalBergabung) {
+      setErrors({ ...errors, tanggalBergabung: '' })
+    }
   }
 
   const theme = useTheme()

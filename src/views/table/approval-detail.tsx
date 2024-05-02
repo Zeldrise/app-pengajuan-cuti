@@ -11,6 +11,7 @@ import { TransitionProps } from '@mui/material/transitions'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 import { CloseCircle } from 'mdi-material-ui'
+import Swal from 'sweetalert2'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -33,12 +34,57 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData 
     onClose()
   }
   const handleAccept = () => {
-    window.alert('pengajuan Cuti Telah Diterima')
-    onClose()
+    Swal.fire({
+      title: 'Terima pengajuan cuti?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#6AD01F',
+      cancelButtonColor: '#FF6166',
+      confirmButtonText: 'Terima',
+      cancelButtonText: 'Batal',
+      customClass: {
+        container: 'full-screen-alert'
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Pengajuan Diterima!',
+          icon: 'success',
+          confirmButtonColor: '#6AD01F',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        })
+        onClose()
+      }
+    })
   }
   const handleReject = () => {
-    window.alert('pengajuan Cuti Ditolak')
-    onClose()
+        Swal.fire({
+          title: 'Tolak pengajuan cuti?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#6AD01F',
+          cancelButtonColor: '#FF6166',
+          confirmButtonText: 'Tolak',
+          cancelButtonText: 'Batal',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        }).then(result => {
+          if (result.isConfirmed) {
+            Swal.fire({
+              title: 'Pengajuan Ditolak',
+              icon: 'success',
+              confirmButtonColor: '#6AD01F',
+              customClass: {
+                container: 'full-screen-alert'
+              }
+            })
+            onClose()
+          }
+        })
+    
   }
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))

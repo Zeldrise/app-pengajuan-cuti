@@ -19,6 +19,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
 import EmailOutline from 'mdi-material-ui/EmailOutline'
 import Phone from 'mdi-material-ui/Phone'
+import Swal from 'sweetalert2'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -52,14 +53,18 @@ const TabAccount = () => {
   const [noTelepon, setNoTelepon] = useState('')
   const [errors, setErrors] = useState<any>({})
 
-     const validateForm = () => {
-       const errors: any = {}
-       if (!nama) errors.nama = 'Nama harus diisi'
-       if (!email) errors.email = 'Email harus diisi'
-       if (!noTelepon) errors.noTelepon = 'Nomor telepon harus diisi'
-       setErrors(errors)
-       return Object.keys(errors).length === 0
-     }
+  const validateForm = () => {
+    const errors: any = {}
+    if (!nama) errors.nama = 'Nama harus diisi'
+    if (!email.trim()) {
+      errors.email = 'Email harus diisi'
+    } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
+      errors.email = 'Format email tidak valid'
+    }
+    if (!noTelepon) errors.noTelepon = 'Nomor telepon harus diisi'
+    setErrors(errors)
+    return Object.keys(errors).length === 0
+  }
 
   const onChange = (file: ChangeEvent) => {
     const reader = new FileReader()
@@ -70,31 +75,62 @@ const TabAccount = () => {
       reader.readAsDataURL(files[0])
     }
   }
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault()
-      if (validateForm()) {
-        const editProfile = {
-          nama,
-          email,
-          noTelepon,
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (validateForm()) {
+      Swal.fire({
+        title: 'Apa Anda yakin?',
+        text: 'Profile Akan Diedit',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#6AD01F',
+        cancelButtonColor: '#FF6166',
+        confirmButtonText: 'Edit',
+        cancelButtonText: 'Batal',
+        customClass: {
+          container: 'full-screen-alert'
         }
-        console.log('Data yang akan disubmit:', editProfile) // Menampilkan data yang akan disubmit pada console
-        window.alert('Profile berhasil diedit')
-        // Lakukan sesuatu dengan data karyawan, seperti mengirimnya ke server
-      }
+      }).then(result => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Pengajuan Cuti berhasil diedit!',
+            icon: 'success',
+            confirmButtonColor: '#6AD01F',
+            customClass: {
+              container: 'full-screen-alert'
+            }
+          })
+          const editProfile = {
+            nama,
+            email,
+            noTelepon
+          }
+          console.log('Data yang akan disubmit:', editProfile)
+        }
+      })
     }
+  }
 
-    const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNama(event.target.value)
+  const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNama(event.target.value)
+    if (errors.nama) {
+      setErrors({ ...errors, nama: '' })
     }
+  }
 
-    const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setEmail(event.target.value)
+  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value)
+    if (errors.email) {
+      setErrors({ ...errors, email: '' })
     }
+  }
 
-    const handleChangeNoTelepon = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNoTelepon(event.target.value)
+  const handleChangeNoTelepon = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNoTelepon(event.target.value)
+    if (errors.noTelepon) {
+      setErrors({ ...errors, noTelepon: '' })
     }
+  }
 
   return (
     <CardContent>

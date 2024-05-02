@@ -50,7 +50,7 @@ const TabSecurity = () => {
 
   // Handle Current Password
   const handleCurrentPasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
+    setValues({ ...values, [prop]: event.target.value, passwordError: '' })
   }
   const handleClickShowCurrentPassword = () => {
     setValues({ ...values, showCurrentPassword: !values.showCurrentPassword })
@@ -61,7 +61,7 @@ const TabSecurity = () => {
 
   // Handle New Password
   const handleNewPasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
+    setValues({ ...values, [prop]: event.target.value, newPasswordError: '' })
   }
   const handleClickShowNewPassword = () => {
     setValues({ ...values, showNewPassword: !values.showNewPassword })
@@ -72,7 +72,7 @@ const TabSecurity = () => {
 
   // Handle Confirm New Password
   const handleConfirmNewPasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
+    setValues({ ...values, [prop]: event.target.value, confirmPasswordError: '' })
   }
   const handleClickShowConfirmNewPassword = () => {
     setValues({ ...values, showConfirmNewPassword: !values.showConfirmNewPassword })
@@ -81,40 +81,50 @@ const TabSecurity = () => {
     event.preventDefault()
   }
 
-    const validationForm = () => {
-      let isValid = true
+const validationForm = () => {
+  let isValid = true
 
-      setValues(prevState => ({ ...prevState, newPasswordError: '', confirmPasswordError: '' }))
+  setValues(prevState => ({
+    ...prevState,
+    newPasswordError: '',
+    confirmPasswordError: '',
+    passwordError: ''
+  }))
 
-      if (!values.currentPassword.trim()) {
-        setValues(prevState => ({ ...prevState, passwordError: 'Current password is required'}))
-        isValid = false
-      } else {
-        setValues(prevState => ({ ...prevState, passwordError: ''}))
-      }
+  if (!values.currentPassword.trim()) {
+    setValues(prevState => ({ ...prevState, passwordError: 'Current password is required' }))
+    isValid = false
+  } else {
+    setValues(prevState => ({ ...prevState, passwordError: '' })) // Menyembunyikan pesan kesalahan jika bidang diisi
+  }
 
-      if (!values.newPassword.trim()) {
-        setValues(prevState => ({ ...prevState, newPasswordError: 'New password is required' }))
-        isValid = false
-      } else if (values.newPassword.length < 8) {
-        setValues(prevState => ({ ...prevState, newPasswordError: 'Password must be at least 8 character' }))
-        isValid = false
-      }
-      if (!values.confirmNewPassword.trim()) {
-        setValues(prevState => ({ ...prevState, confirmPasswordError: 'Confirm password is required' }))
-        isValid = false
-      } else if (values.confirmNewPassword !== values.newPassword) {
-        setValues(prevState => ({ ...prevState, confirmPasswordError: 'Password do not match' }))
-      }
+  if (!values.newPassword.trim()) {
+    setValues(prevState => ({ ...prevState, newPasswordError: 'New password is required' }))
+    isValid = false
+  } else if (values.newPassword.length < 8) {
+    setValues(prevState => ({ ...prevState, newPasswordError: 'Password must be at least 8 characters' }))
+    isValid = false
+  } else {
+    setValues(prevState => ({ ...prevState, newPasswordError: '' })) // Menyembunyikan pesan kesalahan jika bidang diisi
+  }
 
-      return isValid
+  if (!values.confirmNewPassword.trim()) {
+    setValues(prevState => ({ ...prevState, confirmPasswordError: 'Confirm password is required' }))
+    isValid = false
+  } else if (values.confirmNewPassword !== values.newPassword) {
+    setValues(prevState => ({ ...prevState, confirmPasswordError: 'Password do not match' }))
+    isValid = false
+  } else {
+    setValues(prevState => ({ ...prevState, confirmPasswordError: '' })) // Menyembunyikan pesan kesalahan jika bidang diisi
+  }
+
+  return isValid
+}
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (validationForm()) {
     }
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault()
-      if(validationForm()) {
-
-      }
-    }
+  }
   return (
     <form>
       <CardContent sx={{ paddingBottom: 0 }}>
@@ -148,7 +158,7 @@ const TabSecurity = () => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} >
+              <Grid item xs={12}>
                 <FormControl fullWidth>
                   <InputLabel htmlFor='account-settings-new-password'>New Password</InputLabel>
                   <OutlinedInput

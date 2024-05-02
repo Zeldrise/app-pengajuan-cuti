@@ -19,6 +19,7 @@ import { AccountTie, BadgeAccount, CalendarAccount, CloseCircle, Grid, Margin, M
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import FormHelperText from '@mui/material/FormHelperText'
+import Swal from 'sweetalert2'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -76,6 +77,9 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
     setCutiType(selectedType)
     setShowUrgencyFields(selectedType === 'Cuti Urgensi')
     setShowDoctorNoteField(selectedType === 'Cuti Sakit')
+    if (errors.cutiType) {
+      setErrors({ ...errors, cutiType: '' })
+    }
   }
 
   useEffect(() => {
@@ -97,30 +101,76 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
       }
       reader.readAsDataURL(file)
     }
+    if (errors.doctorNote) {
+      setErrors({ ...errors, doctorNote: '' })
+    }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (validateForm()) {
-    console.log('Data yang akan disubmit:', { cutiType, deskripsi, startDate, endDate, doctorNoteImage, urgency }) // Menampilkan data yang akan disubmit pada console
-    window.alert('Data karyawan berhasil diedit')
-    onClose()
+        Swal.fire({
+          title: 'Apa Anda yakin?',
+          text: 'Pengajuan Akan Diedit',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#6AD01F',
+          cancelButtonColor: '#FF6166',
+          confirmButtonText: 'Edit',
+          cancelButtonText: 'Batal',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        }).then(result => {
+          if (result.isConfirmed) {
+            Swal.fire({
+              title: 'Pengajuan Cuti berhasil diedit!',
+              icon: 'success',
+              confirmButtonColor: '#6AD01F',
+              customClass: {
+                container: 'full-screen-alert'
+              }
+            })
+           console.log('Data yang akan disubmit:', {
+             cutiType,
+             deskripsi,
+             startDate,
+             endDate,
+             doctorNoteImage,
+             urgency
+           }) 
+           onClose()
+          }
+        })   
+    
     }
   }
 
   const handleChangeDeskripsi = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDeskripsi(event.target.value)
+     if (errors.deskripsi) {
+       setErrors({ ...errors, deskripsi: '' })
+     }
   }
 
   const handleChangeStartDate = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStartDate(event.target.value)
+     if (errors.startDate) {
+       setErrors({ ...errors, startDate: '' })
+     }
   }
 
   const handleChangeEndDate = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEndDate(event.target.value)
+    if (errors.endDate) {
+      setErrors({ ...errors, endDate: '' })
+    }
   }
   const handleChangeUrgency = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUrgency(event.target.value)
+      if (errors.urgency) {
+         setErrors({ ...errors, urgency: '' })
+       }
   }
 
 

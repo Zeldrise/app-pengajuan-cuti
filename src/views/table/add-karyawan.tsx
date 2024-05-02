@@ -13,6 +13,7 @@ import { Account, AccountTie, BadgeAccount, CalendarAccount, CloseCircle, Email,
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import DatePicker from 'react-datepicker'
+import Swal from 'sweetalert2'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -47,7 +48,11 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
    const validateForm = () => {
      const errors: any = {}
      if (!nama) errors.nama = 'Nama harus diisi'
-     if (!email) errors.email = 'Email harus diisi'
+     if (!email.trim()) {
+       errors.email = 'Email harus diisi'
+     } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
+       errors.email = 'Format email tidak valid'
+     }
      if (!noTelepon) errors.noTelepon = 'Nomor telepon darurat harus diisi'
      if (!posisi) errors.posisi = 'Posisi harus diisi'
      if (!departemen) errors.departemen = 'Departemen harus diisi'
@@ -58,43 +63,83 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (validateForm()) {
-    const newEmployeeData = {
-      nama,
-      email,
-      noTelepon,
-      posisi,
-      departemen,
-      tanggalBergabung
-    }
-    console.log('Data yang akan disubmit:', newEmployeeData) // Menampilkan data yang akan disubmit pada console
-    window.alert('Data karyawan berhasil ditambahkan')
-    // Lakukan sesuatu dengan data karyawan, seperti mengirimnya ke server
-    onClose()
+      Swal.fire({
+        title: 'Apa Data Karyawan Sudah Benar?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#6AD01F',
+        cancelButtonColor: '#FF6166',
+        confirmButtonText: 'Tambah',
+        cancelButtonText: 'Batal',
+        customClass: {
+          container: 'full-screen-alert'
+        }
+      }).then(result => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Data karyawan berhasil ditambahkan!',
+            icon: 'success',
+            confirmButtonColor: '#6AD01F',
+            customClass: {
+              container: 'full-screen-alert'
+            }
+          })
+          const newEmployeeData = {
+            nama,
+            email,
+            noTelepon,
+            posisi,
+            departemen,
+            tanggalBergabung
+          }
+          console.log('Data yang akan disubmit:', newEmployeeData)
+          onClose()
+        }
+      })
+   
   }
   }
 
-  const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNama(event.target.value)
-  }
-
-  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value)
-  }
-
-  const handleChangeNoTelepon = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNoTelepon(event.target.value)
-  }
-
-  const handleChangePosisi = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPosisi(event.target.value)
-  }
-
-  const handleChangeDepartemen = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDepartemen(event.target.value)
-  }
-   const handleChangeTanggalBergabung = (event: React.ChangeEvent<HTMLInputElement>) => {
-     setTanggalBergabung(event.target.value)
+ const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
+   setNama(event.target.value)
+   if (errors.nama) {
+     setErrors({ ...errors, nama: '' })
    }
+ }
+
+ const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+   setEmail(event.target.value)
+   if (errors.email) {
+     setErrors({ ...errors, email: '' })
+   }
+ }
+
+ const handleChangeNoTelepon = (event: React.ChangeEvent<HTMLInputElement>) => {
+   setNoTelepon(event.target.value)
+   if (errors.noTelepon) {
+     setErrors({ ...errors, noTelepon: '' })
+   }
+ }
+
+ const handleChangePosisi = (event: React.ChangeEvent<HTMLInputElement>) => {
+   setPosisi(event.target.value)
+   if (errors.posisi) {
+     setErrors({ ...errors, posisi: '' })
+   }
+ }
+
+ const handleChangeDepartemen = (event: React.ChangeEvent<HTMLInputElement>) => {
+   setDepartemen(event.target.value)
+   if (errors.departemen) {
+     setErrors({ ...errors, departemen: '' })
+   }
+ }
+ const handleChangeTanggalBergabung = (event: React.ChangeEvent<HTMLInputElement>) => {
+   setTanggalBergabung(event.target.value)
+   if (errors.tanggalBergabung) {
+     setErrors({ ...errors, tanggalBergabung: '' })
+   }
+ }
 
 
 

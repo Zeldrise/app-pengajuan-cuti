@@ -11,6 +11,7 @@ import Button from '@mui/material/Button'
 import { PencilBox, PlusCircle, TrashCan } from 'mdi-material-ui'
 import EditDataKaryawan from './data-edit'
 import AddDataKaryawan from './add-karyawan'
+import Swal from 'sweetalert2'
 
 interface Column {
   id: 'nama' | 'email' | 'no_telephone' | 'posisi' | 'departemen' | 'sisa_cuti' | 'actions'
@@ -51,12 +52,12 @@ function createData(
   return { nama, email, no_telephone, posisi, departemen, sisa_cuti }
 }
 
-const rows = [
-  createData('Kyujin', 'kyujin@gmail.com', '123-456-789', 'Developer', 'IT', 8),
-  createData('Wonhee', 'wonhee@gmail.com', '123-456-789', 'Developer', 'IT', 11),
-  createData('Haerin', 'haerin@gmail.com', '123-456-789', 'Developer', 'IT', 11),
-  createData('Chaewon','chaewon@gmail.com', '123-456-789', 'Developer', 'IT', 11),
-]
+// const rows = [
+//   createData('Kyujin', 'kyujin@gmail.com', '123-456-789', 'Developer', 'IT', 8),
+//   createData('Wonhee', 'wonhee@gmail.com', '123-456-789', 'Developer', 'IT', 11),
+//   createData('Haerin', 'haerin@gmail.com', '123-456-789', 'Developer', 'IT', 11),
+//   createData('Chaewon','chaewon@gmail.com', '123-456-789', 'Developer', 'IT', 11),
+// ]
 
 const DataKaryawan = () => {
   const [page, setPage] = useState<number>(0)
@@ -64,6 +65,12 @@ const DataKaryawan = () => {
   const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
   const [isEditDataKaryawanOpen, setIsEditDataKaryawanOpen] = useState<boolean>(false)
   const [isAddDataKaryawanOpen, setIsAddDataKaryawanOpen] = useState<boolean>(false)
+    const [employees, setEmployees] = useState<Data[]>([
+      createData('Kyujin', 'kyujin@gmail.com', '123-456-789', 'Developer', 'IT', 8),
+      createData('Wonhee', 'wonhee@gmail.com', '123-456-789', 'Developer', 'IT', 11),
+      createData('Haerin', 'haerin@gmail.com', '123-456-789', 'Developer', 'IT', 11),
+      createData('Chaewon', 'chaewon@gmail.com', '123-456-789', 'Developer', 'IT', 11)
+    ])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
@@ -88,6 +95,35 @@ const DataKaryawan = () => {
      setIsAddDataKaryawanOpen(false)
    }
 
+   const handleDeleteRow = (rowData: Data) => {
+     Swal.fire({
+       title: 'Apakah Anda yakin?',
+       text: `Anda akan menghapus karyawan ${rowData.nama}`,
+       icon: 'warning',
+       showCancelButton: true,
+       confirmButtonColor: '#6AD01F',
+       cancelButtonColor: '#FF6166',
+       confirmButtonText: 'Ya, hapus!',
+       cancelButtonText: 'Batal',
+       customClass: {
+         container: 'full-screen-alert'
+       }
+     }).then(result => {
+       if (result.isConfirmed) {
+         const updatedEmployees = employees.filter(employee => employee !== rowData)
+         setEmployees(updatedEmployees)
+         Swal.fire({
+           title: 'Data berhasil dihapus!',
+           icon: 'success',
+           confirmButtonColor: '#6AD01F',
+           customClass: {
+             container: 'full-screen-alert'
+           }
+         })
+       }
+     })
+   }
+
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
@@ -102,7 +138,7 @@ const DataKaryawan = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
+            {employees.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
               return (
                 <TableRow hover role='checkbox' tabIndex={-1} key={row.nama}>
                   {columns.map(column => {
@@ -114,7 +150,7 @@ const DataKaryawan = () => {
                             <Button onClick={() => handleActionClick(row)}>
                               <PencilBox />
                             </Button>
-                            <Button>
+                            <Button onClick={() => handleDeleteRow(row)}>
                               <TrashCan />
                             </Button>
                           </div>
@@ -137,7 +173,7 @@ const DataKaryawan = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25, 100]}
         component='div'
-        count={rows.length}
+        count={employees.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

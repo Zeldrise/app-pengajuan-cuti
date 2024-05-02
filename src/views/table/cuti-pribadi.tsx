@@ -11,17 +11,10 @@ import Button from '@mui/material/Button'
 import { PencilBox, TrashCan } from 'mdi-material-ui'
 import EditCutiPribadi from './cuti-edit'
 import Chip from '@mui/material/Chip'
+import Swal from 'sweetalert2'
 
 interface Column {
-  id:
-    | 'tgl_penyerahan'
-    | 'tgl_mulai'
-    | 'tgl_akhir'
-    | 'lama_cuti'
-    | 'tipe_cuti'
-    | 'status'
-    | 'approved_by'
-    | 'actions'
+  id: 'tgl_penyerahan' | 'tgl_mulai' | 'tgl_akhir' | 'lama_cuti' | 'tipe_cuti' | 'status' | 'approved_by' | 'actions'
   label: string
   minWidth?: number
   align?: 'right'
@@ -70,8 +63,9 @@ function createData(
   deskripsi: string,
   status: string,
   approved_by: string
-) {
+): Data {
   return {
+    id: Math.random(),
     nama,
     tgl_penyerahan,
     no_telephone,
@@ -88,7 +82,7 @@ function createData(
   }
 }
 
-const rows = [
+let rows: Data[] = [
   createData(
     'Kyujin',
     '20 April 2024',
@@ -162,17 +156,45 @@ const CutiPribadi = () => {
     setIsEditCutiPribadiOpen(true)
   }
   const handleCloseEditCutiPribadi = () => {
-    setIsEditCutiPribadiOpen (false)
+    setIsEditCutiPribadiOpen(false)
   }
   const handleSort = (property: keyof Data) => {
     const isAsc = orderBy === property && order === 'desc'
     setOrder(isAsc ? 'asc' : 'desc')
     setOrderBy(property)
   }
+  const handleDeleteRow = (rowData: Data) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: `Anda akan menghapus pengajuan cuti`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#6AD01F',
+      cancelButtonColor: '#FF6166',
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal',
+      customClass: {
+        container: 'full-screen-alert'
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        const updatedRows = rows.filter(row => row !== rowData)
+        rows = updatedRows
+        Swal.fire({
+          title: 'Pengajuan berhasil dihapus!',
+          icon: 'success',
+          confirmButtonColor: '#6AD01F',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        })
+      }
+    })
+  }
   const sortedRows =
-  order === 'desc'
-  ? [...rows].sort((a, b) => new Date(a.tgl_penyerahan).getTime() - new Date(b.tgl_penyerahan).getTime())
-  : [...rows].sort((a, b) => new Date(b.tgl_penyerahan).getTime() - new Date(a.tgl_penyerahan).getTime())
+    order === 'desc'
+      ? [...rows].sort((a, b) => new Date(a.tgl_penyerahan).getTime() - new Date(b.tgl_penyerahan).getTime())
+      : [...rows].sort((a, b) => new Date(b.tgl_penyerahan).getTime() - new Date(a.tgl_penyerahan).getTime())
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
@@ -205,7 +227,7 @@ const CutiPribadi = () => {
                             <Button onClick={() => handleActionClick(row)}>
                               <PencilBox />
                             </Button>
-                            <Button>
+                            <Button onClick={() => handleDeleteRow(row)}>
                               <TrashCan />
                             </Button>
                           </div>
@@ -250,7 +272,7 @@ const CutiPribadi = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      <EditCutiPribadi open={isEditCutiPribadiOpen} onClose={handleCloseEditCutiPribadi} rowData={selectedRowData}/>
+      <EditCutiPribadi open={isEditCutiPribadiOpen} onClose={handleCloseEditCutiPribadi} rowData={selectedRowData} />
     </Paper>
   )
   //  <Butto
