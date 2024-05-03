@@ -11,7 +11,7 @@ const Dashboard = () => {
       <Grid item xs={12}>
         <h1>Selamat Datang di Sistem Pengajuan Cuti</h1>
         <p>Silakan masuk untuk mengakses fitur pengajuan cuti.</p>
-        <Link href='/pages/login' passHref>
+        <Link href='/login' passHref>
           <Button variant='contained' color='primary'>
             Masuk
           </Button>

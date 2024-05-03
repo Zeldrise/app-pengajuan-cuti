@@ -199,7 +199,7 @@ const LoginPage = () => {
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
               <FormControlLabel control={<Checkbox />} label='Remember Me' />
-              <Link passHref href='/pages/forgot'>
+              <Link passHref href='/forgot'>
                 <LinkStyled>Forgot Password?</LinkStyled>
               </Link>
             </Box>

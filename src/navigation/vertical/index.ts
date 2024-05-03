@@ -140,7 +140,7 @@ const navigation = (): VerticalNavItemsType => {
    useEffect(() => {
      const token = localStorage.getItem('token')
      if (!token) {
-       router.push('/pages/login')
+       router.push('/login')
      }
    }, [router])
   return menu;
