@@ -210,6 +210,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
               <MenuItem value='Cuti Urgensi'>Cuti Urgensi</MenuItem>
               <MenuItem value='Cuti Sakit'>Cuti Sakit</MenuItem>
             </Select>
+            {errors.cutiType && <FormHelperText error>{errors.cutiType}</FormHelperText>}
           </FormControl>
           {showUrgencyFields && (
             <FormControl fullWidth>

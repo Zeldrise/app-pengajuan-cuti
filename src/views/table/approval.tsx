@@ -20,7 +20,7 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
-  { id: 'nama', label: 'Name', minWidth: 170 },
+  { id: 'nama', label: 'Nama', minWidth: 170 },
   { id: 'tgl_penyerahan', label: 'Tanggal Penyerahan', minWidth: 100 },
   { id: 'tgl_mulai', label: 'Tanggal Mulai', minWidth: 100 },
   { id: 'tgl_akhir', label: 'Tanggal Akhir', minWidth: 100 },

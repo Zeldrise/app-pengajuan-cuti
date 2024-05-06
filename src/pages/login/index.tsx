@@ -5,6 +5,7 @@ import { ChangeEvent, MouseEvent, ReactNode, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import axios from 'axios'
+import AppURL from 'src/api/AppURL'
 import { AxiosError } from 'axios'
 
 // ** MUI Components
@@ -105,7 +106,7 @@ const LoginPage = () => {
     event.preventDefault()
     if (validateForm()) {
       try {
-        const response = await axios.post('http://192.168.10.26:3000/auth/login', {
+        const response = await axios.post(AppURL.UserLogin, {
           email: values.email,
           password: values.password
         })

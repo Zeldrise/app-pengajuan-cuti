@@ -98,7 +98,7 @@ const DataKaryawan = () => {
    const handleDeleteRow = (rowData: Data) => {
      Swal.fire({
        title: 'Apakah Anda yakin?',
-       text: `Anda akan menghapus karyawan ${rowData.nama}`,
+       text: `Anda akan menghapus ${rowData.nama}`,
        icon: 'warning',
        showCancelButton: true,
        confirmButtonColor: '#6AD01F',
