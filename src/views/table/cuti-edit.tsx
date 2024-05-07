@@ -187,7 +187,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
       keepMounted
     >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        Edit Data Karyawan
+        Edit Pengajuan Cuti
         <Button onClick={handleClose} color='inherit'>
           <CloseCircle />
         </Button>
@@ -214,12 +214,12 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
           </FormControl>
           {showUrgencyFields && (
             <FormControl fullWidth>
-              <InputLabel id='form-layouts-separator-select-label' sx={{ marginTop: 2 }}>
+              <InputLabel id='form-layouts-separator-select-label' sx={{ marginTop: 5 }}>
                 Cuti Urgensi
               </InputLabel>
               <Select
                 label='Tipe Urgensi'
-                sx={{ marginTop: 2 }}
+                sx={{ marginTop: 5 }}
                 defaultValue=''
                 id='form-layouts-separator-select'
                 labelId='form-layouts-separator-select-label'
@@ -244,7 +244,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
                 onChange={handleDoctorNoteChange}
               />
               <label htmlFor='contained-button-file'>
-                <Button variant='contained' component='span' sx={{ marginTop: 2 }}>
+                <Button variant='contained' component='span' sx={{ marginTop: 5 }}>
                   Upload Surat Dokter
                 </Button>
               </label>
@@ -264,7 +264,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
             value={deskripsi}
             onChange={handleChangeDeskripsi}
             placeholder='...'
-            sx={{ '& .MuiOutlinedInput-root': { alignItems: 'baseline' }, marginTop: 2 }}
+            sx={{ '& .MuiOutlinedInput-root': { alignItems: 'baseline' }, marginTop: 5 }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -275,7 +275,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
           />
           <TextField
             fullWidth
-            sx={{ marginTop: 2 }}
+            sx={{ marginTop: 5 }}
             type='date'
             label='Start Date'
             value={startDate}
@@ -292,7 +292,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
           {errors.date && <FormHelperText error>{errors.date}</FormHelperText>}
           <TextField
             fullWidth
-            sx={{ marginTop: 2 }}
+            sx={{ marginTop: 5 }}
             type='date'
             label='End Date'
             value={endDate}

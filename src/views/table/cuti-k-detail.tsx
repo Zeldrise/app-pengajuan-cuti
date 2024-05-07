@@ -2,7 +2,6 @@ import React from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
-import Chip from '@mui/material/Chip'
 import Button from '@mui/material/Button'
 import Slide from '@mui/material/Slide'
 
@@ -25,11 +24,6 @@ interface PropsCutiKaryawanDetail {
   onClose: () => void
   rowData: Data | null
 }
-const statusObj: { [key: string]: { color: string } } = {
-  Diterima: { color: 'success' },
-  Ditolak: { color: 'error' },
-  Pending: { color: 'warning' }
-}
 
 const CutiKaryawanDetail: React.FC<PropsCutiKaryawanDetail> = ({ open, onClose, rowData }) => {
   const handleClose = () => {
@@ -38,6 +32,11 @@ const CutiKaryawanDetail: React.FC<PropsCutiKaryawanDetail> = ({ open, onClose, 
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
 
+  const getStatusTextColor = (status:string) => {
+    if (status === 'Diterima') return 'green'
+    if (status === 'Ditolak') return 'red'
+    return 'inherit'
+  }
   return (
     <Dialog
       fullScreen={fullScreen}
@@ -87,16 +86,8 @@ const CutiKaryawanDetail: React.FC<PropsCutiKaryawanDetail> = ({ open, onClose, 
           </p>
           <p>
             <span style={{ display: 'inline-block', width: 180 }}>Status</span>:{' '}
-            <Chip
-              label={rowData?.status}
-              color={rowData && statusObj[rowData?.status] ? statusObj[rowData?.status].color : 'default'}
-              sx={{
-                height: 24,
-                fontSize: '0.75rem',
-                textTransform: 'capitalize',
-                '& .MuiChip-label': { fontWeight: 500 }
-              }}
-            />
+            <span style={{ color: getStatusTextColor(rowData?.status || '')}}>{rowData?.status}</span>
+            
           </p>
           <p>
             <span style={{ display: 'inline-block', width: 180 }}>Approved By</span>: {rowData?.approved_by}

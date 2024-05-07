@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -19,6 +19,7 @@ import VerticalAppBarContent from './components/vertical/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
+import { useRouter } from 'next/router'
 
 interface Props {
   children: ReactNode
@@ -27,6 +28,17 @@ interface Props {
 const UserLayout = ({ children }: Props) => {
   // ** Hooks
   const { settings, saveSettings } = useSettings()
+   const router = useRouter()
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+
+   useEffect(() => {
+     const token = localStorage.getItem('token')
+     if (!token) {
+       router.push('/login')
+     } else {
+       setIsAuthenticated(true)
+     }
+   }, [router])
 
   /**
    *  The below variable will hide the current layout menu at given screen size.
@@ -53,26 +65,30 @@ const UserLayout = ({ children }: Props) => {
   // }
 
   return (
-    <VerticalLayout
-      hidden={hidden}
-      settings={settings}
-      saveSettings={saveSettings}
-      verticalNavItems={VerticalNavItems()} // Navigation Items
-      // afterVerticalNavMenuContent={UpgradeToProImg}
-      verticalAppBarContent={(
-        props // AppBar Content
-      ) => (
-        <VerticalAppBarContent
+    <>
+      {isAuthenticated ? (
+        <VerticalLayout
           hidden={hidden}
           settings={settings}
           saveSettings={saveSettings}
-          toggleNavVisibility={props.toggleNavVisibility}
-        />
-      )}
-    >
-      {children}
-      {/* <UpgradeToProButton /> */}
-    </VerticalLayout>
+          verticalNavItems={VerticalNavItems()} // Navigation Items
+          // afterVerticalNavMenuContent={UpgradeToProImg}
+          verticalAppBarContent={(
+            props // AppBar Content
+          ) => (
+            <VerticalAppBarContent
+              hidden={hidden}
+              settings={settings}
+              saveSettings={saveSettings}
+              toggleNavVisibility={props.toggleNavVisibility}
+            />
+          )}
+        >
+          {children}
+          {/* <UpgradeToProButton /> */}
+        </VerticalLayout>
+      ) : null}
+    </>
   )
 }
 

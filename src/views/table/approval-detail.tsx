@@ -99,7 +99,7 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData 
       keepMounted
     >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        Detail Peangajuan Cuti
+        Detail Pengajuan Cuti
         <Button onClick={handleClose} color='inherit'>
           <CloseCircle />
         </Button>

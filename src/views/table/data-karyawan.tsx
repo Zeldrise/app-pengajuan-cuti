@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent, useEffect } from 'react'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableRow from '@mui/material/TableRow'
@@ -12,52 +12,46 @@ import { PencilBox, PlusCircle, TrashCan } from 'mdi-material-ui'
 import EditDataKaryawan from './data-edit'
 import AddDataKaryawan from './add-karyawan'
 import Swal from 'sweetalert2'
+import AppURL from 'src/api/AppURL'
 
 interface Column {
-  id: 'nama' | 'email' | 'no_telephone' | 'posisi' | 'departemen' | 'sisa_cuti' | 'actions'
+  id: keyof Data
   label: string
   minWidth?: number
   align?: 'right'
-  format?: (value: number) => string
+  format?: (value: any) => string
 }
 
 const columns: readonly Column[] = [
-  { id: 'nama', label: 'Nama', minWidth: 170 },
+  { id: 'name', label: 'Nama', minWidth: 170 },
   { id: 'email', label: 'Email', minWidth: 100 },
-  { id: 'no_telephone', label: 'No Telephone', minWidth: 100 },
-  { id: 'posisi', label: 'Posisi', minWidth: 100 },
-  { id: 'departemen', label: 'Departemen', minWidth: 100 },
-  { id: 'sisa_cuti', label: 'Sisa Cuti', minWidth: 100 },
+  { id: 'telephone', label: 'No Telephone', minWidth: 100 },
+  { id: 'position', label: 'Posisi', minWidth: 100 },
+  { id: 'department', label: 'Departemen', minWidth: 100 },
+  { id: 'sisa_cuti', label: 'Sisa Cuti', minWidth: 100 }, // Saya asumsikan ini sisa cuti
   { id: 'actions', label: 'Actions', minWidth: 100 }
 ]
 
 interface Data {
   id: number
-  nama: string
+  name: string
   email: string
-  no_telephone: string
-  posisi: string
-  departemen: string
+  telephone: string
+  position: string
+  department: string
   sisa_cuti: number
 }
 
 function createData(
-  nama: string,
+  name: string,
   email: string,
-  no_telephone: string,
-  posisi: string,
-  departemen: string,
+  telephone: string,
+  position: string,
+  department: string,
   sisa_cuti: number
 ) {
-  return { nama, email, no_telephone, posisi, departemen, sisa_cuti }
+  return { name, email, telephone, position, department, sisa_cuti }
 }
-
-// const rows = [
-//   createData('Kyujin', 'kyujin@gmail.com', '123-456-789', 'Developer', 'IT', 8),
-//   createData('Wonhee', 'wonhee@gmail.com', '123-456-789', 'Developer', 'IT', 11),
-//   createData('Haerin', 'haerin@gmail.com', '123-456-789', 'Developer', 'IT', 11),
-//   createData('Chaewon','chaewon@gmail.com', '123-456-789', 'Developer', 'IT', 11),
-// ]
 
 const DataKaryawan = () => {
   const [page, setPage] = useState<number>(0)
@@ -65,12 +59,34 @@ const DataKaryawan = () => {
   const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
   const [isEditDataKaryawanOpen, setIsEditDataKaryawanOpen] = useState<boolean>(false)
   const [isAddDataKaryawanOpen, setIsAddDataKaryawanOpen] = useState<boolean>(false)
-    const [employees, setEmployees] = useState<Data[]>([
-      createData('Kyujin', 'kyujin@gmail.com', '123-456-789', 'Developer', 'IT', 8),
-      createData('Wonhee', 'wonhee@gmail.com', '123-456-789', 'Developer', 'IT', 11),
-      createData('Haerin', 'haerin@gmail.com', '123-456-789', 'Developer', 'IT', 11),
-      createData('Chaewon', 'chaewon@gmail.com', '123-456-789', 'Developer', 'IT', 11)
-    ])
+  const [sisaCutiOrder, setSisaCutiOrder] = useState<'asc' | 'desc'>('asc')
+  const [orderBySisaCuti, setOrderBySisaCuti] = useState<keyof Data>('sisa_cuti')
+
+  const [employees, setEmployees] = useState<Data[]>([])
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(AppURL.Users, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      if (!response.ok) {
+        throw new Error('Gagal mengambil data karyawan')
+      }
+      const data = await response.json()
+      const filteredData = data.users.filter((user: any) => user.position !== 'owner')
+      setEmployees(filteredData)
+    } catch (error) {
+      console.error('Terjadi kesalahan:', error)
+    }
+  }
+
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
@@ -80,49 +96,61 @@ const DataKaryawan = () => {
     setRowsPerPage(+event.target.value)
     setPage(0)
   }
-   const handleActionClick = (rowData: Data) => {
-     setSelectedRowData(rowData)
-     setIsEditDataKaryawanOpen(true)
-   }
-   
-   const handleCloseEditDataKaryawan = () => {
-     setIsEditDataKaryawanOpen(false)
-   }
-   const handleAddDataKaryawan = () => {
-     setIsAddDataKaryawanOpen(true)
-   }
-   const handleCloseAddDataKaryawan = () => {
-     setIsAddDataKaryawanOpen(false)
-   }
+  const handleActionClick = (rowData: Data) => {
+    setSelectedRowData(rowData)
+    setIsEditDataKaryawanOpen(true)
+  }
 
-   const handleDeleteRow = (rowData: Data) => {
-     Swal.fire({
-       title: 'Apakah Anda yakin?',
-       text: `Anda akan menghapus ${rowData.nama}`,
-       icon: 'warning',
-       showCancelButton: true,
-       confirmButtonColor: '#6AD01F',
-       cancelButtonColor: '#FF6166',
-       confirmButtonText: 'Ya, hapus!',
-       cancelButtonText: 'Batal',
-       customClass: {
-         container: 'full-screen-alert'
-       }
-     }).then(result => {
-       if (result.isConfirmed) {
-         const updatedEmployees = employees.filter(employee => employee !== rowData)
-         setEmployees(updatedEmployees)
-         Swal.fire({
-           title: 'Data berhasil dihapus!',
-           icon: 'success',
-           confirmButtonColor: '#6AD01F',
-           customClass: {
-             container: 'full-screen-alert'
-           }
-         })
-       }
-     })
-   }
+  const handleCloseEditDataKaryawan = () => {
+    setIsEditDataKaryawanOpen(false)
+  }
+  const handleAddDataKaryawan = () => {
+    setIsAddDataKaryawanOpen(true)
+  }
+  const handleCloseAddDataKaryawan = () => {
+    setIsAddDataKaryawanOpen(false)
+  }
+
+  const handleSortSisaCuti = () => {
+    const isAsc = orderBySisaCuti === 'sisa_cuti' && sisaCutiOrder === 'asc'
+    setSisaCutiOrder(isAsc ? 'desc' : 'asc')
+    setOrderBySisaCuti('sisa_cuti')
+  }
+  const sortedEmployees =
+    orderBySisaCuti === 'sisa_cuti'
+      ? employees
+          .slice()
+          .sort((a, b) => (sisaCutiOrder === 'asc' ? a.sisa_cuti - b.sisa_cuti : b.sisa_cuti - a.sisa_cuti))
+      : employees.slice()
+
+  const handleDeleteRow = (rowData: Data) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: `Anda akan menghapus ${rowData.name}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#6AD01F',
+      cancelButtonColor: '#FF6166',
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal',
+      customClass: {
+        container: 'full-screen-alert'
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        const updatedEmployees = employees.filter(employee => employee !== rowData)
+        setEmployees(updatedEmployees)
+        Swal.fire({
+          title: 'Data berhasil dihapus!',
+          icon: 'success',
+          confirmButtonColor: '#6AD01F',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        })
+      }
+    })
+  }
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -131,16 +159,22 @@ const DataKaryawan = () => {
           <TableHead>
             <TableRow>
               {columns.map(column => (
-                <TableCell key={column.id} align={column.align} sx={{ minWidth: column.minWidth }}>
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  sx={{ minWidth: column.minWidth }}
+                  onClick={() => column.id === 'sisa_cuti' && handleSortSisaCuti()}
+                >
                   {column.id === 'actions' ? <div style={{ textAlign: 'center' }}>Actions</div> : column.label}
+                  {orderBySisaCuti === column.id ? <span>{sisaCutiOrder === 'asc' ? '↓' : '↑'}</span> : null}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {employees.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
+            {sortedEmployees.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
               return (
-                <TableRow hover role='checkbox' tabIndex={-1} key={row.nama}>
+                <TableRow hover role='checkbox' tabIndex={-1} key={row.id}>
                   {columns.map(column => {
                     const value = row[column.id]
                     if (column.id === 'actions') {

@@ -9,11 +9,17 @@ import Slide from '@mui/material/Slide'
 import { TransitionProps } from '@mui/material/transitions'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
-import { Account, AccountTie, BadgeAccount, CalendarAccount, CloseCircle, Email, Phone } from 'mdi-material-ui'
+import { Account, AccountTie, BadgeAccount, CalendarAccount, CloseCircle, Email, GenderFemale, GenderMale, GenderMaleFemale, Phone } from 'mdi-material-ui'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import DatePicker from 'react-datepicker'
 import Swal from 'sweetalert2'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import InputLabel from '@mui/material/InputLabel'
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
+
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -29,17 +35,15 @@ interface PropsAddDataKaryawan {
   onClose: () => void
 }
 
-const TglJoin = forwardRef((props, ref) => {
-  return <TextField fullWidth {...props} inputRef={ref} label='Tanggal Bergabung' autoComplete='off' />
-})
 
 const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
-  const [nama, setNama] = useState('')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [noTelepon, setNoTelepon] = useState('')
-  const [posisi, setPosisi] = useState('')
-  const [departemen, setDepartemen] = useState('')
-  const [tanggalBergabung, setTanggalBergabung] = useState('')
+  const [telephone, setTelephone] = useState('')
+  const [position, setPosition] = useState('')
+  const [department, setDepartment] = useState('')
+  const [gender, setGender] = useState('')
+  const [join_date, setjoin_date] = useState('')
   const [errors, setErrors] = useState<any>({})
 
   const handleClose = () => {
@@ -47,16 +51,17 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
   }
    const validateForm = () => {
      const errors: any = {}
-     if (!nama) errors.nama = 'Nama harus diisi'
+     if (!name) errors.name = 'name harus diisi'
      if (!email.trim()) {
        errors.email = 'Email harus diisi'
      } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
        errors.email = 'Format email tidak valid'
      }
-     if (!noTelepon) errors.noTelepon = 'Nomor telepon darurat harus diisi'
-     if (!posisi) errors.posisi = 'Posisi harus diisi'
-     if (!departemen) errors.departemen = 'Departemen harus diisi'
-     if (!tanggalBergabung) errors.tanggalBergabung = 'Tanggal bergabung harus diisi'
+     if (!telephone) errors.telephone = 'Nomor telepon darurat harus diisi'
+     if (!position) errors.position = 'Position harus diisi'
+     if (!department) errors.department = 'Department harus diisi'
+     if (!gender) errors.gender = 'Gender harus dipilih'
+     if (!join_date) errors.join_date = 'Tanggal bergabung harus diisi'
      setErrors(errors)
      return Object.keys(errors).length === 0
    }
@@ -85,12 +90,13 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
             }
           })
           const newEmployeeData = {
-            nama,
+            name,
             email,
-            noTelepon,
-            posisi,
-            departemen,
-            tanggalBergabung
+            telephone,
+            position,
+            department,
+            gender,
+            join_date
           }
           console.log('Data yang akan disubmit:', newEmployeeData)
           onClose()
@@ -100,10 +106,10 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
   }
   }
 
- const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
-   setNama(event.target.value)
-   if (errors.nama) {
-     setErrors({ ...errors, nama: '' })
+ const handleChangename = (event: React.ChangeEvent<HTMLInputElement>) => {
+   setName(event.target.value)
+   if (errors.name) {
+     setErrors({ ...errors, name: '' })
    }
  }
 
@@ -114,30 +120,36 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
    }
  }
 
- const handleChangeNoTelepon = (event: React.ChangeEvent<HTMLInputElement>) => {
-   setNoTelepon(event.target.value)
-   if (errors.noTelepon) {
-     setErrors({ ...errors, noTelepon: '' })
+ const handleChangetelephone = (event: React.ChangeEvent<HTMLInputElement>) => {
+   setTelephone(event.target.value)
+   if (errors.telephone) {
+     setErrors({ ...errors, telephone: '' })
    }
  }
 
- const handleChangePosisi = (event: React.ChangeEvent<HTMLInputElement>) => {
-   setPosisi(event.target.value)
-   if (errors.posisi) {
-     setErrors({ ...errors, posisi: '' })
+ const handleChangeposition = (event: React.ChangeEvent<HTMLInputElement>) => {
+   setPosition(event.target.value)
+   if (errors.position) {
+     setErrors({ ...errors, position: '' })
    }
  }
 
- const handleChangeDepartemen = (event: React.ChangeEvent<HTMLInputElement>) => {
-   setDepartemen(event.target.value)
-   if (errors.departemen) {
-     setErrors({ ...errors, departemen: '' })
+ const handleChangedepartment = (event: React.ChangeEvent<HTMLInputElement>) => {
+   setDepartment(event.target.value)
+   if (errors.department) {
+     setErrors({ ...errors, department: '' })
    }
  }
- const handleChangeTanggalBergabung = (event: React.ChangeEvent<HTMLInputElement>) => {
-   setTanggalBergabung(event.target.value)
-   if (errors.tanggalBergabung) {
-     setErrors({ ...errors, tanggalBergabung: '' })
+ const handleChangeGender = (event: React.ChangeEvent<HTMLInputElement>) => {
+   setGender(event.target.value)
+   if (errors.gender) {
+     setErrors({ ...errors, gender: '' })
+   }
+ }
+ const handleChangejoin_date = (event: React.ChangeEvent<HTMLInputElement>) => {
+   setjoin_date(event.target.value)
+   if (errors.join_date) {
+     setErrors({ ...errors, join_date: '' })
    }
  }
 
@@ -166,11 +178,11 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
           <TextField
             sx={{ marginTop: 2 }}
             fullWidth
-            label='Nama'
-            error={!!errors.nama}
-            helperText={errors.nama}
-            value={nama}
-            onChange={handleChangeNama}
+            label='name'
+            error={!!errors.name}
+            helperText={errors.name}
+            value={name}
+            onChange={handleChangename}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -182,7 +194,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
 
           <TextField
             fullWidth
-            sx={{ marginTop: 2 }}
+            sx={{ marginTop: 5 }}
             label='Email'
             error={!!errors.email}
             helperText={errors.email}
@@ -199,13 +211,13 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
 
           <TextField
             fullWidth
-            sx={{ marginTop: 2 }}
+            sx={{ marginTop: 5 }}
             label='No Telephone'
             type='number'
-            error={!!errors.noTelepon}
-            helperText={errors.noTelepon}
-            value={noTelepon}
-            onChange={handleChangeNoTelepon}
+            error={!!errors.telephone}
+            helperText={errors.telephone}
+            value={telephone}
+            onChange={handleChangetelephone}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -217,12 +229,12 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
 
           <TextField
             fullWidth
-            sx={{ marginTop: 2 }}
-            label='Posisi'
-            error={!!errors.posisi}
-            helperText={errors.posisi}
-            value={posisi}
-            onChange={handleChangePosisi}
+            sx={{ marginTop: 5 }}
+            label='position'
+            error={!!errors.position}
+            helperText={errors.position}
+            value={position}
+            onChange={handleChangeposition}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -234,12 +246,12 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
 
           <TextField
             fullWidth
-            sx={{ marginTop: 2 }}
-            label='Departemen'
-            error={!!errors.departemen}
-            helperText={errors.departemen}
-            value={departemen}
-            onChange={handleChangeDepartemen}
+            sx={{ marginTop: 5 }}
+            label='department'
+            error={!!errors.department}
+            helperText={errors.department}
+            value={department}
+            onChange={handleChangedepartment}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -248,16 +260,33 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
               )
             }}
           />
+          <FormControl fullWidth sx={{ marginTop: 5 }}>
+            <InputLabel id='form-layouts-separator-select-label'>Gender</InputLabel>
+            <Select
+              label='Gender'
+              defaultValue=''
+              id='form-layouts-separator-select'
+              labelId='form-layouts-separator-select-label'
+              value={gender}
+              onChange={handleChangeGender}
+              error={!!errors.gender}
+              helperText={errors.gender}
+            >
+              <MenuItem value='male'>Male</MenuItem>
+              <MenuItem value='female'>Female</MenuItem>
+            </Select>
+            {errors.gender && <FormHelperText error>{errors.gender}</FormHelperText>}
+          </FormControl>
 
           <TextField
             fullWidth
-            sx={{ marginTop: 2 }}
+            sx={{ marginTop: 5 }}
             type='date'
             label='Tanggal Bergabung'
-            error={!!errors.tanggalBergabung}
-            helperText={errors.tanggalBergabung}
-            value={tanggalBergabung}
-            onChange={handleChangeTanggalBergabung}
+            error={!!errors.join_date}
+            helperText={errors.join_date}
+            value={join_date}
+            onChange={handleChangejoin_date}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>

@@ -4,8 +4,6 @@ import HomeOutline from 'mdi-material-ui/HomeOutline'
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
 import { AccountGroup, Balloon, FileDocumentEditOutline, TableAccount, TextAccount } from 'mdi-material-ui'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 
 const position = 'hr'
 var menu: VerticalNavItemsType = []
@@ -136,13 +134,6 @@ if (position == 'hr') {
 
 
 const navigation = (): VerticalNavItemsType => {
-   const router = useRouter()
-   useEffect(() => {
-     const token = localStorage.getItem('token')
-     if (!token) {
-       router.push('/login')
-     }
-   }, [router])
   return menu;
 }
 

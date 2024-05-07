@@ -196,7 +196,7 @@ const CutiKaryawan = () => {
   const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
   const [isCutiKaryawanDetailOpen, setIsCutiKaryawanDetailOpen] = useState<boolean>(false)
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
-  const [orderBy, setOrderBy] = useState<'tgl_penyerahan' | ''>('')
+  const [orderBy, setOrderBy] = useState<keyof Data>('tgl_penyerahan')
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
@@ -224,9 +224,20 @@ const CutiKaryawan = () => {
 
   const sortedRows =
     order === 'asc'
-      ? [...rows].sort((a, b) => new Date(a.tgl_penyerahan).getTime() - new Date(b.tgl_penyerahan).getTime())
-      : [...rows].sort((a, b) => new Date(b.tgl_penyerahan).getTime() - new Date(a.tgl_penyerahan).getTime())
-
+      ? [...rows].sort((a, b) => {
+          if (orderBy === 'tgl_penyerahan' || orderBy === 'tgl_mulai' || orderBy === 'tgl_akhir') {
+            return new Date(a[orderBy]).getTime() - new Date(b[orderBy]).getTime()
+          }  else {
+            return 0
+          }
+        })
+      : [...rows].sort((a, b) => {
+          if (orderBy === 'tgl_penyerahan' || orderBy === 'tgl_mulai' || orderBy === 'tgl_akhir') {
+            return new Date(b[orderBy]).getTime() - new Date(a[orderBy]).getTime()
+          } else {
+            return 0
+          }
+        })
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
@@ -238,7 +249,7 @@ const CutiKaryawan = () => {
                   key={column.id}
                   align={column.align}
                   sx={{ minWidth: column.minWidth }}
-                  onClick={() => column.id === 'tgl_penyerahan' && handleSort(column.id)}
+                  onClick={() => handleSort(column.id as keyof Data)}
                 >
                   {column.label}
                   {orderBy === column.id ? <span>{order === 'asc' ? '↓' : '↑'}</span> : null}
