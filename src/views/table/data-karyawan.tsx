@@ -129,23 +129,36 @@ const DataKaryawan = () => {
           .sort((a, b) => (sisaCutiOrder === 'desc' ? a.total_days - b.total_days : b.total_days - a.total_days))
       : employees.slice()
 
-  const handleDeleteRow = (rowData: Data) => {
-    Swal.fire({
-      title: 'Apakah Anda yakin?',
-      text: `Anda akan menghapus ${rowData.name}`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#6AD01F',
-      cancelButtonColor: '#FF6166',
-      confirmButtonText: 'Ya, hapus!',
-      cancelButtonText: 'Batal',
-      customClass: {
-        container: 'full-screen-alert'
-      }
-    }).then(result => {
-      if (result.isConfirmed) {
-        const updatedEmployees = employees.filter(employee => employee !== rowData)
+const handleDeleteRow = (rowData: Data) => {
+  Swal.fire({
+    title: 'Apakah Anda yakin?',
+    text: `Anda akan menghapus ${rowData.name}`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#6AD01F',
+    cancelButtonColor: '#FF6166',
+    confirmButtonText: 'Ya, hapus!',
+    cancelButtonText: 'Batal',
+    customClass: {
+      container: 'full-screen-alert'
+    }
+  }).then(async result => {
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(`${AppURL.Users}/${rowData.id}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+
+        if (!response.ok) {
+          throw new Error('Gagal menghapus data karyawan')
+        }
+
+        const updatedEmployees = employees.filter(employee => employee.id !== rowData.id)
         setEmployees(updatedEmployees)
+
         Swal.fire({
           title: 'Data berhasil dihapus!',
           icon: 'success',
@@ -154,9 +167,22 @@ const DataKaryawan = () => {
             container: 'full-screen-alert'
           }
         })
+      } catch (error) {
+        console.error('Terjadi kesalahan:', error)
+        Swal.fire({
+          title: 'Terjadi kesalahan!',
+          text: 'Gagal menghapus data karyawan',
+          icon: 'error',
+          confirmButtonColor: '#FF6166',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        })
       }
-    })
-  }
+    }
+  })
+}
+
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -242,13 +268,6 @@ const DataKaryawan = () => {
       />
     </Paper>
   )
-  //  <Butto
-  //       className={`fixed right-3 bottom-3 md:right-10 md:bottom-10 bg-yellow-400  px-4 py-2 text-white rounded-md `}
-  //       // onClick={handleAddEmployeeClick}
-  //       // disabled={editingItemId !== null}
-  //     >
-  //       Tambah Karyawan
-  //     </Butto>
 }
 
 export default DataKaryawan
