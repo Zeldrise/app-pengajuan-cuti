@@ -9,7 +9,18 @@ import Slide from '@mui/material/Slide'
 import { TransitionProps } from '@mui/material/transitions'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
-import { Account, AccountTie, BadgeAccount, CalendarAccount, CloseCircle, Email, GenderFemale, GenderMale, GenderMaleFemale, Phone } from 'mdi-material-ui'
+import {
+  Account,
+  AccountTie,
+  BadgeAccount,
+  CalendarAccount,
+  CloseCircle,
+  Email,
+  GenderFemale,
+  GenderMale,
+  GenderMaleFemale,
+  Phone
+} from 'mdi-material-ui'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import DatePicker from 'react-datepicker'
@@ -19,7 +30,7 @@ import MenuItem from '@mui/material/MenuItem'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
-
+import AppURL from 'src/api/AppURL'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -33,10 +44,10 @@ const Transition = React.forwardRef(function Transition(
 interface PropsAddDataKaryawan {
   open: boolean
   onClose: () => void
+  onAddEmployeeSuccess: () => void
 }
 
-
-const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
+const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddEmployeeSuccess }) => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [telephone, setTelephone] = useState('')
@@ -49,27 +60,27 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
   const handleClose = () => {
     onClose()
   }
-   const validateForm = () => {
-     const errors: any = {}
-     if (!name) errors.name = 'name harus diisi'
-     if (!email.trim()) {
-       errors.email = 'Email harus diisi'
-     } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
-       errors.email = 'Format email tidak valid'
-     }
-     if (!telephone) errors.telephone = 'Nomor telepon darurat harus diisi'
-     if (!position) errors.position = 'Position harus diisi'
-     if (!department) errors.department = 'Department harus diisi'
-     if (!gender) errors.gender = 'Gender harus dipilih'
-     if (!join_date) errors.join_date = 'Tanggal bergabung harus diisi'
-     setErrors(errors)
-     return Object.keys(errors).length === 0
-   }
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateForm = () => {
+    const errors: any = {}
+    if (!name) errors.name = 'name harus diisi'
+    if (!email.trim()) {
+      errors.email = 'Email harus diisi'
+    } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
+      errors.email = 'Format email tidak valid'
+    }
+    if (!telephone) errors.telephone = 'Nomor telepon darurat harus diisi'
+    if (!position) errors.position = 'Position harus diisi'
+    if (!department) errors.department = 'Department harus diisi'
+    if (!gender) errors.gender = 'Gender harus dipilih'
+    if (!join_date) errors.join_date = 'Tanggal bergabung harus diisi'
+    setErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (validateForm()) {
       Swal.fire({
-        title: 'Apa Data Karyawan Sudah Benar?',
+        title: 'Is Employee Data Correct?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#6AD01F',
@@ -79,81 +90,110 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose }) => {
         customClass: {
           container: 'full-screen-alert'
         }
-      }).then(result => {
+      }).then(async result => {
         if (result.isConfirmed) {
-          Swal.fire({
-            title: 'Data karyawan berhasil ditambahkan!',
-            icon: 'success',
-            confirmButtonColor: '#6AD01F',
-            customClass: {
-              container: 'full-screen-alert'
+          try {
+            const response = await fetch(AppURL.Users, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+              },
+              body: JSON.stringify({
+                name,
+                email,
+                telephone,
+                position,
+                department,
+                gender,
+                join_date
+              })
+            })
+            if (!response.ok) {
+              throw new Error('Failed to add employee')
             }
-          })
-          const newEmployeeData = {
-            name,
-            email,
-            telephone,
-            position,
-            department,
-            gender,
-            join_date
+            const data = await response.json()
+            Swal.fire({
+              title: 'Employee data added successfully!!',
+              icon: 'success',
+              confirmButtonColor: '#6AD01F',
+              customClass: {
+                container: 'full-screen-alert'
+              }
+            })
+            console.log('Data submitted:', data)
+            setName('')
+            setEmail('')
+            setTelephone('')
+            setPosition('')
+            setDepartment('')
+            setGender('')
+            setjoin_date('')
+            onClose()
+            onAddEmployeeSuccess()
+          } catch (error) {
+            console.error('Error editing employee:', error)
+            Swal.fire({
+              title: 'Error!',
+              text: 'Failed to add employee',
+              icon: 'error',
+              confirmButtonColor: '#6AD01F',
+              customClass: {
+                container: 'full-screen-alert'
+              }
+            })
           }
-          console.log('Data yang akan disubmit:', newEmployeeData)
-          onClose()
         }
       })
-   
+    }
   }
+
+  const handleChangename = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value)
+    if (errors.name) {
+      setErrors({ ...errors, name: '' })
+    }
   }
 
- const handleChangename = (event: React.ChangeEvent<HTMLInputElement>) => {
-   setName(event.target.value)
-   if (errors.name) {
-     setErrors({ ...errors, name: '' })
-   }
- }
+  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value)
+    if (errors.email) {
+      setErrors({ ...errors, email: '' })
+    }
+  }
 
- const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
-   setEmail(event.target.value)
-   if (errors.email) {
-     setErrors({ ...errors, email: '' })
-   }
- }
+  const handleChangetelephone = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTelephone(event.target.value)
+    if (errors.telephone) {
+      setErrors({ ...errors, telephone: '' })
+    }
+  }
 
- const handleChangetelephone = (event: React.ChangeEvent<HTMLInputElement>) => {
-   setTelephone(event.target.value)
-   if (errors.telephone) {
-     setErrors({ ...errors, telephone: '' })
-   }
- }
+  const handleChangeposition = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPosition(event.target.value)
+    if (errors.position) {
+      setErrors({ ...errors, position: '' })
+    }
+  }
 
- const handleChangeposition = (event: React.ChangeEvent<HTMLInputElement>) => {
-   setPosition(event.target.value)
-   if (errors.position) {
-     setErrors({ ...errors, position: '' })
-   }
- }
-
- const handleChangedepartment = (event: React.ChangeEvent<HTMLInputElement>) => {
-   setDepartment(event.target.value)
-   if (errors.department) {
-     setErrors({ ...errors, department: '' })
-   }
- }
- const handleChangeGender = (event: React.ChangeEvent<HTMLInputElement>) => {
-   setGender(event.target.value)
-   if (errors.gender) {
-     setErrors({ ...errors, gender: '' })
-   }
- }
- const handleChangejoin_date = (event: React.ChangeEvent<HTMLInputElement>) => {
-   setjoin_date(event.target.value)
-   if (errors.join_date) {
-     setErrors({ ...errors, join_date: '' })
-   }
- }
-
-
+  const handleChangedepartment = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDepartment(event.target.value)
+    if (errors.department) {
+      setErrors({ ...errors, department: '' })
+    }
+  }
+  const handleChangeGender = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setGender(event.target.value)
+    if (errors.gender) {
+      setErrors({ ...errors, gender: '' })
+    }
+  }
+  const handleChangejoin_date = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setjoin_date(event.target.value)
+    if (errors.join_date) {
+      setErrors({ ...errors, join_date: '' })
+    }
+  }
 
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))

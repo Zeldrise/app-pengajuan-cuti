@@ -28,7 +28,7 @@ const columns: readonly Column[] = [
   { id: 'telephone', label: 'No Telephone', minWidth: 100 },
   { id: 'position', label: 'Posisi', minWidth: 100 },
   { id: 'department', label: 'Departemen', minWidth: 100 },
-  { id: 'sisa_cuti', label: 'Sisa Cuti', minWidth: 100 }, // Saya asumsikan ini sisa cuti
+  { id: 'total_days', label: 'Sisa Cuti', minWidth: 100 }, // Saya asumsikan ini sisa cuti
   { id: 'actions', label: 'Actions', minWidth: 100 }
 ]
 
@@ -39,7 +39,7 @@ interface Data {
   telephone: string
   position: string
   department: string
-  sisa_cuti: number
+  total_days: number
 }
 
 function createData(
@@ -48,9 +48,9 @@ function createData(
   telephone: string,
   position: string,
   department: string,
-  sisa_cuti: number
+  total_days: number
 ) {
-  return { name, email, telephone, position, department, sisa_cuti }
+  return { name, email, telephone, position, department, total_days }
 }
 
 const DataKaryawan = () => {
@@ -60,7 +60,7 @@ const DataKaryawan = () => {
   const [isEditDataKaryawanOpen, setIsEditDataKaryawanOpen] = useState<boolean>(false)
   const [isAddDataKaryawanOpen, setIsAddDataKaryawanOpen] = useState<boolean>(false)
   const [sisaCutiOrder, setSisaCutiOrder] = useState<'asc' | 'desc'>('asc')
-  const [orderBySisaCuti, setOrderBySisaCuti] = useState<keyof Data>('sisa_cuti')
+  const [orderBySisaCuti, setOrderBySisaCuti] = useState<keyof Data>('total_days')
 
   const [employees, setEmployees] = useState<Data[]>([])
 
@@ -107,20 +107,26 @@ const DataKaryawan = () => {
   const handleAddDataKaryawan = () => {
     setIsAddDataKaryawanOpen(true)
   }
+   const handleAddEmployeeSuccess = () => {
+     fetchData() // Update table data after adding a new employee
+   }
+   const handleEditEmployeeSuccess = () => {
+     fetchData() // Update table data after adding a new employee
+   }
   const handleCloseAddDataKaryawan = () => {
     setIsAddDataKaryawanOpen(false)
   }
 
   const handleSortSisaCuti = () => {
-    const isAsc = orderBySisaCuti === 'sisa_cuti' && sisaCutiOrder === 'asc'
+    const isAsc = orderBySisaCuti === 'total_days' && sisaCutiOrder === 'asc'
     setSisaCutiOrder(isAsc ? 'desc' : 'asc')
-    setOrderBySisaCuti('sisa_cuti')
+    setOrderBySisaCuti('total_days')
   }
   const sortedEmployees =
-    orderBySisaCuti === 'sisa_cuti'
+    orderBySisaCuti === 'total_days'
       ? employees
           .slice()
-          .sort((a, b) => (sisaCutiOrder === 'asc' ? a.sisa_cuti - b.sisa_cuti : b.sisa_cuti - a.sisa_cuti))
+          .sort((a, b) => (sisaCutiOrder === 'desc' ? a.total_days - b.total_days : b.total_days - a.total_days))
       : employees.slice()
 
   const handleDeleteRow = (rowData: Data) => {
@@ -163,10 +169,10 @@ const DataKaryawan = () => {
                   key={column.id}
                   align={column.align}
                   sx={{ minWidth: column.minWidth }}
-                  onClick={() => column.id === 'sisa_cuti' && handleSortSisaCuti()}
+                  onClick={() => column.id === 'total_days' && handleSortSisaCuti()}
                 >
                   {column.id === 'actions' ? <div style={{ textAlign: 'center' }}>Actions</div> : column.label}
-                  {orderBySisaCuti === column.id ? <span>{sisaCutiOrder === 'asc' ? '↓' : '↑'}</span> : null}
+                  {orderBySisaCuti === column.id ? <span>{sisaCutiOrder === 'desc' ? '↓' : '↑'}</span> : null}
                 </TableCell>
               ))}
             </TableRow>
@@ -223,8 +229,17 @@ const DataKaryawan = () => {
       >
         Tambah karyawan
       </Button>
-      <EditDataKaryawan open={isEditDataKaryawanOpen} onClose={handleCloseEditDataKaryawan} rowData={selectedRowData} />
-      <AddDataKaryawan open={isAddDataKaryawanOpen} onClose={handleCloseAddDataKaryawan} />
+      <EditDataKaryawan
+        open={isEditDataKaryawanOpen}
+        onClose={handleCloseEditDataKaryawan}
+        rowData={selectedRowData}
+        onEditEmployeeSuccess={handleEditEmployeeSuccess}
+      />
+      <AddDataKaryawan
+        open={isAddDataKaryawanOpen}
+        onClose={handleCloseAddDataKaryawan}
+        onAddEmployeeSuccess={handleAddEmployeeSuccess}
+      />
     </Paper>
   )
   //  <Butto

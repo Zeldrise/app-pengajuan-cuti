@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -18,6 +18,7 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormHelperText from '@mui/material/FormHelperText'
 import Select from '@mui/material/Select'
+import AppURL from 'src/api/AppURL'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -32,39 +33,104 @@ interface PropsEditDataKaryawan {
   open: boolean
   onClose: () => void
   rowData: Data | null
+  onEditEmployeeSuccess: () => void
 }
 
-const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowData }) => {
-     const [name, setName] = useState('')
-     const [email, setEmail] = useState('')
-     const [telephone, setTelephone] = useState('')
-     const [position, setPosition] = useState('')
-     const [department, setDepartment] = useState('')
-     const [gender, setGender] = useState('')
-     const [join_date, setjoin_date] = useState('')
-     const [errors, setErrors] = useState<any>({})
+const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowData, onEditEmployeeSuccess }) => {
+  const [name, setName] = useState(rowData?.name || '')
+  const [email, setEmail] = useState(rowData?.email || '')
+  const [telephone, setTelephone] = useState(rowData?.telephone || '')
+  const [position, setPosition] = useState(rowData?.position || '')
+  const [department, setDepartment] = useState(rowData?.department || '')
+  const [gender, setGender] = useState(rowData?.gender || '')
+  const [join_date, setJoin_date] = useState(rowData?.join_date || '')
+  const [errors, setErrors] = useState<any>({})
+  useEffect(() => {
+    if (rowData) {
+      setName(rowData.name || '')
+      setEmail(rowData.email || '')
+      setTelephone(rowData.telephone || '')
+      setPosition(rowData.position || '')
+      setDepartment(rowData.department || '')
+      setGender(rowData.gender || '')
+      setJoin_date(rowData.join_date || '')
+    }
+  }, [rowData])
   const handleClose = () => {
     onClose()
   }
-   const validateForm = () => {
-     const errors: any = {}
-         if (!name) errors.name = 'Nama harus diisi'
-        if (!email.trim()) {
-          errors.email = 'Email harus diisi'
-        } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
-          errors.email = 'Format email tidak valid'
+  const validateForm = () => {
+    const errors: any = {}
+    if (!name) errors.name = 'Nama harus diisi'
+    if (!email.trim()) {
+      errors.email = 'Email harus diisi'
+    } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
+      errors.email = 'Format email tidak valid'
+    }
+    if (!telephone) errors.telephone = 'Nomor telepon darurat harus diisi'
+    if (!position) errors.position = 'Position harus diisi'
+    if (!department) errors.department = 'Department harus diisi'
+    if (!gender) errors.gender = 'Gender harus dipilih'
+    if (!join_date) errors.join_date = 'Tanggal bergabung harus diisi'
+    setErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+  const handleEditEmployee = async () => {
+    try {
+      const response = await fetch(`${AppURL.Users}/update/${rowData.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          telephone,
+          position,
+          department,
+          gender,
+          join_date
+        })
+      })
+      if (!response.ok) {
+        throw new Error('Failed to edit employee')
+      }
+      const data = await response.json()
+      Swal.fire({
+        title: 'Employee data edited successfully!',
+        icon: 'success',
+        confirmButtonColor: '#6AD01F',
+        customClass: {
+          container: 'full-screen-alert'
         }
-         if (!telephone) errors.telephone = 'Nomor telepon darurat harus diisi'
-         if (!position) errors.position = 'Position harus diisi'
-         if (!department) errors.department = 'Department harus diisi'
-         if (!gender) errors.gender = 'Gender harus dipilih'
-         if (!join_date) errors.join_date = 'Tanggal bergabung harus diisi'
-     setErrors(errors)
-     return Object.keys(errors).length === 0
-   }
- const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault()
-  if (validateForm()) { 
+      })
+      console.log('Data edited:', data)
+      setName('')
+      setEmail('')
+      setTelephone('')
+      setPosition('')
+      setDepartment('')
+      setGender('')
+      setJoin_date('')
+      onClose()
+      onEditEmployeeSuccess()
+    } catch (error) {
+      console.error('Error editing employee:', error)
+      Swal.fire({
+        title: 'Error!',
+        text: 'Failed to edit employee',
+        icon: 'error',
+        confirmButtonColor: '#6AD01F',
+        customClass: {
+          container: 'full-screen-alert'
+        }
+      })
+    }
+  }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (validateForm()) {
       Swal.fire({
         title: 'Apa Anda yakin?',
         text: 'Data Karyawan Akan Diedit',
@@ -79,31 +145,11 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
         }
       }).then(result => {
         if (result.isConfirmed) {
-          Swal.fire({
-            title: 'Data karyawan berhasil diedit!',
-            icon: 'success',
-            confirmButtonColor: '#6AD01F',
-            customClass: {
-              container: 'full-screen-alert'
-            }
-          })
-          const editEmployeeData = {
-            name,
-            email,
-            telephone,
-            position,
-            department,
-            gender,
-            join_date
-          }
-          console.log('Data yang akan disubmit:', editEmployeeData)
-          onClose()
+          handleEditEmployee()
         }
-      })   
-   
- }
- }
-
+      })
+    }
+  }
   const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value)
     if (errors.name) {
@@ -138,14 +184,14 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
       setErrors({ ...errors, department: '' })
     }
   }
-   const handleChangeGender = (event: React.ChangeEvent<HTMLInputElement>) => {
-     setGender(event.target.value)
-     if (errors.gender) {
-       setErrors({ ...errors, gender: '' })
-     }
-   }
+  const handleChangeGender = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setGender(event.target.value)
+    if (errors.gender) {
+      setErrors({ ...errors, gender: '' })
+    }
+  }
   const handleChangejoin_date = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setjoin_date(event.target.value)
+    setJoin_date(event.target.value)
     if (errors.join_date) {
       setErrors({ ...errors, join_date: '' })
     }
