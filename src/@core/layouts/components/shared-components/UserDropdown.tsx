@@ -15,13 +15,9 @@ import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 
 // ** Icons Imports
-// import CogOutline from 'mdi-material-ui/CogOutline'
-// import CurrencyUsd from 'mdi-material-ui/CurrencyUsd'
-// import EmailOutline from 'mdi-material-ui/EmailOutline'
 import LogoutVariant from 'mdi-material-ui/LogoutVariant'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
-// import MessageOutline from 'mdi-material-ui/MessageOutline'
-// import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
+import AppURL from 'src/api/AppURL'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -35,7 +31,7 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 const UserDropdown = () => {
   // ** States
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
-  
+  const [userData, setUserData] = useState<any>(null)
 
 
 
@@ -49,6 +45,28 @@ const UserDropdown = () => {
     }
     setAnchorEl(null)
   }
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(AppURL.Profile, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        if(!response.ok) {
+          throw new Error('Gagal mengambil data user')
+        }
+        const userData = await response.json()
+        setUserData(userData)
+        console.log(userData)
+      }catch (error) {
+        console.error('Terjadi kesalahan:', error)
+      }
+    }
+    fetchUserData()
+  }, [])
 
   const styles = {
     py: 2,
@@ -66,19 +84,9 @@ const UserDropdown = () => {
   const [urlPrefix, setUrlPrefix] = useState<string>('')
   const router = useRouter()
 
-  useEffect(() => {
-    const currentUrl = window.location.href
-    const regex = /\/\/[^/]+\/([^/]+)\// // Regex untuk menemukan potongan URL setelah domain dan sebelum path
-    const match = currentUrl.match(regex)
-    if (match && match[1]) {
-      setUrlPrefix(match[1])
-    }
-  }, [])
 
   const handleLogout = () => {
-    // Clear token from local storage or state
     localStorage.removeItem('token')
-    // Redirect to logout page or any other page
     router.push('/')
   }
 
@@ -116,9 +124,9 @@ const UserDropdown = () => {
               <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', marginLeft: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 600 }}>John Doe</Typography>
+              <Typography sx={{ fontWeight: 600 }}>{userData ? userData.name : '...'}</Typography>
               <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                Admin
+                {userData ? userData.position : '...'}
               </Typography>
             </Box>
           </Box>

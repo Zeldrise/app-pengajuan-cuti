@@ -3,6 +3,8 @@ class AppURL {
 
   static UserLogin = `${AppURL.BaseURL}/auth/login`
   static Users = `${AppURL.BaseURL}/users`
+  static Profile = `${AppURL.Users}/profil`
+  static LeaveType = `${AppURL.BaseURL}/leave-types`
 }
 
 export default AppURL

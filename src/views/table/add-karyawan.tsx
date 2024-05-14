@@ -16,14 +16,10 @@ import {
   CalendarAccount,
   CloseCircle,
   Email,
-  GenderFemale,
-  GenderMale,
-  GenderMaleFemale,
   Phone
 } from 'mdi-material-ui'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
-import DatePicker from 'react-datepicker'
 import Swal from 'sweetalert2'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
@@ -68,7 +64,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
     } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
       errors.email = 'Format email tidak valid'
     }
-    if (!telephone) errors.telephone = 'Nomor telepon darurat harus diisi'
+    if (!telephone) errors.telephone = 'Nomor telepon harus diisi'
     if (!position) errors.position = 'Position harus diisi'
     if (!department) errors.department = 'Department harus diisi'
     if (!gender) errors.gender = 'Gender harus dipilih'
@@ -218,7 +214,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
           <TextField
             sx={{ marginTop: 2 }}
             fullWidth
-            label='name'
+            label='Nama'
             error={!!errors.name}
             helperText={errors.name}
             value={name}
@@ -267,27 +263,30 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
             }}
           />
 
-          <TextField
-            fullWidth
-            sx={{ marginTop: 5 }}
-            label='position'
-            error={!!errors.position}
-            helperText={errors.position}
-            value={position}
-            onChange={handleChangeposition}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <BadgeAccount />
-                </InputAdornment>
-              )
-            }}
-          />
+         
+          <FormControl fullWidth sx={{ marginTop: 5 }}>
+            <InputLabel id='form-layouts-separator-select-label'>Position</InputLabel>
+            <Select
+              label='Position'
+              defaultValue=''
+              id='form-layouts-separator-select'
+              labelId='form-layouts-separator-select-label'
+              error={!!errors.position}
+              helperText={errors.position}
+              value={position}
+              onChange={handleChangeposition}
+            >
+              <MenuItem value='hr'>hr</MenuItem>
+              <MenuItem value='admin'>admin</MenuItem>
+              <MenuItem value='karyawan'>karyawan</MenuItem>
+            </Select>
+            {errors.position && <FormHelperText error>{errors.position}</FormHelperText>}
+          </FormControl>
 
           <TextField
             fullWidth
             sx={{ marginTop: 5 }}
-            label='department'
+            label='Department'
             error={!!errors.department}
             helperText={errors.department}
             value={department}

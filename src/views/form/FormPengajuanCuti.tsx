@@ -1,6 +1,6 @@
 // ** React Imports
 import React, { forwardRef, useState, useEffect } from 'react'
-import { startOfToday, differenceInDays } from 'date-fns'
+import { startOfToday, differenceInDays, addDays } from 'date-fns'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
@@ -27,6 +27,7 @@ import { Account, AccountTie, BadgeAccount } from 'mdi-material-ui'
 import Typography from '@mui/material/Typography'
 import FormHelperText from '@mui/material/FormHelperText'
 import Swal from 'sweetalert2'
+import AppURL from 'src/api/AppURL'
 
 
 const TglAwal = forwardRef((props, ref) => {
@@ -49,8 +50,11 @@ const FormPengajuanCuti = () => {
   const [showUrgencyFields, setShowUrgencyFields] = useState<boolean>(false)
   const [showDoctorNoteField, setShowDoctorNoteField] = useState<boolean>(false)
   const [doctorNoteImage, setDoctorNoteImage] = useState<string | null>(null)
+  const [urgencyOptions, setUrgencyOptions] = useState<any[]>([])
   const [urgency, setUrgency] = useState<string>('')
+  const [userData, setUserData] = useState<any>(null)
   const [errors, setErrors] = useState<any>({})
+  
 
   const validateForm = () => {
     const errors: any = {}
@@ -199,6 +203,52 @@ const FormPengajuanCuti = () => {
          setErrors({ ...errors, urgency: '' })
        }
      }
+
+      useEffect(() => {
+        const fetchUserData = async () => {
+          try {
+            const response = await fetch(AppURL.Profile, {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+              }
+            })
+            if (!response.ok) {
+              throw new Error('Gagal mengambil data user')
+            }
+            const userData = await response.json()
+            setUserData(userData)
+            console.log(userData)
+          } catch (error) {
+            console.error('Terjadi kesalahan:', error)
+          }
+        }
+        fetchUserData()
+      }, [])
+
+      useEffect(() => {
+        // Fetch urgency options from API
+        const fetchUrgencyOptions = async () => {
+          try {
+            const response = await fetch(`${AppURL.LeaveType}?is_emergency=1`, {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+              }
+            })
+            if (!response.ok) {
+              throw new Error('Failed to fetch urgency options')
+            }
+            const urgencyData = await response.json()
+            setUrgencyOptions(urgencyData)
+          } catch (error) {
+            console.error('Error fetching urgency options:', error)
+          }
+        }
+
+        fetchUrgencyOptions()
+      }, [])
+
  
   return (
     <Card>
@@ -213,7 +263,7 @@ const FormPengajuanCuti = () => {
             alignItems: 'center'
           }}
         >
-          Sisa cuti : 10
+          Sisa cuti : {userData ? userData.total_days : '...'}
         </Typography>
       </Card>
       <Divider sx={{ margin: 0 }} />
@@ -227,7 +277,7 @@ const FormPengajuanCuti = () => {
                 placeholder='Monkey D Luffy'
                 error={!!errors.nama}
                 helperText={errors.nama}
-                value={nama}
+                value={userData ? userData.name : '...'}
                 onChange={handleChangeNama}
                 InputProps={{
                   startAdornment: (
@@ -267,7 +317,7 @@ const FormPengajuanCuti = () => {
                 placeholder='Developer'
                 error={!!errors.posisi}
                 helperText={errors.posisi}
-                value={posisi}
+                value={userData ? userData.position : '...'}
                 onChange={handleChangePosisi}
                 InputProps={{
                   startAdornment: (
@@ -285,7 +335,7 @@ const FormPengajuanCuti = () => {
                 placeholder='IT'
                 error={!!errors.departemen}
                 helperText={errors.departemen}
-                value={departemen}
+                value={userData ? userData.department : '...'}
                 onChange={handleChangeDepartemen}
                 InputProps={{
                   startAdornment: (
@@ -349,9 +399,11 @@ const FormPengajuanCuti = () => {
                     onChange={handleChangeUrgency}
                     value={urgency}
                   >
-                    <MenuItem value='keluarga meninggal'>keluarga meninggal</MenuItem>
-                    <MenuItem value='melahirkan'>melahirkan</MenuItem>
-                    <MenuItem value='kehilangan'>kehilangan</MenuItem>
+                    {urgencyOptions.map(option => (
+                      <MenuItem key={option.id} value={option.type}>
+                        {option.type}
+                      </MenuItem>
+                    ))}
                   </Select>
                   {errors.urgency && <FormHelperText error>{errors.urgency}</FormHelperText>}
                 </FormControl>
@@ -391,7 +443,12 @@ const FormPengajuanCuti = () => {
                 placeholderText='MM-DD-YYYY'
                 customInput={<TglAwal />}
                 id='form-layouts-separator-date'
-                onChange={handleChangeStartDate}
+                onChange={date => {
+                  handleChangeStartDate(date)
+                  if (cutiType === 'Cuti Urgensi' && urgency === 'Keluarga meninggal' && date) {
+                    handleChangeEndDate(addDays(date, 1)) // Set end date to next day if urgency is 'keluarga meninggal'
+                  }
+                }}
                 minDate={startOfToday()}
               />
               {errors.startDate && <FormHelperText error>{errors.startDate}</FormHelperText>}
@@ -406,6 +463,7 @@ const FormPengajuanCuti = () => {
                 id='form-layouts-separator-date'
                 onChange={handleChangeEndDate}
                 minDate={startOfToday()}
+                startDate={startDate}
               />
               {errors.endDate && <FormHelperText error>{errors.endDate}</FormHelperText>}
             </Grid>

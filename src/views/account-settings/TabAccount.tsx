@@ -20,6 +20,7 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import EmailOutline from 'mdi-material-ui/EmailOutline'
 import Phone from 'mdi-material-ui/Phone'
 import Swal from 'sweetalert2'
+import AppURL from 'src/api/AppURL'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -48,20 +49,20 @@ const ResetButtonStyled = styled(Button)<ButtonProps>(({ theme }) => ({
 const TabAccount = () => {
   // ** State
   const [imgSrc, setImgSrc] = useState<string>('/images/avatars/1.png')
-  const [nama, setNama] = useState('')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [noTelepon, setNoTelepon] = useState('')
+  const [telephone, setTelephone] = useState('')
   const [errors, setErrors] = useState<any>({})
 
   const validateForm = () => {
     const errors: any = {}
-    if (!nama) errors.nama = 'Nama harus diisi'
+    if (!name) errors.name = 'Name harus diisi'
     if (!email.trim()) {
       errors.email = 'Email harus diisi'
     } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
       errors.email = 'Format email tidak valid'
     }
-    if (!noTelepon) errors.noTelepon = 'Nomor telepon harus diisi'
+    if (!telephone) errors.telephone = 'Nomor telepon harus diisi'
     setErrors(errors)
     return Object.keys(errors).length === 0
   }
@@ -92,29 +93,56 @@ const TabAccount = () => {
         }
       }).then(result => {
         if (result.isConfirmed) {
-          Swal.fire({
-            title: 'Pengajuan Cuti berhasil diedit!',
-            icon: 'success',
-            confirmButtonColor: '#6AD01F',
-            customClass: {
-              container: 'full-screen-alert'
-            }
-          })
-          const editProfile = {
-            nama,
-            email,
-            noTelepon
-          }
-          console.log('Data yang akan disubmit:', editProfile)
+          editProfile()
         }
       })
     }
   }
+   const editProfile = async () => {
+     try {
+       const response = await fetch(`${AppURL.Users}/update1/${id}`, {
+         method: 'PUT',
+         headers: {
+           'Content-Type': 'application/json',
+           Authorization: `Bearer ${localStorage.getItem('token')}`
+         },
+         body: JSON.stringify({
+           name,
+           email,
+           telephone
+         })
+       })
+       if (!response.ok) {
+         throw new Error('Failed to edit profile')
+       }
+       const data = await response.json()
+       Swal.fire({
+         title: 'Profile berhasil diedit!',
+         icon: 'success',
+         confirmButtonColor: '#6AD01F',
+         customClass: {
+           container: 'full-screen-alert'
+         }
+       })
+       console.log('Data yang akan disubmit:', data)
+     } catch (error) {
+       console.error('Error editing profile:', error)
+       Swal.fire({
+         title: 'Error!',
+         text: 'Failed to edit profile',
+         icon: 'error',
+         confirmButtonColor: '#6AD01F',
+         customClass: {
+           container: 'full-screen-alert'
+         }
+       })
+     }
+   }
 
-  const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNama(event.target.value)
-    if (errors.nama) {
-      setErrors({ ...errors, nama: '' })
+  const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value)
+    if (errors.name) {
+      setErrors({ ...errors, name: '' })
     }
   }
 
@@ -125,10 +153,10 @@ const TabAccount = () => {
     }
   }
 
-  const handleChangeNoTelepon = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNoTelepon(event.target.value)
-    if (errors.noTelepon) {
-      setErrors({ ...errors, noTelepon: '' })
+  const handleChangetelephone = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTelephone(event.target.value)
+    if (errors.telephone) {
+      setErrors({ ...errors, telephone: '' })
     }
   }
 
@@ -164,10 +192,10 @@ const TabAccount = () => {
             <TextField
               fullWidth
               label='Full Name'
-              error={!!errors.nama}
-              helperText={errors.nama}
-              value={nama}
-              onChange={handleChangeNama}
+              error={!!errors.name}
+              helperText={errors.name}
+              value={name}
+              onChange={handleChangeName}
               placeholder='Monkey D Luffy'
               InputProps={{
                 startAdornment: (
@@ -202,10 +230,10 @@ const TabAccount = () => {
               fullWidth
               type='number'
               label='Phone No.'
-              error={!!errors.noTelepon}
-              helperText={errors.noTelepon}
-              value={noTelepon}
-              onChange={handleChangeNoTelepon}
+              error={!!errors.telephone}
+              helperText={errors.telephone}
+              value={telephone}
+              onChange={handleChangetelephone}
               placeholder='+62-123-456-8790'
               InputProps={{
                 startAdornment: (

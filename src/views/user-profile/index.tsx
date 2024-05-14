@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import Button from '@mui/material/Button'
 import Link from 'next/link'
+import AppURL from 'src/api/AppURL'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -18,7 +19,30 @@ const ImgStyled = styled('img')(({ theme }) => ({
 const UserProfile = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(true)
   const [imgSrc, setImgSrc] = useState<string>('/images/avatars/1.png')
+  const [userData, setUserData] = useState<any>(null)
   const router = useRouter()
+
+    useEffect(() => {
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch(AppURL.Profile, {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+          if (!response.ok) {
+            throw new Error('Gagal mengambil data user')
+          }
+          const userData = await response.json()
+          setUserData(userData)
+          // console.log(userData)
+        } catch (error) {
+          console.error('Terjadi kesalahan:', error)
+        }
+      }
+      fetchUserData()
+    }, [])
 
   return (
     <CardContent>
@@ -32,22 +56,26 @@ const UserProfile = () => {
 
           <Grid item xs={12}>
             <Typography variant='body1'>
-              <span style={{ display: 'inline-block', width: 120 }}>Nama</span>: .........
+              <span style={{ display: 'inline-block', width: 120 }}>Nama</span>: {userData ? userData.name : '...'}
             </Typography>
             <Typography variant='body1'>
-              <span style={{ display: 'inline-block', width: 120 }}>Email</span>: ----------
+              <span style={{ display: 'inline-block', width: 120 }}>Email</span>: {userData ? userData.email : '...'}
             </Typography>
             <Typography variant='body1'>
-              <span style={{ display: 'inline-block', width: 120 }}>No telephone</span>: 123456789
+              <span style={{ display: 'inline-block', width: 120 }}>No telephone</span>:{' '}
+              {userData ? userData.telephone : '...'}
             </Typography>
             <Typography variant='body1'>
-              <span style={{ display: 'inline-block', width: 120 }}>Posisi</span>: ---------
+              <span style={{ display: 'inline-block', width: 120 }}>Posisi</span>:{' '}
+              {userData ? userData.position : '...'}
             </Typography>
             <Typography variant='body1'>
-              <span style={{ display: 'inline-block', width: 120 }}>Departemen</span>: ----------
+              <span style={{ display: 'inline-block', width: 120 }}>Departemen</span>:{' '}
+              {userData ? userData.department : '...'}
             </Typography>
             <Typography variant='body1'>
-              <span style={{ display: 'inline-block', width: 120 }}>Jatah cuti</span>: -------------
+              <span style={{ display: 'inline-block', width: 120 }}>Jatah cuti</span>:{' '}
+              {userData ? userData.total_days : '...'}
             </Typography>
           </Grid>
 

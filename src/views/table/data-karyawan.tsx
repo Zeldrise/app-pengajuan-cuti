@@ -66,11 +66,11 @@ const DataKaryawan = () => {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [sisaCutiOrder])
 
   const fetchData = async () => {
     try {
-      const response = await fetch(AppURL.Users, {
+      const response = await fetch(`${AppURL.Users}?sort_by=${sisaCutiOrder}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`

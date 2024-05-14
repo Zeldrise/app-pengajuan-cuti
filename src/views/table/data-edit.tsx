@@ -67,7 +67,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
     } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
       errors.email = 'Format email tidak valid'
     }
-    if (!telephone) errors.telephone = 'Nomor telepon darurat harus diisi'
+    if (!telephone) errors.telephone = 'Nomor telepon harus diisi'
     if (!position) errors.position = 'Position harus diisi'
     if (!department) errors.department = 'Department harus diisi'
     if (!gender) errors.gender = 'Gender harus dipilih'
@@ -77,7 +77,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
   }
   const handleEditEmployee = async () => {
     try {
-      const response = await fetch(`${AppURL.Users}/update/${rowData.id}`, {
+      const response = await fetch(`${AppURL.Users}/${rowData.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -269,28 +269,29 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
               )
             }}
           />
-          <TextField
-            fullWidth
-            sx={{ marginTop: 5 }}
-            label='position'
-            value={position} // Ubah placeholder menjadi value agar nilai yang diinput terpantau
-            onChange={handleChangeposition}
-            error={!!errors.position}
-            helperText={errors.position}
-            placeholder={rowData?.position}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <BadgeAccount />
-                </InputAdornment>
-              )
-            }}
-          />
+          <FormControl fullWidth sx={{ marginTop: 5 }}>
+            <InputLabel id='form-layouts-separator-select-label'>Position</InputLabel>
+            <Select
+              label='Position'
+              defaultValue=''
+              id='form-layouts-separator-select'
+              labelId='form-layouts-separator-select-label'
+              error={!!errors.position}
+              helperText={errors.position}
+              value={position}
+              onChange={handleChangeposition}
+            >
+              <MenuItem value='hr'>hr</MenuItem>
+              <MenuItem value='admin'>admin</MenuItem>
+              <MenuItem value='karyawan'>karyawan</MenuItem>
+            </Select>
+            {errors.position && <FormHelperText error>{errors.position}</FormHelperText>}
+          </FormControl>
 
           <TextField
             fullWidth
             sx={{ marginTop: 5 }}
-            label='department'
+            label='Department'
             value={department} // Menambahkan value dan onChange untuk input department
             onChange={handleChangedepartment}
             error={!!errors.department}
