@@ -51,6 +51,7 @@ const FormPengajuanCuti = () => {
   const [showDoctorNoteField, setShowDoctorNoteField] = useState<boolean>(false)
   const [doctorNoteImage, setDoctorNoteImage] = useState<string | null>(null)
   const [urgencyOptions, setUrgencyOptions] = useState<any[]>([])
+  const [leaveOptions, setLeaveOptions] = useState<any[]>([])
   const [urgency, setUrgency] = useState<string>('')
   const [userData, setUserData] = useState<any>(null)
   const [errors, setErrors] = useState<any>({})
@@ -64,8 +65,8 @@ const FormPengajuanCuti = () => {
     if (!departemen) errors.departemen = 'Departemen harus diisi'
     if (!cutiType) errors.cutiType = 'Tipe cuti harus dipilih'
     if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
-    if (cutiType === 'Cuti Sakit' && !doctorNoteImage) errors.doctorNote = 'Surat dokter harus diunggah'
-    if (cutiType === 'Cuti Urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
+    if (Number(cutiType) === 2 && !doctorNoteImage) errors.doctorNote = 'Surat dokter harus diunggah'
+    if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
     if (!startDate) errors.startDate = 'Tanggal awal harus diisi' 
     if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
     
@@ -75,55 +76,107 @@ const FormPengajuanCuti = () => {
     return Object.keys(errors).length === 0
   }
 
+  const submitFormData = async (data: any) => {
+    try {
+      const response = await fetch(AppURL.Submissions, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(data)
+      })
+      if (!response.ok) {
+        throw new Error('Failed to submit form data')
+      }
+      return response.json()
+    } catch (error) {
+      console.error('Error submitting form data:', error)
+      throw error
+    }
+  }
+
+
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (validateForm()) {
-          Swal.fire({
-            title: 'Apa Pengajuan Sudah Benar?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#6AD01F',
-            cancelButtonColor: '#FF6166',
-            confirmButtonText: 'Ajukan',
-            cancelButtonText: 'Batal',
-            customClass: {
-              container: 'full-screen-alert'
+      Swal.fire({
+        title: 'Apa Pengajuan Sudah Benar?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#6AD01F',
+        cancelButtonColor: '#FF6166',
+        confirmButtonText: 'Ajukan',
+        cancelButtonText: 'Batal',
+        customClass: {
+          container: 'full-screen-alert'
+        }
+      }).then(async result => {
+        if (result.isConfirmed) {
+          try {
+            const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
+            const dataPengajuan = {
+              start_date: startDate,
+              end_date: endDate,
+              leave_type: finalCutiType,
+              emergency_call: telepon,
+              description: deskripsi
             }
-          }).then(result => {
-            if (result.isConfirmed) {
-              Swal.fire({
-                title: 'Pengajuan Berhasil Disubmit!',
-                icon: 'success',
-                confirmButtonColor: '#6AD01F',
-                customClass: {
-                  container: 'full-screen-alert'
-                }
-              })
-              const dataPengajuan = {
-                nama,
-                telepon,
-                posisi,
-                departemen,
-                cutiType,
-                urgency,
-                deskripsi,
-                startDate,
-                doctorNoteImage,
-                endDate
+            await submitFormData(dataPengajuan)
+            Swal.fire({
+              title: 'Pengajuan Berhasil Disubmit!',
+              icon: 'success',
+              confirmButtonColor: '#6AD01F',
+              customClass: {
+                container: 'full-screen-alert'
               }
-              console.log('Data yang akan disubmit:', dataPengajuan)
-            }
-          })
-
+            })
+          } catch (error) {
+            Swal.fire({
+              title: 'Terjadi Kesalahan!',
+              text: 'Gagal mengirim data pengajuan cuti. Silakan coba lagi.',
+              icon: 'error',
+              confirmButtonColor: '#FF6166',
+              customClass: {
+                container: 'full-screen-alert'
+              }
+            })
+          }
+        }
+      })
     }
   }
+
     const handleChangeStartDate = (date: Date | null) => {
       setStartDate(date)
-      if (errors.startDate) {
-        setErrors({ ...errors, startDate: '' }) 
+
+      if (cutiType === 'Cuti urgensi' && date) {
+        const urgencyNumber = Number(urgency)
+        if (urgencyNumber === 3) {
+          handleChangeEndDate(addDays(date, 2))
+        } else if (
+          urgencyNumber === 4 ||
+          urgencyNumber === 5 ||
+          urgencyNumber === 7 ||
+          urgencyNumber === 8 ||
+          urgencyNumber === 9
+        ) {
+          handleChangeEndDate(addDays(date, 1))
+        } else if (urgencyNumber === 6) {
+          handleChangeEndDate(addDays(date, 0))
+        }
+
+        if (errors.startDate || errors.endDate) {
+          setErrors({ ...errors, startDate: '', endDate: '' })
+        }
+      } else {
+        if (errors.startDate) {
+          setErrors({ ...errors, startDate: '' })
+        }
       }
     }
+
 
     const handleChangeEndDate = (date: Date | null) => {
       setEndDate(date)
@@ -135,16 +188,15 @@ const FormPengajuanCuti = () => {
   const handleCutiTypeChange = (event: SelectChangeEvent<string>) => {
     const selectedType = event.target.value as string
     setCutiType(selectedType)
-
-    setShowUrgencyFields(selectedType === 'Cuti Urgensi')
-    setShowDoctorNoteField(selectedType === 'Cuti Sakit')
+    setShowUrgencyFields(selectedType === 'Cuti urgensi')
+    setShowDoctorNoteField(Number(selectedType) === 2)
     if (errors.cutiType) {
       setErrors({ ...errors, cutiType: '' })
     }
   }
   useEffect(() => {
-    // Set showDoctorNoteField to true if cutiType is 'Cuti Sakit' and duration is more than 1 day
-    if (cutiType === 'Cuti Sakit' && startDate && endDate) {
+    // Set showDoctorNoteField to true if cutiType is 2 and duration is more than 1 day
+    if (Number(cutiType) === 2 && startDate && endDate) {
       const duration = differenceInDays(endDate, startDate)
       setShowDoctorNoteField(duration > 0)
     } else {
@@ -197,12 +249,16 @@ const FormPengajuanCuti = () => {
          setErrors({ ...errors, deskripsi: '' })
        }
      }
-     const handleChangeUrgency = (event: React.ChangeEvent<HTMLInputElement>) => {
-       setUrgency(event.target.value)
-       if (errors.urgency) {
-         setErrors({ ...errors, urgency: '' })
-       }
-     }
+    
+      const handleChangeUrgency = (event: SelectChangeEvent<string>) => {
+        const selectedUrgency = event.target.value as string
+        setUrgency(selectedUrgency)
+        setStartDate(null)
+        setEndDate(null)
+        if (errors.urgency) {
+          setErrors({ ...errors, urgency: '' })
+        }
+      }
 
       useEffect(() => {
         const fetchUserData = async () => {
@@ -218,6 +274,9 @@ const FormPengajuanCuti = () => {
             }
             const userData = await response.json()
             setUserData(userData)
+            setNama(userData.name) // Set the initial state with the fetched user data
+            setPosisi(userData.position) // Set the initial state with the fetched user data
+            setDepartemen(userData.department)
             console.log(userData)
           } catch (error) {
             console.error('Terjadi kesalahan:', error)
@@ -227,7 +286,6 @@ const FormPengajuanCuti = () => {
       }, [])
 
       useEffect(() => {
-        // Fetch urgency options from API
         const fetchUrgencyOptions = async () => {
           try {
             const response = await fetch(`${AppURL.LeaveType}?is_emergency=1`, {
@@ -248,6 +306,28 @@ const FormPengajuanCuti = () => {
 
         fetchUrgencyOptions()
       }, [])
+
+       useEffect(() => {
+         const fetchLeaveOptions = async () => {
+           try {
+             const response = await fetch(`${AppURL.LeaveType}?is_emergency=false`, {
+               method: 'GET',
+               headers: {
+                 Authorization: `Bearer ${localStorage.getItem('token')}`
+               }
+             })
+             if (!response.ok) {
+               throw new Error('Failed to fetch urgency options')
+             }
+             const leaveData = await response.json()
+             setLeaveOptions(leaveData)
+           } catch (error) {
+             console.error('Error fetching urgency options:', error)
+           }
+         }
+
+         fetchLeaveOptions()
+       }, [])
 
  
   return (
@@ -274,11 +354,12 @@ const FormPengajuanCuti = () => {
               <TextField
                 fullWidth
                 label='Nama'
-                placeholder='Monkey D Luffy'
                 error={!!errors.nama}
                 helperText={errors.nama}
-                value={userData ? userData.name : '...'}
+                placeholder='Masukkan Nama'
+                value={nama}
                 onChange={handleChangeNama}
+                disabled
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -314,11 +395,12 @@ const FormPengajuanCuti = () => {
               <TextField
                 fullWidth
                 label='Posisi'
-                placeholder='Developer'
                 error={!!errors.posisi}
                 helperText={errors.posisi}
-                value={userData ? userData.position : '...'}
+                placeholder='Masukkan Posisi'
+                value={posisi}
                 onChange={handleChangePosisi}
+                disabled
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -332,11 +414,12 @@ const FormPengajuanCuti = () => {
               <TextField
                 fullWidth
                 label='Departemen'
-                placeholder='IT'
                 error={!!errors.departemen}
                 helperText={errors.departemen}
-                value={userData ? userData.department : '...'}
+                placeholder='Masukkan Departemen'
+                value={departemen}
                 onChange={handleChangeDepartemen}
+                disabled
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
@@ -358,9 +441,12 @@ const FormPengajuanCuti = () => {
                   error={!!errors.cutiType}
                   value={cutiType}
                 >
-                  <MenuItem value='Cuti Tahunan'>Cuti Tahunan</MenuItem>
-                  <MenuItem value='Cuti Urgensi'>Cuti Urgensi</MenuItem>
-                  <MenuItem value='Cuti Sakit'>Cuti Sakit</MenuItem>
+                  {leaveOptions.map(option => (
+                    <MenuItem key={option.id} value={option.id}>
+                      {option.type}
+                    </MenuItem>
+                  ))}
+                  <MenuItem value='Cuti urgensi'>Cuti urgensi</MenuItem>
                 </Select>
                 {errors.cutiType && <FormHelperText error>{errors.cutiType}</FormHelperText>}
               </FormControl>
@@ -389,9 +475,9 @@ const FormPengajuanCuti = () => {
             {showUrgencyFields && (
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel id='form-layouts-separator-select-label'>Cuti Urgensi</InputLabel>
+                  <InputLabel id='form-layouts-separator-select-label'>Cuti urgensi</InputLabel>
                   <Select
-                    label='Tipe Urgensi'
+                    label='Tipe urgensi'
                     defaultValue=''
                     id='form-layouts-separator-select'
                     labelId='form-layouts-separator-select-label'
@@ -400,7 +486,7 @@ const FormPengajuanCuti = () => {
                     value={urgency}
                   >
                     {urgencyOptions.map(option => (
-                      <MenuItem key={option.id} value={option.type}>
+                      <MenuItem key={option.id} value={option.id}>
                         {option.type}
                       </MenuItem>
                     ))}
@@ -411,7 +497,7 @@ const FormPengajuanCuti = () => {
             )}
             {showDoctorNoteField && (
               <Grid item xs={12}>
-                {/* Additional field for Cuti Sakit */}
+                {/* Additional field for Cuti sakit */}
                 <input
                   accept='image/*'
                   id='contained-button-file'
@@ -443,12 +529,7 @@ const FormPengajuanCuti = () => {
                 placeholderText='MM-DD-YYYY'
                 customInput={<TglAwal />}
                 id='form-layouts-separator-date'
-                onChange={date => {
-                  handleChangeStartDate(date)
-                  if (cutiType === 'Cuti Urgensi' && urgency === 'Keluarga meninggal' && date) {
-                    handleChangeEndDate(addDays(date, 1)) // Set end date to next day if urgency is 'keluarga meninggal'
-                  }
-                }}
+                onChange={handleChangeStartDate}
                 minDate={startOfToday()}
               />
               {errors.startDate && <FormHelperText error>{errors.startDate}</FormHelperText>}
@@ -464,6 +545,7 @@ const FormPengajuanCuti = () => {
                 onChange={handleChangeEndDate}
                 minDate={startOfToday()}
                 startDate={startDate}
+                disabled={cutiType === 'Cuti urgensi'}
               />
               {errors.endDate && <FormHelperText error>{errors.endDate}</FormHelperText>}
             </Grid>

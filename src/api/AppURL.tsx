@@ -5,6 +5,7 @@ class AppURL {
   static Users = `${AppURL.BaseURL}/users`
   static Profile = `${AppURL.Users}/profil`
   static LeaveType = `${AppURL.BaseURL}/leave-types`
+  static Submissions = `${AppURL.BaseURL}/submissions`
 }
 
 export default AppURL
