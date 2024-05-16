@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent, useEffect } from 'react'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableRow from '@mui/material/TableRow'
@@ -11,178 +11,46 @@ import Button from '@mui/material/Button'
 import { FileEye } from 'mdi-material-ui'
 import Chip from '@mui/material/Chip'
 import CutiKaryawanDetail from './cuti-k-detail'
+import AppURL from 'src/api/AppURL'
 
 interface Column {
-  id:
-    | 'nama'
-    | 'tgl_penyerahan'
-    | 'tgl_mulai'
-    | 'tgl_akhir'
-    | 'lama_cuti'
-    | 'tipe_cuti'
-    | 'status'
-    | 'approved_by'
-    | 'actions'
+  id: keyof Data
   label: string
   minWidth?: number
   align?: 'right'
-  format?: (value: number) => string
+  format?: (value: any) => string
 }
 
 const columns: readonly Column[] = [
-  { id: 'nama', label: 'Nama', minWidth: 170 },
-  { id: 'tgl_penyerahan', label: 'Tanggal Penyerahan', minWidth: 100 },
-  { id: 'tgl_mulai', label: 'Tanggal Mulai', minWidth: 100 },
-  { id: 'tgl_akhir', label: 'Tanggal Akhir', minWidth: 100 },
-  { id: 'lama_cuti', label: 'Lama Cuti', minWidth: 100 },
-  { id: 'tipe_cuti', label: 'Tipe Cuti', minWidth: 100 },
+  { id: 'name', label: 'Nama', minWidth: 170 },
+  { id: 'submissionDate', label: 'Tanggal Penyerahan', minWidth: 100 },
+  { id: 'startDate', label: 'Tanggal Mulai', minWidth: 100 },
+  { id: 'endDate', label: 'Tanggal Akhir', minWidth: 100 },
+  { id: 'totalDays', label: 'Lama Cuti', minWidth: 100 },
+  { id: 'leaveType', label: 'Tipe Cuti', minWidth: 100 },
   { id: 'status', label: 'Status', minWidth: 100 },
-  { id: 'approved_by', label: 'Approved By', minWidth: 100 },
+  { id: 'approver', label: 'Approved By', minWidth: 100 },
   { id: 'actions', label: 'Actions', minWidth: 100 }
 ]
 
 interface Data {
   id: number
-  nama: string
-  tgl_penyerahan: string
-  no_telephone: string
-  telephone_darurat: string
-  posisi: string
-  departemen: string
-  tgl_mulai: string
-  tgl_akhir: string
-  lama_cuti: number
-  tipe_cuti: string
-  deskripsi: string
+  name: string
+  submissionDate: string
+  telephone: string
+  emergencyCall: string
+  position: string
+  department: string
+  startDate: string
+  endDate: string
+  totalDays: number
+  leaveType: string
+  leaveAllowance: number
+  description: string
   status: string
-  approved_by: string
+  approver: string
 }
 
-function createData(
-  nama: string,
-  tgl_penyerahan: string,
-  no_telephone: string,
-  telephone_darurat: string,
-  posisi: string,
-  departemen: string,
-  tgl_mulai: string,
-  tgl_akhir: string,
-  lama_cuti: number,
-  tipe_cuti: string,
-  deskripsi: string,
-  status: string,
-  approved_by: string
-) {
-  return {
-    nama,
-    tgl_penyerahan,
-    no_telephone,
-    telephone_darurat,
-    posisi,
-    departemen,
-    tgl_mulai,
-    tgl_akhir,
-    lama_cuti,
-    tipe_cuti,
-    deskripsi,
-    status,
-    approved_by
-  }
-}
-
-const rows = [
-  createData(
-    'Kyujin',
-    '20 Januari 2024',
-    '+62 987-654-321',
-    '+62 123-456-789',
-    'Developer',
-    'IT',
-    '25 Januari 2024',
-    '30 Januari 2024',
-    5,
-    'liburan',
-    'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged It was popularised in',
-    'Ditolak',
-    'HR'
-  ),
-  createData(
-    'Jennie',
-    '20 Februari 2024',
-    '+62 987-654-321',
-    '+62 123-456-789',
-    'Developer',
-    'IT',
-    '	25 Februari 2024',
-    '30 Februari 2024',
-    5,
-    'liburan',
-    'test',
-    'Diterima',
-    'HR'
-  ),
-  createData(
-    'Wonhee',
-    '20 Maret 2024',
-    '+62 987-654-321',
-    '+62 123-456-789',
-    'Developer',
-    'IT',
-    '	25 maret 2024',
-    '30 maret 2024',
-    5,
-    'liburan',
-    'test',
-    'Diterima',
-    'HR'
-  ),
-  createData(
-    'Haerin',
-    '20 April 2024',
-    '+62 987-654-321',
-    '+62 123-456-789',
-    'Developer',
-    'IT',
-    '	25 April 2024',
-    '30 April 2024',
-    5,
-    'liburan',
-    'test',
-    'Diterima',
-    'HR'
-  ),
-  createData(
-    'Chaewon',
-    '20 Mei 2024',
-    '+62 987-654-321',
-
-    '+62 123-456-789',
-    'Developer',
-    'IT',
-    '	25 Mei 2024',
-    '30 Mei 2024',
-    5,
-    'liburan',
-    'test',
-    'Diterima',
-    'HR'
-  ),
-  createData(
-    'Pharita ',
-    '20 Juni 2024',
-    '+62 987-654-321',
-    '+62 123-456-789',
-    'Developer',
-    'IT',
-    '	25 Juni 2024',
-    '30 Juni 2024',
-    5,
-    'liburan',
-    'test',
-    'Diterima',
-    'HR'
-  )
-]
 
 const statusObj: { [key: string]: { color: string } } = {
   Diterima: { color: 'success' },
@@ -196,7 +64,31 @@ const CutiKaryawan = () => {
   const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
   const [isCutiKaryawanDetailOpen, setIsCutiKaryawanDetailOpen] = useState<boolean>(false)
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
-  const [orderBy, setOrderBy] = useState<keyof Data>('tgl_penyerahan')
+   const [orderBy, setOrderBy] = useState<keyof Data>('submissionDate')
+   const [rows, setRows] = useState<Data[]>([])
+
+
+   useEffect(() => {
+     fetchSubmissions()
+   }, [order])
+
+   const fetchSubmissions = async () => {
+     try {
+       const response = await fetch(`${AppURL.Submissions}?status=diterima,ditolak&sort_by=${order}`, {
+         method: 'GET',
+         headers: {
+           Authorization: `Bearer ${localStorage.getItem('token')}`
+         }
+       })
+       if (!response.ok) {
+         throw new Error('Failed to fetch data')
+       }
+       const data = await response.json()
+       setRows(data.submissions)
+     } catch (error) {
+       console.error('Error fetching data:', error)
+     }
+   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
@@ -222,22 +114,16 @@ const CutiKaryawan = () => {
     setOrderBy(property)
   }
 
-  const sortedRows =
-    order === 'asc'
-      ? [...rows].sort((a, b) => {
-          if (orderBy === 'tgl_penyerahan' || orderBy === 'tgl_mulai' || orderBy === 'tgl_akhir') {
-            return new Date(a[orderBy]).getTime() - new Date(b[orderBy]).getTime()
-          }  else {
-            return 0
-          }
-        })
-      : [...rows].sort((a, b) => {
-          if (orderBy === 'tgl_penyerahan' || orderBy === 'tgl_mulai' || orderBy === 'tgl_akhir') {
-            return new Date(b[orderBy]).getTime() - new Date(a[orderBy]).getTime()
-          } else {
-            return 0
-          }
-        })
+  const sortedRows = rows.sort((a, b) => {
+    if (orderBy === 'submissionDate' || orderBy === 'startDate' || orderBy === 'endDate') {
+      return order === 'asc'
+        ? new Date(a[orderBy]).getTime() - new Date(b[orderBy]).getTime()
+        : new Date(b[orderBy]).getTime() - new Date(a[orderBy]).getTime()
+    } else if (orderBy === 'leaveAllowance') {
+      return order === 'asc' ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy]
+    }
+    return 0
+  })
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
@@ -260,7 +146,7 @@ const CutiKaryawan = () => {
           <TableBody>
             {sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
               return (
-                <TableRow hover role='checkbox' tabIndex={-1} key={row.nama}>
+                <TableRow hover role='checkbox' tabIndex={-1} key={row.id}>
                   {columns.map(column => {
                     const value = row[column.id]
                     if (column.id === 'actions') {

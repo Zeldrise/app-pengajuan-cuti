@@ -9,6 +9,7 @@ import { TransitionProps } from '@mui/material/transitions'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 import { CloseCircle } from 'mdi-material-ui'
+import AppURL from 'src/api/AppURL'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -18,6 +19,24 @@ const Transition = React.forwardRef(function Transition(
 ) {
   return <Slide direction='up' ref={ref} {...props} />
 })
+
+interface Data {
+  id: number
+  name: string
+  submissionDate: string
+  telephone: string
+  emergencyCall: string
+  position: string
+  department: string
+  startDate: string
+  endDate: string
+  totalDays: number
+  leaveType: string
+  leaveAllowance: number
+  description: string
+  status: string
+  approver: string
+}
 
 interface PropsCutiKaryawanDetail {
   open: boolean
@@ -55,46 +74,45 @@ const CutiKaryawanDetail: React.FC<PropsCutiKaryawanDetail> = ({ open, onClose, 
       <DialogContent>
         <div>
           <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Nama</span>: {rowData?.nama}
+            <span style={{ display: 'inline-block', width: 180 }}>Nama</span>: {rowData?.name}
           </p>
           <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Tanggal Penyerahan</span>: {rowData?.tgl_penyerahan}
+            <span style={{ display: 'inline-block', width: 180 }}>Tanggal Penyerahan</span>: {rowData?.submissionDate}
           </p>
           <p>
-            <span style={{ display: 'inline-block', width: 180 }}>No Telephone</span>: {rowData?.no_telephone}
+            <span style={{ display: 'inline-block', width: 180 }}>No Telephone</span>: {rowData?.telephone}
           </p>
           <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Telephone Darurat</span>: {rowData?.telephone_darurat}
+            <span style={{ display: 'inline-block', width: 180 }}>Telephone Darurat</span>: {rowData?.emergencyCall}
           </p>
           <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Posisi</span>: {rowData?.posisi}
+            <span style={{ display: 'inline-block', width: 180 }}>Posisi</span>: {rowData?.position}
           </p>
           <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Departemen</span>: {rowData?.departemen}
+            <span style={{ display: 'inline-block', width: 180 }}>Departemen</span>: {rowData?.department}
           </p>
           <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Tanggal Mulai</span>: {rowData?.tgl_mulai}
+            <span style={{ display: 'inline-block', width: 180 }}>Tanggal Mulai</span>: {rowData?.startDate}
           </p>
           <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Tanggal Akhir</span>: {rowData?.tgl_akhir}
+            <span style={{ display: 'inline-block', width: 180 }}>Tanggal Akhir</span>: {rowData?.endDate}
           </p>
           <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Lama Cuti</span>: {rowData?.lama_cuti}
+            <span style={{ display: 'inline-block', width: 180 }}>Lama Cuti</span>: {rowData?.totalDays}
           </p>
           <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Tipe Cuti</span>: {rowData?.tipe_cuti}
+            <span style={{ display: 'inline-block', width: 180 }}>Tipe Cuti</span>: {rowData?.leaveType}
           </p>
           <p>
             <span style={{ display: 'inline-block', width: 180 }}>Status</span>:{' '}
-            <span style={{ color: getStatusTextColor(rowData?.status || '')}}>{rowData?.status}</span>
-            
+            <span style={{ color: getStatusTextColor(rowData?.status || '') }}>{rowData?.status}</span>
           </p>
           <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Approved By</span>: {rowData?.approved_by}
+            <span style={{ display: 'inline-block', width: 180 }}>Approved By</span>: {rowData?.approver}
           </p>
           <p>
             <span style={{ display: 'inline-block', width: 180 }}>Deskripsi</span>:{' '}
-            <span style={{ display: 'inline-flex', width: 300 }}>{rowData?.deskripsi}</span>
+            <span style={{ display: 'inline-flex', width: 300 }}>{rowData?.description}</span>
           </p>
         </div>
       </DialogContent>

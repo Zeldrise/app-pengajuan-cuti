@@ -140,7 +140,7 @@ const CutiPribadi = () => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
   const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
   const [isEditCutiPribadiOpen, setIsEditCutiPribadiOpen] = useState<boolean>(false)
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc')
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = useState<keyof Data>('tgl_penyerahan')
 
   const handleChangePage = (event: unknown, newPage: number) => {

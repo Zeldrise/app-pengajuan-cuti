@@ -42,16 +42,6 @@ interface Data {
   total_days: number
 }
 
-function createData(
-  name: string,
-  email: string,
-  telephone: string,
-  position: string,
-  department: string,
-  total_days: number
-) {
-  return { name, email, telephone, position, department, total_days }
-}
 
 const DataKaryawan = () => {
   const [page, setPage] = useState<number>(0)

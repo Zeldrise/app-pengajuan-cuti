@@ -65,7 +65,11 @@ const FormPengajuanCuti = () => {
     if (!departemen) errors.departemen = 'Departemen harus diisi'
     if (!cutiType) errors.cutiType = 'Tipe cuti harus dipilih'
     if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
-    if (Number(cutiType) === 2 && !doctorNoteImage) errors.doctorNote = 'Surat dokter harus diunggah'
+    const isSickLeave = Number(cutiType) === 2
+    const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
+    if (isSickLeave && duration > 1 && !doctorNoteImage) {
+      errors.doctorNote = 'Surat dokter harus diunggah'
+    }
     if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
     if (!startDate) errors.startDate = 'Tanggal awal harus diisi' 
     if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
@@ -189,20 +193,20 @@ const FormPengajuanCuti = () => {
     const selectedType = event.target.value as string
     setCutiType(selectedType)
     setShowUrgencyFields(selectedType === 'Cuti urgensi')
-    setShowDoctorNoteField(Number(selectedType) === 2)
+     const isSickLeave = Number(selectedType) === 2
+     setShowDoctorNoteField(isSickLeave && startDate && endDate && differenceInDays(endDate, startDate) > 0)
     if (errors.cutiType) {
       setErrors({ ...errors, cutiType: '' })
     }
   }
-  useEffect(() => {
-    // Set showDoctorNoteField to true if cutiType is 2 and duration is more than 1 day
-    if (Number(cutiType) === 2 && startDate && endDate) {
-      const duration = differenceInDays(endDate, startDate)
-      setShowDoctorNoteField(duration > 0)
-    } else {
-      setShowDoctorNoteField(false)
-    }
-  }, [cutiType, startDate, endDate])
+   useEffect(() => {
+     if (Number(cutiType) === 2 && startDate && endDate) {
+       const duration = differenceInDays(endDate, startDate) + 1
+       setShowDoctorNoteField(duration > 1)
+     } else {
+       setShowDoctorNoteField(false)
+     }
+   }, [cutiType, startDate, endDate])
  const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   const file = event.target.files && event.target.files[0]
   if (file) {
@@ -277,7 +281,7 @@ const FormPengajuanCuti = () => {
             setNama(userData.name) // Set the initial state with the fetched user data
             setPosisi(userData.position) // Set the initial state with the fetched user data
             setDepartemen(userData.department)
-            console.log(userData)
+            // console.log(userData)
           } catch (error) {
             console.error('Terjadi kesalahan:', error)
           }
@@ -388,9 +392,7 @@ const FormPengajuanCuti = () => {
                 }}
               />
             </Grid>
-            {/* <Grid item xs={12}>
-              <Divider sx={{ marginBottom: 0 }} />
-            </Grid> */}
+
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
