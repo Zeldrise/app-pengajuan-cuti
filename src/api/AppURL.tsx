@@ -1,9 +1,8 @@
-import dotenv from 'dotenv'
+console.log("Base URL:", process.env.NEXT_PUBLIC_BASE_URL);
 
-dotenv.config()
 
 class AppURL {
-  static BaseURL = process.env.REACT_APP_BASE_URL
+  static BaseURL = process.env.NEXT_PUBLIC_BASE_URL
 
   static UserLogin = `${AppURL.BaseURL}/auth/login`
   static UserChangePass = `${AppURL.BaseURL}/auth/changePassword`
