@@ -47,6 +47,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [telephone, setTelephone] = useState('')
+  const [role, setRole] = useState('')
   const [position, setPosition] = useState('')
   const [department, setDepartment] = useState('')
   const [gender, setGender] = useState('')
@@ -65,6 +66,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
       errors.email = 'Format email tidak valid'
     }
     if (!telephone) errors.telephone = 'Nomor telepon harus diisi'
+    if (!role) errors.role = 'Role harus diisi'
     if (!position) errors.position = 'Position harus diisi'
     if (!department) errors.department = 'Department harus diisi'
     if (!gender) errors.gender = 'Gender harus dipilih'
@@ -99,6 +101,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
                 name,
                 email,
                 telephone,
+                role,
                 position,
                 department,
                 gender,
@@ -121,6 +124,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
             setName('')
             setEmail('')
             setTelephone('')
+            setRole('')
             setPosition('')
             setDepartment('')
             setGender('')
@@ -164,6 +168,13 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
       setErrors({ ...errors, telephone: '' })
     }
   }
+
+   const handleChangeRole = (event: React.ChangeEvent<HTMLInputElement>) => {
+     setRole(event.target.value)
+     if (errors.role) {
+       setErrors({ ...errors, role: '' })
+     }
+   }
 
   const handleChangeposition = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPosition(event.target.value)
@@ -265,32 +276,49 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
 
          
           <FormControl fullWidth sx={{ marginTop: 5 }}>
-            <InputLabel id='form-layouts-separator-select-label'>Position</InputLabel>
+            <InputLabel id='form-layouts-separator-select-label'>Role</InputLabel>
             <Select
-              label='Position'
+              label='Role'
               defaultValue=''
               id='form-layouts-separator-select'
               labelId='form-layouts-separator-select-label'
-              error={!!errors.position}
-              helperText={errors.position}
-              value={position}
-              onChange={handleChangeposition}
+              error={!!errors.role}
+              helperText={errors.role}
+              value={role}
+              onChange={handleChangeRole}
             >
               <MenuItem value='hr'>hr</MenuItem>
-              <MenuItem value='admin'>admin</MenuItem>
+              <MenuItem value='staff'>staff</MenuItem>
               <MenuItem value='karyawan'>karyawan</MenuItem>
             </Select>
-            {errors.position && <FormHelperText error>{errors.position}</FormHelperText>}
+            {errors.role && <FormHelperText error>{errors.role}</FormHelperText>}
           </FormControl>
 
           <TextField
             fullWidth
             sx={{ marginTop: 5 }}
+            label='Position'
+            value={position}
+            onChange={handleChangeposition}
+            error={!!errors.position}
+            helperText={errors.position}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <AccountTie />
+                </InputAdornment>
+              )
+            }}
+          />
+
+          <TextField
+            fullWidth
+            sx={{ marginTop: 5 }}
             label='Department'
-            error={!!errors.department}
-            helperText={errors.department}
             value={department}
             onChange={handleChangedepartment}
+            error={!!errors.department}
+            helperText={errors.department}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>

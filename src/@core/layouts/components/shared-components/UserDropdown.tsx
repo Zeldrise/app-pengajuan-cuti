@@ -46,27 +46,30 @@ const UserDropdown = () => {
     setAnchorEl(null)
   }
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(AppURL.Profile, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-        if(!response.ok) {
-          throw new Error('Gagal mengambil data user')
+ 
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch(AppURL.Profile, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
-        const userData = await response.json()
-        setUserData(userData)
-        console.log(userData)
-      }catch (error) {
-        console.error('Terjadi kesalahan:', error)
+      })
+      if (!response.ok) {
+        throw new Error('Gagal mengambil data user')
       }
+      const userData = await response.json()
+      setUserData(userData)
+      console.log(userData)
+    } catch (error) {
+      console.error('Terjadi kesalahan:', error)
     }
+  }
+
+  useEffect(() => {
     fetchUserData()
   }, [])
+
 
   const styles = {
     py: 2,

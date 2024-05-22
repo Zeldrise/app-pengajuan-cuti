@@ -4,65 +4,93 @@ import PermintaanCuti from 'src/views/card/PermintaanCuti'
 import Ditolak from 'src/views/card/Ditolak'
 import Diterima from 'src/views/card/Diterima'
 import UserLayout from 'src/layouts/UserLayout'
+import { useEffect, useState } from 'react'
+import AppURL from 'src/api/AppURL'
 
-const position = 'hr';
-var dashboard: JSX.Element[]=[]
-if (position == 'hr') {
-  dashboard = [
-    <Grid container spacing={3}>
-      <Grid item xs={12} sm={6}>
-        <KaryawanCuti />
-      </Grid>
-      <Grid item xs={12} sm={6}>
-        <PermintaanCuti />
-      </Grid>
-      <Grid item xs={12} sm={6}>
-        <Diterima />
-      </Grid>
-      <Grid item xs={12} sm={6}>
-        <Ditolak />
-      </Grid>
-    </Grid>
-  ]
-} else if (position == 'staff') {
-  dashboard = [
-    <Grid container spacing={3}>
-      <Grid item xs={12} sm={6}>
-        <Diterima />
-      </Grid>
-      <Grid item xs={12} sm={6}>
-        <Ditolak />
-      </Grid>
-      <Grid item xs={12}>
-        <KaryawanCuti />
-      </Grid>
-    </Grid>
-  ]
-} else if (position == 'karyawan') {
-  dashboard = [
-    <Grid container spacing={3}>
-      <Grid item xs={12} sm={6}>
-        <Diterima />
-      </Grid>
-      <Grid item xs={12} sm={6}>
-        <Ditolak />
-      </Grid>
-    </Grid>
-  ]
-} else if (position == 'owner') {
-  dashboard = [
-    <Grid container spacing={3}>
-      <Grid item xs={12} sm={6}>
-        <KaryawanCuti />
-      </Grid>
-      <Grid item xs={12} sm={6}>
-        <PermintaanCuti />
-      </Grid>
-    </Grid>
-  ]
-}
+
 const index = () => {
-  return dashboard;
+  const [userData, setUserData] = useState<any>(null)
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(AppURL.Profile, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        if (!response.ok) {
+          throw new Error('Gagal mengambil data user')
+        }
+        const userData = await response.json()
+        setUserData(userData)
+        // console.log(userData)
+      } catch (error) {
+        console.error('Terjadi kesalahan:', error)
+      }
+    }
+    fetchUserData()
+  }, [])
+
+  const position = userData ? userData.role : '...'
+  var dashboard: JSX.Element[] = []
+  if (position == 'hr') {
+    dashboard = [
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6}>
+          <KaryawanCuti />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <PermintaanCuti />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Diterima />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Ditolak />
+        </Grid>
+      </Grid>
+    ]
+  } else if (position == 'staff') {
+    dashboard = [
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6}>
+          <Diterima />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Ditolak />
+        </Grid>
+        <Grid item xs={12}>
+          <KaryawanCuti />
+        </Grid>
+      </Grid>
+    ]
+  } else if (position == 'karyawan') {
+    dashboard = [
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6}>
+          <Diterima />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Ditolak />
+        </Grid>
+      </Grid>
+    ]
+  } else if (position == 'owner') {
+    dashboard = [
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6}>
+          <KaryawanCuti />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <PermintaanCuti />
+        </Grid>
+      </Grid>
+    ]
+  }
+
+  return dashboard
 }
 index.getLayout = (page: React.ReactNode) => <UserLayout>{page}</UserLayout>
 

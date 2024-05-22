@@ -1,81 +1,54 @@
-// ** React Imports
 import { ReactNode, useEffect, useState } from 'react'
-
-// ** MUI Imports
 import Box from '@mui/material/Box'
 import { Theme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
-
-// ** Layout Imports
-// !Do not remove this Layout import
 import VerticalLayout from 'src/@core/layouts/VerticalLayout'
-
-// ** Navigation Imports
 import VerticalNavItems from 'src/navigation/vertical'
-
-// ** Component Import
-// import UpgradeToProButton from './components/UpgradeToProButton'
 import VerticalAppBarContent from './components/vertical/AppBarContent'
-
-// ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
 import { useRouter } from 'next/router'
+import { VerticalNavItemsType } from 'src/@core/layouts/types'
 
 interface Props {
   children: ReactNode
 }
 
 const UserLayout = ({ children }: Props) => {
-  // ** Hooks
   const { settings, saveSettings } = useSettings()
-   const router = useRouter()
+  const router = useRouter()
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+  const [verticalNavItems, setVerticalNavItems] = useState<VerticalNavItemsType | null>(null)
 
-   useEffect(() => {
-     const token = localStorage.getItem('token')
-     if (!token) {
-       router.push('/login')
-     } else {
-       setIsAuthenticated(true)
-     }
-   }, [router])
+  useEffect(() => {
+    const fetchAuthStatus = async () => {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        router.push('/login')
+      } else {
+        setIsAuthenticated(true)
+        // Fetch vertical navigation items
+        try {
+          const items = await VerticalNavItems()
+          setVerticalNavItems(items)
+        } catch (error) {
+          console.error('Failed to fetch vertical navigation items:', error)
+        }
+      }
+    }
+    fetchAuthStatus()
+  }, [router])
 
-  /**
-   *  The below variable will hide the current layout menu at given screen size.
-   *  The menu will be accessible from the Hamburger icon only (Vertical Overlay Menu).
-   *  You can change the screen size from which you want to hide the current layout menu.
-   *  Please refer useMediaQuery() hook: https://mui.com/components/use-media-query/,
-   *  to know more about what values can be passed to this hook.
-   *  ! Do not change this value unless you know what you are doing. It can break the template.
-   */
   const hidden = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'))
-
-  // const UpgradeToProImg = () => {
-  //   return (
-  //     <Box sx={{ mx: 'auto' }}>
-  //       <a
-  //         target='_blank'
-  //         rel='noreferrer'
-  //         href='https://themeselection.com/products/materio-mui-react-nextjs-admin-template/'
-  //       >
-  //         <img width={230} alt='upgrade to premium' src={`/images/misc/upgrade-banner-${settings.mode}.png`} />
-  //       </a>
-  //     </Box>
-  //   )
-  // }
 
   return (
     <>
-      {isAuthenticated ? (
+      {isAuthenticated && (
         <VerticalLayout
           hidden={hidden}
           settings={settings}
           saveSettings={saveSettings}
-          verticalNavItems={VerticalNavItems()} // Navigation Items
-          // afterVerticalNavMenuContent={UpgradeToProImg}
-          verticalAppBarContent={(
-            props // AppBar Content
-          ) => (
+          verticalNavItems={verticalNavItems}
+          verticalAppBarContent={props => (
             <VerticalAppBarContent
               hidden={hidden}
               settings={settings}
@@ -85,12 +58,10 @@ const UserLayout = ({ children }: Props) => {
           )}
         >
           {children}
-          {/* <UpgradeToProButton /> */}
         </VerticalLayout>
-      ) : null}
+      )}
     </>
   )
 }
-
 
 export default UserLayout

@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent, useEffect } from 'react'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableRow from '@mui/material/TableRow'
@@ -12,9 +12,11 @@ import { PencilBox, TrashCan } from 'mdi-material-ui'
 import EditCutiPribadi from './cuti-edit'
 import Chip from '@mui/material/Chip'
 import Swal from 'sweetalert2'
+import AppURL from 'src/api/AppURL'
+import axios from 'axios'
 
 interface Column {
-  id: 'tgl_penyerahan' | 'tgl_mulai' | 'tgl_akhir' | 'lama_cuti' | 'tipe_cuti' | 'status' | 'approved_by' | 'actions'
+  id: 'submissionDate' | 'startDate' | 'endDate' | 'totalDays' | 'leaveType' | 'status' | 'approver' | 'actions'
   label: string
   minWidth?: number
   align?: 'right'
@@ -22,113 +24,35 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
-  { id: 'tgl_penyerahan', label: 'Tanggal Penyerahan', minWidth: 100 },
-  { id: 'tgl_mulai', label: 'Tanggal Mulai', minWidth: 100 },
-  { id: 'tgl_akhir', label: 'Tanggal Akhir', minWidth: 100 },
-  { id: 'lama_cuti', label: 'Lama Cuti', minWidth: 100 },
-  { id: 'tipe_cuti', label: 'Tipe Cuti', minWidth: 100 },
+  { id: 'submissionDate', label: 'Tanggal Penyerahan', minWidth: 100 },
+  { id: 'startDate', label: 'Tanggal Mulai', minWidth: 100 },
+  { id: 'endDate', label: 'Tanggal Akhir', minWidth: 100 },
+  { id: 'totalDays', label: 'Lama Cuti', minWidth: 100 },
+  { id: 'leaveType', label: 'Tipe Cuti', minWidth: 100 },
   { id: 'status', label: 'Status', minWidth: 100 },
-  { id: 'approved_by', label: 'Approved By', minWidth: 100 },
+  { id: 'approver', label: 'Approved By', minWidth: 100 },
   { id: 'actions', label: 'Actions', minWidth: 100 }
 ]
 
 interface Data {
   id: number
-  nama: string
-  tgl_penyerahan: string
-  no_telephone: string
-  telephone_darurat: string
-  posisi: string
-  departemen: string
-  tgl_mulai: string
-  tgl_akhir: string
-  lama_cuti: number
-  tipe_cuti: string
-  deskripsi: string
+  name: string
+  submissionDate: string
+  telephone: string
+  emergencyCall: string
+  position: string
+  department: string
+  startDate: string
+  endDate: string
+  totalDays: number
+  leaveType: string
+  leaveAllowance: number
+  description: string
   status: string
-  approved_by: string
+  approver: string
 }
 
-function createData(
-  nama: string,
-  tgl_penyerahan: string,
-  no_telephone: string,
-  telephone_darurat: string,
-  posisi: string,
-  departemen: string,
-  tgl_mulai: string,
-  tgl_akhir: string,
-  lama_cuti: number,
-  tipe_cuti: string,
-  deskripsi: string,
-  status: string,
-  approved_by: string
-): Data {
-  return {
-    id: Math.random(),
-    nama,
-    tgl_penyerahan,
-    no_telephone,
-    telephone_darurat,
-    posisi,
-    departemen,
-    tgl_mulai,
-    tgl_akhir,
-    lama_cuti,
-    tipe_cuti,
-    deskripsi,
-    status,
-    approved_by
-  }
-}
 
-let rows: Data[] = [
-  createData(
-    'Kyujin',
-    '20 April 2024',
-    '+62 987-654-321',
-    '+62 123-456-789',
-    'Developer',
-    'IT',
-    '25 April 2024',
-    '30 April 2024',
-    5,
-    'liburan',
-    'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged It was popularised in',
-    'Pending',
-    ''
-  ),
-  createData(
-    'Kyujin',
-    '20 Februari 2024',
-    '+62 987-654-321',
-    '+62 123-456-789',
-    'Developer',
-    'IT',
-    '	25 Februari 2024',
-    '30 Februari 2024',
-    5,
-    'liburan',
-    'test',
-    'Diterima',
-    'HR'
-  ),
-  createData(
-    'Kyujin',
-    '20 Januari 2024',
-    '+62 987-654-321',
-    '+62 123-456-789',
-    'Developer',
-    'IT',
-    '25 Januari 2024',
-    '30 Januari 2024',
-    5,
-    'liburan',
-    'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged It was popularised in',
-    'Diterima',
-    'HR'
-  )
-]
 const statusObj: { [key: string]: { color: string } } = {
   Diterima: { color: 'success' },
   Ditolak: { color: 'error' },
@@ -141,7 +65,36 @@ const CutiPribadi = () => {
   const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
   const [isEditCutiPribadiOpen, setIsEditCutiPribadiOpen] = useState<boolean>(false)
   const [order, setOrder] = useState<'asc' | 'desc'>('desc')
-  const [orderBy, setOrderBy] = useState<keyof Data>('tgl_penyerahan')
+  const [orderBy, setOrderBy] = useState<keyof Data>('submissionDate')
+  const [rows, setRows] = useState<Data[]>([])
+
+     useEffect(() => {
+       fetchSubmissions()
+     }, [order])
+
+     const fetchSubmissions = async () => {
+       try {
+         const token = localStorage.getItem('token')
+         const response = await axios.get(AppURL.SubLogin, {
+           headers: {
+             Authorization: `Bearer ${token}`
+           }
+         })
+
+         if (response.status !== 200) {
+           throw new Error('Failed to fetch data')
+         }
+
+         const data = response.data
+         if (Array.isArray(data.submissions)) {
+           setRows(data.submissions)
+         } else {
+           console.error('Invalid data format: expected an array')
+         }
+       } catch (error) {
+         console.error('Error fetching data:', error)
+       }
+     }
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
@@ -158,6 +111,9 @@ const CutiPribadi = () => {
   const handleCloseEditCutiPribadi = () => {
     setIsEditCutiPribadiOpen(false)
   }
+  const handleEditSuccess = () => {
+    fetchSubmissions() 
+  }
   const handleSort = (property: keyof Data) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
@@ -167,20 +123,31 @@ const CutiPribadi = () => {
   const sortedRows =
     order === 'asc'
       ? [...rows].sort((a, b) => {
-          if (orderBy === 'tgl_penyerahan' || orderBy === 'tgl_mulai' || orderBy === 'tgl_akhir') {
+          if (
+            orderBy === 'submissionDate' ||
+            orderBy === 'startDate' ||
+            orderBy === 'endDate' ||
+            orderBy === 'totalDays'
+          ) {
             return new Date(a[orderBy]).getTime() - new Date(b[orderBy]).getTime()
           } else {
             return 0
           }
         })
       : [...rows].sort((a, b) => {
-          if (orderBy === 'tgl_penyerahan' || orderBy === 'tgl_mulai' || orderBy === 'tgl_akhir') {
+          if (
+            orderBy === 'submissionDate' ||
+            orderBy === 'startDate' ||
+            orderBy === 'endDate' ||
+            orderBy === 'totalDays'
+          ) {
             return new Date(b[orderBy]).getTime() - new Date(a[orderBy]).getTime()
           } else {
             return 0
           }
         })
-  const handleDeleteRow = (rowData: Data) => {
+        
+  const handleDeleteRow = async (rowData: Data) => {
     Swal.fire({
       title: 'Apakah Anda yakin?',
       text: `Anda akan menghapus pengajuan cuti`,
@@ -193,21 +160,51 @@ const CutiPribadi = () => {
       customClass: {
         container: 'full-screen-alert'
       }
-    }).then(result => {
+    }).then(async result => {
       if (result.isConfirmed) {
-        const updatedRows = rows.filter(row => row !== rowData)
-        rows = updatedRows
-        Swal.fire({
-          title: 'Pengajuan berhasil dihapus!',
-          icon: 'success',
-          confirmButtonColor: '#6AD01F',
-          customClass: {
-            container: 'full-screen-alert'
+        try {
+          const response = await axios.put(`${AppURL.Submissions}/delete/${rowData.id}`, null, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+
+          if (response.status !== 200) {
+            throw new Error('Gagal menghapus pengajuan')
           }
-        })
+          const updatedRows = rows.filter(row => row.id !== rowData.id)
+          setRows(updatedRows)
+          Swal.fire({
+            title: 'Pengajuan berhasil dihapus!',
+            icon: 'success',
+            confirmButtonColor: '#6AD01F',
+            customClass: {
+              container: 'full-screen-alert'
+            }
+          })
+        } catch (error) {
+          console.error('Terjadi kesalahan:', error)
+          Swal.fire({
+            title: 'Terjadi kesalahan!',
+            text: 'Gagal menghapus data karyawan',
+            icon: 'error',
+            confirmButtonColor: '#FF6166',
+            customClass: {
+              container: 'full-screen-alert'
+            }
+          })
+        }
       }
     })
   }
+
+
+
+
+
+
+
+
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -231,7 +228,7 @@ const CutiPribadi = () => {
           <TableBody>
             {sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
               return (
-                <TableRow hover role='checkbox' tabIndex={-1}>
+                <TableRow hover role='checkbox' tabIndex={-1} key={row.id}>
                   {columns.map(column => {
                     const value = row[column.id]
                     if (column.id === 'actions' && row.status === 'Pending') {
@@ -286,16 +283,14 @@ const CutiPribadi = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      <EditCutiPribadi open={isEditCutiPribadiOpen} onClose={handleCloseEditCutiPribadi} rowData={selectedRowData} />
-    </Paper>
+      <EditCutiPribadi
+        open={isEditCutiPribadiOpen}
+        onClose={handleCloseEditCutiPribadi}
+        rowData={selectedRowData}
+        onEditSuccess={handleEditSuccess}
+      />
+    </Paper>  
   )
-  //  <Butto
-  //       className={`fixed right-3 bottom-3 md:right-10 md:bottom-10 bg-yellow-400  px-4 py-2 text-white rounded-md `}
-  //       // onClick={handleAddEmployeeClick}
-  //       // disabled={editingItemId !== null}
-  //     >
-  //       Tambah Karyawan
-  //     </Butto>
 }
 
 export default CutiPribadi

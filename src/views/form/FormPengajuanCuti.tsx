@@ -104,6 +104,19 @@ const FormPengajuanCuti = () => {
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+ if (Number(cutiType) === 1 && userData?.total_days === 0) {
+   Swal.fire({
+     title: 'Sisa cuti 0',
+     text: 'Maaf sisa cuti anda 0 tidak dapat mengajukan cuti tahunan',
+     icon: 'warning',
+     confirmButtonColor: '#FF6166',
+     customClass: {
+       container: 'full-screen-alert'
+     }
+   })
+   return
+ }
+
     if (validateForm()) {
       Swal.fire({
         title: 'Apa Pengajuan Sudah Benar?',
@@ -136,6 +149,16 @@ const FormPengajuanCuti = () => {
                 container: 'full-screen-alert'
               }
             })
+             setStartDate(null)
+             setEndDate(null)
+             setCutiType('')
+             setTelepon('')
+             setDeskripsi('')
+             setShowUrgencyFields(false)
+             setShowDoctorNoteField(false)
+             setDoctorNoteImage(null)
+             setUrgency('')
+             setErrors({})
           } catch (error) {
             Swal.fire({
               title: 'Terjadi Kesalahan!',
@@ -245,7 +268,6 @@ const FormPengajuanCuti = () => {
        if (errors.departemen) {
          setErrors({ ...errors, departemen: '' })
        }
-       
      }
      const handleChangeDeskripsi = (event: React.ChangeEvent<HTMLInputElement>) => {
        setDeskripsi(event.target.value)
@@ -363,13 +385,13 @@ const FormPengajuanCuti = () => {
                 placeholder='Masukkan Nama'
                 value={nama}
                 onChange={handleChangeNama}
-                disabled
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
                       <Account />
                     </InputAdornment>
-                  )
+                  ),
+                  readOnly: true
                 }}
               />
             </Grid>
@@ -402,13 +424,13 @@ const FormPengajuanCuti = () => {
                 placeholder='Masukkan Posisi'
                 value={posisi}
                 onChange={handleChangePosisi}
-                disabled
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
                       <BadgeAccount />
                     </InputAdornment>
-                  )
+                  ),
+                  readOnly: true
                 }}
               />
             </Grid>
@@ -421,13 +443,13 @@ const FormPengajuanCuti = () => {
                 placeholder='Masukkan Departemen'
                 value={departemen}
                 onChange={handleChangeDepartemen}
-                disabled
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>
                       <AccountTie />
                     </InputAdornment>
-                  )
+                  ),
+                  readOnly: true
                 }}
               />
             </Grid>

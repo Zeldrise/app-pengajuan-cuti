@@ -1,5 +1,6 @@
 // ** Types Import
 import { Settings } from 'src/@core/context/settingsContext'
+import { ReactNode } from 'react'
 import { NavLink, NavSectionTitle, VerticalNavItemsType } from 'src/@core/layouts/types'
 
 // ** Custom Menu Components
@@ -17,20 +18,16 @@ interface Props {
   setCurrentActiveGroup: (item: string[]) => void
 }
 
-const resolveNavItemComponent = (item: NavLink | NavSectionTitle) => {
+const resolveNavItemComponent = (item: NavLink | NavSectionTitle): any => {
   if ((item as NavSectionTitle).sectionTitle) return VerticalNavSectionTitle
-
   return VerticalNavLink
 }
 
-const VerticalNavItems = (props: Props) => {
-  // ** Props
-  const { verticalNavItems } = props
-
+const VerticalNavItems = ({ verticalNavItems }: Props): ReactNode => {
   const RenderMenuItems = verticalNavItems?.map((item: NavLink | NavSectionTitle, index: number) => {
     const TagName: any = resolveNavItemComponent(item)
 
-    return <TagName {...props} key={index} item={item} />
+    return <TagName key={index} item={item} />
   })
 
   return <>{RenderMenuItems}</>

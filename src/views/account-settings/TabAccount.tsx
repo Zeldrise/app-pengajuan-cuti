@@ -1,16 +1,10 @@
 // ** React Imports
-import { useState, ElementType, ChangeEvent, SyntheticEvent } from 'react'
+import { useState, ElementType, ChangeEvent, SyntheticEvent, useEffect } from 'react'
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import Link from '@mui/material/Link'
-import Alert from '@mui/material/Alert'
-import Select from '@mui/material/Select'
 import { styled } from '@mui/material/styles'
-import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import Button, { ButtonProps } from '@mui/material/Button'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -21,6 +15,10 @@ import EmailOutline from 'mdi-material-ui/EmailOutline'
 import Phone from 'mdi-material-ui/Phone'
 import Swal from 'sweetalert2'
 import AppURL from 'src/api/AppURL'
+
+import { useRouter } from 'next/router'
+
+
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -53,6 +51,32 @@ const TabAccount = () => {
   const [email, setEmail] = useState('')
   const [telephone, setTelephone] = useState('')
   const [errors, setErrors] = useState<any>({})
+  const router = useRouter()
+
+
+
+   useEffect(() => {
+     fetchProfileData()
+   }, [])
+
+   const fetchProfileData = async () => {
+     try {
+       const response = await fetch(`${AppURL.Profile}`, {
+         headers: {
+           Authorization: `Bearer ${localStorage.getItem('token')}`
+         }
+       })
+       if (!response.ok) {
+         throw new Error('Failed to fetch profile data')
+       }
+       const data = await response.json()
+       setName(data.name)
+       setEmail(data.email)
+       setTelephone(data.telephone)
+     } catch (error) {
+       console.error('Error fetching profile data:', error)
+     }
+   }
 
   const validateForm = () => {
     const errors: any = {}
@@ -94,13 +118,14 @@ const TabAccount = () => {
       }).then(result => {
         if (result.isConfirmed) {
           editProfile()
+          
         }
       })
     }
   }
    const editProfile = async () => {
      try {
-       const response = await fetch(`${AppURL.Users}/update1/${id}`, {
+       const response = await fetch(`${AppURL.Users}/profil`, {
          method: 'PUT',
          headers: {
            'Content-Type': 'application/json',
@@ -125,6 +150,7 @@ const TabAccount = () => {
          }
        })
        console.log('Data yang akan disubmit:', data)
+       router.reload()
      } catch (error) {
        console.error('Error editing profile:', error)
        Swal.fire({
@@ -159,12 +185,13 @@ const TabAccount = () => {
       setErrors({ ...errors, telephone: '' })
     }
   }
+  
 
   return (
     <CardContent>
       <form>
         <Grid container spacing={7}>
-          <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
+          {/* <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <ImgStyled src={imgSrc} alt='Profile Pic' />
               <Box>
@@ -186,7 +213,7 @@ const TabAccount = () => {
                 </Typography>
               </Box>
             </Box>
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12} sm={6}>
             <TextField
@@ -196,7 +223,6 @@ const TabAccount = () => {
               helperText={errors.name}
               value={name}
               onChange={handleChangeName}
-              placeholder='Monkey D Luffy'
               InputProps={{
                 startAdornment: (
                   <InputAdornment position='start'>
@@ -215,7 +241,6 @@ const TabAccount = () => {
               helperText={errors.email}
               value={email}
               onChange={handleChangeEmail}
-              placeholder='bakasenchou@gmail.com'
               InputProps={{
                 startAdornment: (
                   <InputAdornment position='start'>
@@ -234,7 +259,6 @@ const TabAccount = () => {
               helperText={errors.telephone}
               value={telephone}
               onChange={handleChangetelephone}
-              placeholder='+62-123-456-8790'
               InputProps={{
                 startAdornment: (
                   <InputAdornment position='start'>
@@ -249,9 +273,7 @@ const TabAccount = () => {
             <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
               Save Changes
             </Button>
-            <Button type='reset' variant='outlined' color='secondary'>
-              Reset
-            </Button>
+            
           </Grid>
         </Grid>
       </form>

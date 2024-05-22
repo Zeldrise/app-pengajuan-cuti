@@ -49,18 +49,18 @@ const DataKaryawan = () => {
   const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
   const [isEditDataKaryawanOpen, setIsEditDataKaryawanOpen] = useState<boolean>(false)
   const [isAddDataKaryawanOpen, setIsAddDataKaryawanOpen] = useState<boolean>(false)
-  const [sisaCutiOrder, setSisaCutiOrder] = useState<'asc' | 'desc'>('asc')
+  const [sisaCutiOrder, setSisaCutiOrder] = useState<'asc' | 'desc'>('desc')
   const [orderBySisaCuti, setOrderBySisaCuti] = useState<keyof Data>('total_days')
 
   const [employees, setEmployees] = useState<Data[]>([])
 
   useEffect(() => {
     fetchData()
-  }, [sisaCutiOrder])
+  }, [sisaCutiOrder, orderBySisaCuti])
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${AppURL.Users}?sort_by=${sisaCutiOrder}`, {
+      const response = await fetch(`${AppURL.Users}?sort_by=${sisaCutiOrder}&sort_field=${orderBySisaCuti}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -70,7 +70,7 @@ const DataKaryawan = () => {
         throw new Error('Gagal mengambil data karyawan')
       }
       const data = await response.json()
-      const filteredData = data.users.filter((user: any) => user.position !== 'owner')
+      const filteredData = data.users.filter((user: any) => user.role !== 'owner')
       setEmployees(filteredData)
     } catch (error) {
       console.error('Terjadi kesalahan:', error)
@@ -108,15 +108,15 @@ const DataKaryawan = () => {
   }
 
   const handleSortSisaCuti = () => {
-    const isAsc = orderBySisaCuti === 'total_days' && sisaCutiOrder === 'asc'
-    setSisaCutiOrder(isAsc ? 'desc' : 'asc')
+    const isDesc = orderBySisaCuti === 'total_days' && sisaCutiOrder === 'desc'
+    setSisaCutiOrder(isDesc ? 'asc' : 'desc')
     setOrderBySisaCuti('total_days')
   }
   const sortedEmployees =
     orderBySisaCuti === 'total_days'
       ? employees
           .slice()
-          .sort((a, b) => (sisaCutiOrder === 'desc' ? a.total_days - b.total_days : b.total_days - a.total_days))
+          .sort((a, b) => (sisaCutiOrder === 'asc' ? a.total_days - b.total_days : b.total_days - a.total_days))
       : employees.slice()
 
 const handleDeleteRow = (rowData: Data) => {
@@ -135,8 +135,8 @@ const handleDeleteRow = (rowData: Data) => {
   }).then(async result => {
     if (result.isConfirmed) {
       try {
-        const response = await fetch(`${AppURL.Users}/${rowData.id}`, {
-          method: 'DELETE',
+        const response = await fetch(`${AppURL.Users}/delete/${rowData.id}`, {
+          method: 'PUT',
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

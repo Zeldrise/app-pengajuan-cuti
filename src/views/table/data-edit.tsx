@@ -40,6 +40,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
   const [name, setName] = useState(rowData?.name || '')
   const [email, setEmail] = useState(rowData?.email || '')
   const [telephone, setTelephone] = useState(rowData?.telephone || '')
+  const [role, setRole] = useState(rowData?.role || '')
   const [position, setPosition] = useState(rowData?.position || '')
   const [department, setDepartment] = useState(rowData?.department || '')
   const [gender, setGender] = useState(rowData?.gender || '')
@@ -50,6 +51,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
       setName(rowData.name || '')
       setEmail(rowData.email || '')
       setTelephone(rowData.telephone || '')
+      setRole(rowData.role || '')
       setPosition(rowData.position || '')
       setDepartment(rowData.department || '')
       setGender(rowData.gender || '')
@@ -68,6 +70,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
       errors.email = 'Format email tidak valid'
     }
     if (!telephone) errors.telephone = 'Nomor telepon harus diisi'
+    if (!role) errors.role = 'Role harus diisi'
     if (!position) errors.position = 'Position harus diisi'
     if (!department) errors.department = 'Department harus diisi'
     if (!gender) errors.gender = 'Gender harus dipilih'
@@ -87,6 +90,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
           name,
           email,
           telephone,
+          role,
           position,
           department,
           gender,
@@ -109,6 +113,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
       setName('')
       setEmail('')
       setTelephone('')
+      setRole('')
       setPosition('')
       setDepartment('')
       setGender('')
@@ -168,6 +173,12 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
     setTelephone(event.target.value)
     if (errors.telephone) {
       setErrors({ ...errors, telephone: '' })
+    }
+  }
+  const handleChangeRole = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRole(event.target.value)
+    if (errors.role) {
+      setErrors({ ...errors, role: '' })
     }
   }
 
@@ -270,29 +281,47 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
             }}
           />
           <FormControl fullWidth sx={{ marginTop: 5 }}>
-            <InputLabel id='form-layouts-separator-select-label'>Position</InputLabel>
+            <InputLabel id='form-layouts-separator-select-label'>Role</InputLabel>
             <Select
-              label='Position'
+              label='Role'
               defaultValue=''
               id='form-layouts-separator-select'
               labelId='form-layouts-separator-select-label'
-              error={!!errors.position}
-              helperText={errors.position}
-              value={position}
-              onChange={handleChangeposition}
+              error={!!errors.role}
+              helperText={errors.role}
+              value={role}
+              onChange={handleChangeRole}
             >
               <MenuItem value='hr'>hr</MenuItem>
-              <MenuItem value='admin'>admin</MenuItem>
+              <MenuItem value='staff'>staff</MenuItem>
               <MenuItem value='karyawan'>karyawan</MenuItem>
             </Select>
-            {errors.position && <FormHelperText error>{errors.position}</FormHelperText>}
+            {errors.role && <FormHelperText error>{errors.role}</FormHelperText>}
           </FormControl>
 
           <TextField
             fullWidth
             sx={{ marginTop: 5 }}
+            label='Position'
+            value={position}
+            onChange={handleChangeposition}
+            error={!!errors.position}
+            helperText={errors.position}
+            placeholder={rowData?.position}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <AccountTie />
+                </InputAdornment>
+              )
+            }}
+          />
+
+          <TextField
+            fullWidth
+            sx={{ marginTop: 5 }}
             label='Department'
-            value={department} // Menambahkan value dan onChange untuk input department
+            value={department}
             onChange={handleChangedepartment}
             error={!!errors.department}
             helperText={errors.department}
