@@ -22,8 +22,17 @@ const UserLayout = ({ children }: Props) => {
   useEffect(() => {
     const fetchAuthStatus = async () => {
       const token = localStorage.getItem('token')
+      const menuAccessJson = localStorage.getItem('menuAccess')
+      var menuAccess: string[] = []
+      if (menuAccessJson != null) {
+        menuAccess = JSON.parse(menuAccessJson)
+      }
+
+      const { route } = router
       if (!token) {
         router.push('/login')
+      } else if (menuAccess.indexOf(route) < 0) {
+        router.push('/403')
       } else {
         setIsAuthenticated(true)
         // Fetch vertical navigation items

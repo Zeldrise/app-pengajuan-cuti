@@ -5,6 +5,7 @@ import HomeOutline from 'mdi-material-ui/HomeOutline'
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
 import { AccountGroup, Balloon, FileDocumentEditOutline, TableAccount, TextAccount } from 'mdi-material-ui'
 import AppURL from 'src/api/AppURL'
+import { NavLink } from 'react-router-dom'
 
 const fetchUserProfile = async () => {
   try {
@@ -25,7 +26,6 @@ const fetchUserProfile = async () => {
   }
 }
 
-
 const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
   const userProfile = await fetchUserProfile()
   if (!userProfile || !userProfile.role) {
@@ -35,7 +35,10 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
 
   const { role } = userProfile
   let menu: VerticalNavItemsType = []
+  var menuAccess: string[] = []
+  console.log('role', role)
   if (role == 'hr') {
+    menuAccess = ['/home', '/ajukan-cuti', '/approval-cuti', '/data-karyawan', '/cuti-karyawan', '/cuti-pribadi', '/user-profile', '/account-settings']
     menu = [
       {
         title: 'Home',
@@ -76,6 +79,15 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       }
     ]
   } else if (role == 'staff') {
+    menuAccess = [
+      '/home',
+      '/ajukan-cuti',
+      '/data-karyawan',
+      '/cuti-karyawan',
+      '/cuti-pribadi',
+      '/user-profile',
+      '/account-settings'
+    ]
     menu = [
       {
         title: 'Home',
@@ -111,6 +123,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       }
     ]
   } else if (role == 'karyawan') {
+    menuAccess = ['/home', '/ajukan-cuti', '/cuti-pribadi', '/user-profile', '/account-settings']
     menu = [
       {
         title: 'Home',
@@ -129,6 +142,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       }
     ]
   } else if (role == 'owner') {
+    menuAccess = ['/home', '/approval-cuti', '/data-karyawan', '/cuti-karyawan', '/user-profile', '/account-settings']
     menu = [
       {
         title: 'Home',
@@ -159,6 +173,8 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       }
     ]
   }
+
+  localStorage.setItem('menuAccess', JSON.stringify(menuAccess))
 
   return menu
 }

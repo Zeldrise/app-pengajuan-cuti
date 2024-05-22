@@ -1,5 +1,5 @@
 // ** React Imports
-import { ChangeEvent, MouseEvent, useState } from 'react'
+import { ChangeEvent, MouseEvent, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -21,14 +21,16 @@ import KeyOutline from 'mdi-material-ui/KeyOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
 import { FormHelperText } from '@mui/material'
+import AppURL from 'src/api/AppURL'
+import axios from 'axios'
 
 interface State {
   newPassword: string
   currentPassword: string
   showNewPassword: boolean
-  confirmNewPassword: string
+  confirmPassword: string
   showCurrentPassword: boolean
-  showConfirmNewPassword: boolean
+  showConfirmPassword: boolean
   passwordError: string
   newPasswordError: string
   confirmPasswordError: string
@@ -40,13 +42,39 @@ const TabSecurity = () => {
     newPassword: '',
     currentPassword: '',
     showNewPassword: false,
-    confirmNewPassword: '',
+    confirmPassword: '',
     showCurrentPassword: false,
-    showConfirmNewPassword: false,
+    showConfirmPassword: false,
     passwordError: '',
     newPasswordError: '',
     confirmPasswordError: ''
   })
+
+
+const changePassword = async () => {
+  try {
+    const response = await axios.put(AppURL.UserChangePass, {
+      currentPassword: values.currentPassword,
+      newPassword: values.newPassword, 
+      confirmPassword: values.confirmPassword 
+    })
+    if (response.data.success) {
+      // Tambahkan logika atau pesan sukses jika diperlukan
+    } else {
+      setValues(prevState => ({
+        ...prevState,
+        passwordError: response.data.error || 'Failed to change password'
+      }))
+    }
+  } catch (error) {
+    console.error('Error changing password:', error)
+    setValues(prevState => ({
+      ...prevState,
+      passwordError: 'Failed to change password. Please try again later.'
+    }))
+  }
+}
+
 
   // Handle Current Password
   const handleCurrentPasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -71,58 +99,59 @@ const TabSecurity = () => {
   }
 
   // Handle Confirm New Password
-  const handleConfirmNewPasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value, confirmPasswordError: '' })
   }
-  const handleClickShowConfirmNewPassword = () => {
-    setValues({ ...values, showConfirmNewPassword: !values.showConfirmNewPassword })
+  const handleClickShowConfirmPassword = () => {
+    setValues({ ...values, showConfirmPassword: !values.showConfirmPassword })
   }
-  const handleMouseDownConfirmNewPassword = (event: MouseEvent<HTMLButtonElement>) => {
+  const handleMouseDownConfirmPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
   }
 
-const validationForm = () => {
-  let isValid = true
+  const validationForm = () => {
+    let isValid = true
 
-  setValues(prevState => ({
-    ...prevState,
-    newPasswordError: '',
-    confirmPasswordError: '',
-    passwordError: ''
-  }))
+    setValues(prevState => ({
+      ...prevState,
+      newPasswordError: '',
+      confirmPasswordError: '',
+      passwordError: ''
+    }))
 
-  if (!values.currentPassword.trim()) {
-    setValues(prevState => ({ ...prevState, passwordError: 'Current password is required' }))
-    isValid = false
-  } else {
-    setValues(prevState => ({ ...prevState, passwordError: '' })) // Menyembunyikan pesan kesalahan jika bidang diisi
+    if (!values.currentPassword.trim()) {
+      setValues(prevState => ({ ...prevState, passwordError: 'Current password is required' }))
+      isValid = false
+    } else {
+      setValues(prevState => ({ ...prevState, passwordError: '' })) // Menyembunyikan pesan kesalahan jika bidang diisi
+    }
+
+    if (!values.newPassword.trim()) {
+      setValues(prevState => ({ ...prevState, newPasswordError: 'New password is required' }))
+      isValid = false
+    } else if (values.newPassword.length < 8) {
+      setValues(prevState => ({ ...prevState, newPasswordError: 'Password must be at least 8 characters' }))
+      isValid = false
+    } else {
+      setValues(prevState => ({ ...prevState, newPasswordError: '' })) // Menyembunyikan pesan kesalahan jika bidang diisi
+    }
+
+    if (!values.confirmPassword.trim()) {
+      setValues(prevState => ({ ...prevState, confirmPasswordError: 'Confirm password is required' }))
+      isValid = false
+    } else if (values.confirmPassword !== values.newPassword) {
+      setValues(prevState => ({ ...prevState, confirmPasswordError: 'Password do not match' }))
+      isValid = false
+    } else {
+      setValues(prevState => ({ ...prevState, confirmPasswordError: '' })) // Menyembunyikan pesan kesalahan jika bidang diisi
+    }
+
+    return isValid
   }
-
-  if (!values.newPassword.trim()) {
-    setValues(prevState => ({ ...prevState, newPasswordError: 'New password is required' }))
-    isValid = false
-  } else if (values.newPassword.length < 8) {
-    setValues(prevState => ({ ...prevState, newPasswordError: 'Password must be at least 8 characters' }))
-    isValid = false
-  } else {
-    setValues(prevState => ({ ...prevState, newPasswordError: '' })) // Menyembunyikan pesan kesalahan jika bidang diisi
-  }
-
-  if (!values.confirmNewPassword.trim()) {
-    setValues(prevState => ({ ...prevState, confirmPasswordError: 'Confirm password is required' }))
-    isValid = false
-  } else if (values.confirmNewPassword !== values.newPassword) {
-    setValues(prevState => ({ ...prevState, confirmPasswordError: 'Password do not match' }))
-    isValid = false
-  } else {
-    setValues(prevState => ({ ...prevState, confirmPasswordError: '' })) // Menyembunyikan pesan kesalahan jika bidang diisi
-  }
-
-  return isValid
-}
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (validationForm()) {
+      await changePassword() 
     }
   }
   return (
@@ -190,20 +219,20 @@ const validationForm = () => {
                   <InputLabel htmlFor='account-settings-confirm-new-password'>Confirm New Password</InputLabel>
                   <OutlinedInput
                     label='Confirm New Password'
-                    value={values.confirmNewPassword}
+                    value={values.confirmPassword}
                     error={!!values.confirmPasswordError}
                     id='account-settings-confirm-new-password'
-                    type={values.showConfirmNewPassword ? 'text' : 'password'}
-                    onChange={handleConfirmNewPasswordChange('confirmNewPassword')}
+                    type={values.showConfirmPassword ? 'text' : 'password'}
+                    onChange={handleConfirmPasswordChange('confirmPassword')}
                     endAdornment={
                       <InputAdornment position='end'>
                         <IconButton
                           edge='end'
                           aria-label='toggle password visibility'
-                          onClick={handleClickShowConfirmNewPassword}
-                          onMouseDown={handleMouseDownConfirmNewPassword}
+                          onClick={handleClickShowConfirmPassword}
+                          onMouseDown={handleMouseDownConfirmPassword}
                         >
-                          {values.showConfirmNewPassword ? <EyeOutline /> : <EyeOffOutline />}
+                          {values.showConfirmPassword ? <EyeOutline /> : <EyeOffOutline />}
                         </IconButton>
                       </InputAdornment>
                     }
@@ -228,37 +257,6 @@ const validationForm = () => {
       <Divider sx={{ margin: 0 }} />
 
       <CardContent>
-        {/* <Box sx={{ mt: 1.75, display: 'flex', alignItems: 'center' }}>
-          <KeyOutline sx={{ marginRight: 3 }} />
-          <Typography variant='h6'>Two-factor authentication</Typography>
-        </Box> */}
-        {/* 
-        <Box sx={{ mt: 5.75, display: 'flex', justifyContent: 'center' }}>
-          <Box
-            sx={{
-              maxWidth: 368,
-              display: 'flex',
-              textAlign: 'center',
-              alignItems: 'center',
-              flexDirection: 'column'
-            }}
-          >
-            <Avatar
-              variant='rounded'
-              sx={{ width: 48, height: 48, color: 'common.white', backgroundColor: 'primary.main' }}
-            >
-              <LockOpenOutline sx={{ fontSize: '1.75rem' }} />
-            </Avatar>
-            <Typography sx={{ fontWeight: 600, marginTop: 3.5, marginBottom: 3.5 }}>
-              Two factor authentication is not enabled yet.
-            </Typography>
-            <Typography variant='body2'>
-              Two-factor authentication adds an additional layer of security to your account by requiring more than just
-              a password to log in. Learn more.
-            </Typography>
-          </Box>
-        </Box> */}
-
         <Box>
           <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
             Save Changes
@@ -267,7 +265,7 @@ const validationForm = () => {
             type='reset'
             variant='outlined'
             color='secondary'
-            onClick={() => setValues({ ...values, currentPassword: '', newPassword: '', confirmNewPassword: '' })}
+            onClick={() => setValues({ ...values, currentPassword: '', newPassword: '', confirmPassword: '' })}
           >
             Reset
           </Button>

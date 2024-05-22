@@ -9,8 +9,8 @@ const Dashboard = () => {
   return (
     <Grid container spacing={3} className='content-center'>
       <Grid item xs={12}>
-        <h1>Selamat Datang di Sistem Pengajuan Cuti</h1>
-        <p>Silakan masuk untuk mengakses fitur pengajuan cuti.</p>
+        <h1>Selamat datang!</h1>
+        <p>Ajukan cuti dengan mudah dan praktis untuk perencanaan liburan atau keperluan pribadi Anda.</p>
         <Link href='/login' passHref>
           <Button variant='contained' color='primary'>
             Masuk

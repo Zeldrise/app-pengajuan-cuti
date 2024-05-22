@@ -14,6 +14,7 @@ import AddDataKaryawan from './add-karyawan'
 import Swal from 'sweetalert2'
 import AppURL from 'src/api/AppURL'
 
+
 interface Column {
   id: keyof Data
   label: string
