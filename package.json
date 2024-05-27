@@ -53,7 +53,6 @@
     "@mui/material": "^5.15.18",
     "@popperjs/core": "^2.11.2",
     "@types/react-router-dom": "^5.3.3",
-    "@types/react": "^18.3.3",
     "apexcharts-clevision": "3.28.5",
     "axios": "^1.6.8",
     "clsx": "^1.1.1",
@@ -76,6 +75,7 @@
   "devDependencies": {
     "@types/node": "^20.12.12",
     "@types/nprogress": "^0.2.0",
+    "@types/react": "^18.3.3",
     "@types/react-datepicker": "^4.3.2",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
