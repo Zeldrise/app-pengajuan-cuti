@@ -1,4 +1,4 @@
-
+console.log('base url :', process.env.NEXT_PUBLIC_BASE_URL)
 
 class AppURL {
   static BaseURL = process.env.NEXT_PUBLIC_BASE_URL

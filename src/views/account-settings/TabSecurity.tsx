@@ -23,6 +23,7 @@ import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
 import { FormHelperText } from '@mui/material'
 import AppURL from 'src/api/AppURL'
 import axios from 'axios'
+import Swal from 'sweetalert2'
 
 interface State {
   newPassword: string
@@ -49,33 +50,6 @@ const TabSecurity = () => {
     newPasswordError: '',
     confirmPasswordError: ''
   })
-
-
-const changePassword = async () => {
-  try {
-    const response = await axios.put(AppURL.UserChangePass, {
-      currentPassword: values.currentPassword,
-      newPassword: values.newPassword, 
-      confirmPassword: values.confirmPassword 
-    })
-    if (response.data.success) {
-      // Tambahkan logika atau pesan sukses jika diperlukan
-    } else {
-      setValues(prevState => ({
-        ...prevState,
-        passwordError: response.data.error || 'Failed to change password'
-      }))
-    }
-  } catch (error) {
-    console.error('Error changing password:', error)
-    setValues(prevState => ({
-      ...prevState,
-      passwordError: 'Failed to change password. Please try again later.'
-    }))
-  }
-}
-
-
   // Handle Current Password
   const handleCurrentPasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value, passwordError: '' })
@@ -148,14 +122,74 @@ const changePassword = async () => {
 
     return isValid
   }
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (validationForm()) {
-      await changePassword() 
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault()
+      if (validationForm()) {
+        Swal.fire({
+          title: 'Apa anda yakin?',
+          text: 'Password kamu akan dirubah',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#6AD01F',
+          cancelButtonColor: '#FF6166',
+          confirmButtonText: 'Change',
+          cancelButtonText: 'Cancel',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        }).then(async result => {
+          if (result.isConfirmed) {
+            try {
+               const token = localStorage.getItem('token') 
+               const response = await axios.put(
+                 AppURL.UserChangePass,
+                 {
+                   currentPassword: values.currentPassword,
+                   newPassword: values.newPassword,
+                   confirmPassword: values.confirmPassword
+                 },
+                 {
+                   headers: {
+                     Authorization: `Bearer ${token}`
+                   }
+                 }
+               )
+
+              if (response.status !== 200) {
+                throw new Error('Failed to edit profile')
+              } 
+                Swal.fire({
+                  title: 'Success',
+                  text: 'Password changed successfully',
+                  icon: 'success',
+                  customClass: {
+                    container: 'full-screen-alert'
+                  }
+                })
+              } catch (error: any) {
+              if (
+                error.response &&
+                error.response.data &&
+                error.response.data.error === 'Current password is incorrect'
+              ) {
+                setValues(prevState => ({ ...prevState, passwordError: 'Current password is incorrect' }))
+              } else {
+                Swal.fire({
+                  title: 'Error',
+                  text: 'An error occurred while changing the password',
+                  icon: 'error',
+                  customClass: {
+                    container: 'full-screen-alert'
+                  }
+                })
+              }
+            }
+          }
+        })
+      }
     }
-  }
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <CardContent sx={{ paddingBottom: 0 }}>
         <Grid container spacing={5}>
           <Grid item xs={12} sm={6}>
@@ -258,7 +292,7 @@ const changePassword = async () => {
 
       <CardContent>
         <Box>
-          <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
+          <Button variant='contained' sx={{ marginRight: 3.5 }} type='submit'>
             Save Changes
           </Button>
           <Button
