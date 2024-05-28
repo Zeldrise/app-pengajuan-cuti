@@ -9,7 +9,6 @@ import { TransitionProps } from '@mui/material/transitions'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 import { CloseCircle } from 'mdi-material-ui'
-import AppURL from 'src/api/AppURL'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -54,8 +53,10 @@ const CutiKaryawanDetail: React.FC<PropsCutiKaryawanDetail> = ({ open, onClose, 
   const getStatusTextColor = (status:string) => {
     if (status === 'Diterima') return 'green'
     if (status === 'Ditolak') return 'red'
+
     return 'inherit'
   }
+  
   return (
     <Dialog
       fullScreen={fullScreen}

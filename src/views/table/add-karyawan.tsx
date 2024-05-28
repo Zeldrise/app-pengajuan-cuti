@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react'
+import React, { useState } from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -12,7 +12,6 @@ import { useTheme } from '@mui/material/styles'
 import {
   Account,
   AccountTie,
-  BadgeAccount,
   CalendarAccount,
   CloseCircle,
   Email,
@@ -21,7 +20,7 @@ import {
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import Swal from 'sweetalert2'
-import Select from '@mui/material/Select'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
@@ -72,6 +71,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
     if (!gender) errors.gender = 'Gender harus dipilih'
     if (!join_date) errors.join_date = 'Tanggal bergabung harus diisi'
     setErrors(errors)
+
     return Object.keys(errors).length === 0
   }
   const handleSubmit = async (e: React.FormEvent) => {
@@ -169,12 +169,13 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
     }
   }
 
-   const handleChangeRole = (event: React.ChangeEvent<HTMLInputElement>) => {
-     setRole(event.target.value)
-     if (errors.role) {
-       setErrors({ ...errors, role: '' })
-     }
-   }
+const handleChangeRole = (event: SelectChangeEvent<string>) => {
+  setRole(event.target.value)
+  if (errors.role) {
+    setErrors({ ...errors, role: '' })
+  }
+}
+
 
   const handleChangeposition = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPosition(event.target.value)
@@ -189,7 +190,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
       setErrors({ ...errors, department: '' })
     }
   }
-  const handleChangeGender = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeGender = (event: SelectChangeEvent<string>) => {
     setGender(event.target.value)
     if (errors.gender) {
       setErrors({ ...errors, gender: '' })
@@ -283,7 +284,6 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
               id='form-layouts-separator-select'
               labelId='form-layouts-separator-select-label'
               error={!!errors.role}
-              helperText={errors.role}
               value={role}
               onChange={handleChangeRole}
             >
@@ -337,7 +337,6 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
               value={gender}
               onChange={handleChangeGender}
               error={!!errors.gender}
-              helperText={errors.gender}
             >
               <MenuItem value='male'>Male</MenuItem>
               <MenuItem value='female'>Female</MenuItem>

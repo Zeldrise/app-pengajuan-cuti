@@ -1,5 +1,4 @@
 import { ReactNode, useEffect, useState } from 'react'
-import Box from '@mui/material/Box'
 import { Theme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import VerticalLayout from 'src/@core/layouts/VerticalLayout'
@@ -17,13 +16,13 @@ const UserLayout = ({ children }: Props) => {
   const { settings, saveSettings } = useSettings()
   const router = useRouter()
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
-  const [verticalNavItems, setVerticalNavItems] = useState<VerticalNavItemsType | null>(null)
+  const [verticalNavItems, setVerticalNavItems] = useState<VerticalNavItemsType>([])
 
   useEffect(() => {
     const fetchAuthStatus = async () => {
       const token = localStorage.getItem('token')
       const menuAccessJson = localStorage.getItem('menuAccess')
-      var menuAccess: string[] = []
+      let menuAccess: string[] = []
       if (menuAccessJson != null) {
         menuAccess = JSON.parse(menuAccessJson)
       }
@@ -35,7 +34,6 @@ const UserLayout = ({ children }: Props) => {
         router.push('/403')
       } else {
         setIsAuthenticated(true)
-        // Fetch vertical navigation items
         try {
           const items = await VerticalNavItems()
           setVerticalNavItems(items)

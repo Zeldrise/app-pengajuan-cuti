@@ -46,6 +46,7 @@ interface Data {
   leaveAllowance: number
   description: string
   status: string
+  actions: any
 }
 
 
@@ -110,10 +111,13 @@ const Approval = () => {
        ? new Date(a[orderBy]).getTime() - new Date(b[orderBy]).getTime()
        : new Date(b[orderBy]).getTime() - new Date(a[orderBy]).getTime()
    } else if (orderBy === 'leaveAllowance') {
+
      return order === 'asc' ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy]
    }
+
    return 0
  })
+
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>

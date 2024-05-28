@@ -1,8 +1,6 @@
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 import Link from 'next/link'
 
 const Dashboard = () => {

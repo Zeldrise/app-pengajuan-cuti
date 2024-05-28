@@ -15,7 +15,6 @@ import type { EmotionCache } from '@emotion/cache'
 import themeConfig from 'src/configs/themeConfig'
 
 // ** Component Imports
-import UserLayout from 'src/layouts/UserLayout'
 import ThemeComponent from 'src/@core/theme/ThemeComponent'
 
 // ** Contexts

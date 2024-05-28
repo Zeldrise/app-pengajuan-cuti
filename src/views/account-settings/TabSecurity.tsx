@@ -1,15 +1,13 @@
 // ** React Imports
-import { ChangeEvent, MouseEvent, useEffect, useState } from 'react'
+import { ChangeEvent, MouseEvent, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import InputLabel from '@mui/material/InputLabel'
 import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
@@ -17,9 +15,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 
 // ** Icons Imports
 import EyeOutline from 'mdi-material-ui/EyeOutline'
-import KeyOutline from 'mdi-material-ui/KeyOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
 import { FormHelperText } from '@mui/material'
 import AppURL from 'src/api/AppURL'
 import axios from 'axios'
@@ -38,7 +34,6 @@ interface State {
 }
 
 const TabSecurity = () => {
-  // ** States
   const [values, setValues] = useState<State>({
     newPassword: '',
     currentPassword: '',
@@ -50,7 +45,6 @@ const TabSecurity = () => {
     newPasswordError: '',
     confirmPasswordError: ''
   })
-  // Handle Current Password
   const handleCurrentPasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value, passwordError: '' })
   }
@@ -61,7 +55,6 @@ const TabSecurity = () => {
     event.preventDefault()
   }
 
-  // Handle New Password
   const handleNewPasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value, newPasswordError: '' })
   }
@@ -72,7 +65,7 @@ const TabSecurity = () => {
     event.preventDefault()
   }
 
-  // Handle Confirm New Password
+
   const handleConfirmPasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value, confirmPasswordError: '' })
   }
@@ -188,6 +181,7 @@ const TabSecurity = () => {
         })
       }
     }
+    
   return (
     <form onSubmit={handleSubmit}>
       <CardContent sx={{ paddingBottom: 0 }}>

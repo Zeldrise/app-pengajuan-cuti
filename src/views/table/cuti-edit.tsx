@@ -15,7 +15,7 @@ import InputLabel from '@mui/material/InputLabel'
 import { TransitionProps } from '@mui/material/transitions'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
-import { Account, AccountTie, BadgeAccount, CalendarAccount, CloseCircle,  Margin, MessageOutline, Phone } from 'mdi-material-ui'
+import { Account, AccountTie, BadgeAccount,  CloseCircle,  MessageOutline, Phone } from 'mdi-material-ui'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import FormHelperText from '@mui/material/FormHelperText'
@@ -26,7 +26,6 @@ import AppURL from 'src/api/AppURL'
 // ** Third Party Imports
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import Card from '@mui/material/Card/Card'
 import Grid from '@mui/material/Grid'
 
 const TglAwal = forwardRef((props, ref) => {
@@ -45,6 +44,25 @@ const Transition = React.forwardRef(function Transition(
 ) {
   return <Slide direction='up' ref={ref} {...props} />
 })
+
+interface Data {
+  id: number
+  name: string
+  submissionDate: string
+  telephone: string
+  emergencyCall: string
+  position: string
+  department: string
+  startDate: string
+  endDate: string
+  totalDays: number
+  leaveType: string
+  leaveAllowance: number
+  description: string
+  status: string
+  leave_urgency?: string
+  doctor_note?: any
+}
 
 
 
@@ -72,6 +90,8 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
   const [urgency, setUrgency] = useState<string>('')
   const [errors, setErrors] = useState<any>({})
 
+  
+
   const handleClose = () => {
     onClose()
   }
@@ -96,6 +116,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
     if (startDate && endDate && startDate > endDate)
       errors.date = 'Tanggal awal tidak boleh lebih besar dari tanggal akhir'
     setErrors(errors)
+
     return Object.keys(errors).length === 0
   }
 
@@ -104,7 +125,9 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
     setCutiType(selectedType)
     setShowUrgencyFields(selectedType === 'Cuti urgensi')
     const isSickLeave = Number(selectedType) === 2
-    setShowDoctorNoteField(isSickLeave && startDate && endDate && differenceInDays(endDate, startDate) > 0)
+    setShowDoctorNoteField(
+      isSickLeave && startDate && endDate && differenceInDays(endDate, startDate) > 0 ? true : false
+    )
     if (errors.cutiType) {
       setErrors({ ...errors, cutiType: '' })
     }
@@ -160,7 +183,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
           }
 
           try {
-            const response = await fetch(`${AppURL.Submissions}/${rowData.id}`, {
+            const response = await fetch(`${AppURL.Submissions}/${rowData?.id}`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
@@ -298,8 +321,8 @@ useEffect(() => {
       setShowUrgencyFields(true);
       setUrgency(rowData.leave_urgency || '');
     }
-    if (rowData.leave_type === '2' && rowData.doctor_note) {
-      setDoctorNoteImage(rowData.doctor_note);
+    if (rowData.leaveType === '2' && rowData.doctor_note) {
+      setDoctorNoteImage(rowData.doctor_note)
     }
   }
 }, [rowData, leaveOptions]);
@@ -545,7 +568,6 @@ useEffect(() => {
                   selected={startDate}
                   showYearDropdown
                   showMonthDropdown
-                  error={!!errors.startDate}
                   placeholderText='MM-DD-YYYY'
                   customInput={<TglAwal />}
                   id='form-layouts-separator-date'

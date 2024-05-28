@@ -4,12 +4,12 @@ import PermintaanCuti from 'src/views/card/PermintaanCuti'
 import Ditolak from 'src/views/card/Ditolak'
 import Diterima from 'src/views/card/Diterima'
 import UserLayout from 'src/layouts/UserLayout'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AppURL from 'src/api/AppURL'
 
 
-const index = () => {
-  const [userData, setUserData] = useState<any>(null)
+const Index = () => {
+   const [userData, setUserData] = useState<any>(null)
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -25,7 +25,6 @@ const index = () => {
         }
         const userData = await response.json()
         setUserData(userData)
-        // console.log(userData)
       } catch (error) {
         console.error('Terjadi kesalahan:', error)
       }
@@ -34,10 +33,10 @@ const index = () => {
   }, [])
 
   const position = userData ? userData.role : '...'
-  var dashboard: JSX.Element[] = []
+  let dashboard: JSX.Element[] = []
   if (position == 'hr') {
     dashboard = [
-      <Grid container spacing={3}>
+      <Grid container spacing={3} key='dashboard'>
         <Grid item xs={12} sm={6}>
           <KaryawanCuti />
         </Grid>
@@ -54,7 +53,7 @@ const index = () => {
     ]
   } else if (position == 'staff') {
     dashboard = [
-      <Grid container spacing={3}>
+      <Grid container spacing={3} key='dashboard'>
         <Grid item xs={12} sm={6}>
           <Diterima />
         </Grid>
@@ -68,7 +67,7 @@ const index = () => {
     ]
   } else if (position == 'karyawan') {
     dashboard = [
-      <Grid container spacing={3}>
+      <Grid container spacing={3} key='dashboard'>
         <Grid item xs={12} sm={6}>
           <Diterima />
         </Grid>
@@ -79,7 +78,7 @@ const index = () => {
     ]
   } else if (position == 'owner') {
     dashboard = [
-      <Grid container spacing={3}>
+      <Grid container spacing={3} key='dashboard'>
         <Grid item xs={12} sm={6}>
           <KaryawanCuti />
         </Grid>
@@ -92,6 +91,6 @@ const index = () => {
 
   return dashboard
 }
-index.getLayout = (page: React.ReactNode) => <UserLayout>{page}</UserLayout>
+Index.getLayout = (page: React.ReactNode) => <UserLayout>{page}</UserLayout>
 
-export default index
+export default Index

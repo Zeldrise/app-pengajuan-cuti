@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import AppURL from 'src/api/AppURL'
-import { AxiosError } from 'axios'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -16,7 +15,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import CardContent from '@mui/material/CardContent'
-import { styled, useTheme } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import MuiCard, { CardProps } from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
@@ -67,10 +66,9 @@ const LoginPage = () => {
     passwordError: '',
     serverError: null
   })
-  const [loginError, setLoginError] = useState<string>('')
+ 
 
   // ** Hook
-  const theme = useTheme()
   const router = useRouter()
 
   const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -99,6 +97,7 @@ const LoginPage = () => {
     } else {
       setValues(prevState => ({ ...prevState, passwordError: '' }))
     }
+
     return isValid
   }
 

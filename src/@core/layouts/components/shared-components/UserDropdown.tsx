@@ -84,7 +84,7 @@ const UserDropdown = () => {
       color: 'text.secondary'
     }
   }
-  const [urlPrefix, setUrlPrefix] = useState<string>('')
+
   const router = useRouter()
 
 

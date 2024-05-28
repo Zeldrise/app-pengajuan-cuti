@@ -230,7 +230,7 @@ const CutiPribadi = () => {
               return (
                 <TableRow hover role='checkbox' tabIndex={-1} key={row.id}>
                   {columns.map(column => {
-                    const value = row[column.id]
+                    
                     if (column.id === 'actions' && row.status === 'Pending') {
                       return (
                         <TableCell key={column.id} align='center' colSpan={columns.length}>
@@ -244,13 +244,24 @@ const CutiPribadi = () => {
                           </div>
                         </TableCell>
                       )
-                    }
+                    }else {
+                      const value = row[column.id as keyof Data]
                     if (column.id === 'status') {
                       return (
                         <TableCell key={column.id} align={column.align}>
                           <Chip
                             label={value}
-                            color={statusObj[value].color}
+                            color={
+                              (statusObj[value]?.color as
+                                | 'success'
+                                | 'error'
+                                | 'warning'
+                                | 'default'
+                                | 'primary'
+                                | 'secondary'
+                                | 'info'
+                                | undefined) || 'default'
+                            }
                             sx={{
                               height: 24,
                               fontSize: '0.75rem',
@@ -267,6 +278,7 @@ const CutiPribadi = () => {
                         {column.format && typeof value === 'number' ? column.format(value) : value}
                       </TableCell>
                     )
+                  }
                   })}
                 </TableRow>
               )

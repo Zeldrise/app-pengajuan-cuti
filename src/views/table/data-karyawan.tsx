@@ -29,7 +29,7 @@ const columns: readonly Column[] = [
   { id: 'telephone', label: 'No Telephone', minWidth: 100 },
   { id: 'position', label: 'Posisi', minWidth: 100 },
   { id: 'department', label: 'Departemen', minWidth: 100 },
-  { id: 'total_days', label: 'Sisa Cuti', minWidth: 100 }, // Saya asumsikan ini sisa cuti
+  { id: 'total_days', label: 'Sisa Cuti', minWidth: 100 }, 
   { id: 'actions', label: 'Actions', minWidth: 100 }
 ]
 
@@ -41,7 +41,12 @@ interface Data {
   position: string
   department: string
   total_days: number
+  role: string
+  gender: string
+  join_date: string
+  actions: any
 }
+
 
 
 const DataKaryawan = () => {

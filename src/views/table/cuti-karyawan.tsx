@@ -49,6 +49,7 @@ interface Data {
   description: string
   status: string
   approver: string
+  actions: any
 }
 
 
@@ -64,7 +65,7 @@ const CutiKaryawan = () => {
   const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
   const [isCutiKaryawanDetailOpen, setIsCutiKaryawanDetailOpen] = useState<boolean>(false)
   const [order, setOrder] = useState<'asc' | 'desc'>('asc')
-   const [orderBy, setOrderBy] = useState<keyof Data>('')
+   const [orderBy, setOrderBy] = useState<keyof Data>('submissionDate')
    const [rows, setRows] = useState<Data[]>([])
 
 
@@ -116,14 +117,18 @@ const CutiKaryawan = () => {
 
   const sortedRows = rows.sort((a, b) => {
     if (orderBy === 'submissionDate' || orderBy === 'startDate' || orderBy === 'endDate') {
+
       return order === 'asc'
         ? new Date(a[orderBy]).getTime() - new Date(b[orderBy]).getTime()
         : new Date(b[orderBy]).getTime() - new Date(a[orderBy]).getTime()
     } else if (orderBy === 'leaveAllowance') {
+
       return order === 'asc' ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy]
     }
+
     return 0
   })
+
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
@@ -150,6 +155,7 @@ const CutiKaryawan = () => {
                   {columns.map(column => {
                     const value = row[column.id]
                     if (column.id === 'actions') {
+
                       return (
                         <TableCell key={column.id} align={column.align}>
                           <Button onClick={() => handleActionClick(row)}>
@@ -159,11 +165,22 @@ const CutiKaryawan = () => {
                       )
                     }
                     if (column.id === 'status') {
+
                       return (
                         <TableCell key={column.id} align={column.align}>
                           <Chip
                             label={value}
-                            color={statusObj[value].color}
+                            color={
+                              (statusObj[value]?.color as
+                                | 'success'
+                                | 'error'
+                                | 'warning'
+                                | 'default'
+                                | 'primary'
+                                | 'secondary'
+                                | 'info'
+                                | undefined) || 'default'
+                            }
                             sx={{
                               height: 24,
                               fontSize: '0.75rem',
@@ -174,6 +191,7 @@ const CutiKaryawan = () => {
                         </TableCell>
                       )
                     }
+
                     return (
                       <TableCell key={column.id} align={column.align}>
                         {column.format && typeof value === 'number' ? column.format(value) : value}

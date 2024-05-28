@@ -9,7 +9,7 @@ import Slide from '@mui/material/Slide'
 import { TransitionProps } from '@mui/material/transitions'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
-import { Account, AccountTie, BadgeAccount, CalendarAccount, CloseCircle, Email, Margin, Phone } from 'mdi-material-ui'
+import { Account, AccountTie,  CalendarAccount, CloseCircle, Email,  Phone } from 'mdi-material-ui'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import Swal from 'sweetalert2'
@@ -17,8 +17,22 @@ import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormHelperText from '@mui/material/FormHelperText'
-import Select from '@mui/material/Select'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import AppURL from 'src/api/AppURL'
+
+interface Data {
+  id: number
+  name: string
+  email: string
+  telephone: string
+  position: string
+  department: string
+  role: string
+  gender: string
+  join_date: string
+  total_days: number
+}
+
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -76,11 +90,12 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
     if (!gender) errors.gender = 'Gender harus dipilih'
     if (!join_date) errors.join_date = 'Tanggal bergabung harus diisi'
     setErrors(errors)
+
     return Object.keys(errors).length === 0
   }
   const handleEditEmployee = async () => {
     try {
-      const response = await fetch(`${AppURL.Users}/${rowData.id}`, {
+      const response = await fetch(`${AppURL.Users}/${rowData?.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -175,7 +190,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
       setErrors({ ...errors, telephone: '' })
     }
   }
-  const handleChangeRole = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRole = (event: SelectChangeEvent<string>) => {
     setRole(event.target.value)
     if (errors.role) {
       setErrors({ ...errors, role: '' })
@@ -195,7 +210,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
       setErrors({ ...errors, department: '' })
     }
   }
-  const handleChangeGender = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeGender = (event: SelectChangeEvent<string>) => {
     setGender(event.target.value)
     if (errors.gender) {
       setErrors({ ...errors, gender: '' })
@@ -271,7 +286,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
             helperText={errors.telephone}
             value={telephone}
             onChange={handleChangetelephone}
-            placeholder={rowData?.no_telephone}
+            placeholder={rowData?.telephone}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -288,7 +303,6 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
               id='form-layouts-separator-select'
               labelId='form-layouts-separator-select-label'
               error={!!errors.role}
-              helperText={errors.role}
               value={role}
               onChange={handleChangeRole}
             >
@@ -344,7 +358,6 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
               value={gender}
               onChange={handleChangeGender}
               error={!!errors.gender}
-              helperText={errors.gender}
             >
               <MenuItem value='male'>Male</MenuItem>
               <MenuItem value='female'>Female</MenuItem>

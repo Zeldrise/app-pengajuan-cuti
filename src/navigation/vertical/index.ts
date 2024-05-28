@@ -1,11 +1,10 @@
-// ** Icon imports
-import HomeOutline from 'mdi-material-ui/HomeOutline'
+
+
 
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
-import { AccountGroup, Balloon, FileDocumentEditOutline, TableAccount, TextAccount } from 'mdi-material-ui'
 import AppURL from 'src/api/AppURL'
-import { NavLink } from 'react-router-dom'
+
 
 const fetchUserProfile = async () => {
   try {
@@ -18,10 +17,11 @@ const fetchUserProfile = async () => {
     if (!response.ok) {
       throw new Error('Failed to fetch user profile')
     }
+
     return await response.json()
   } catch (error) {
     console.error(error)
-    // Handle error accordingly
+    
     return null
   }
 }
@@ -35,19 +35,19 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
 
   const { role } = userProfile
   let menu: VerticalNavItemsType = []
-  var menuAccess: string[] = []
-  console.log('role', role)
+  let menuAccess: string[] = []
+
   if (role == 'hr') {
     menuAccess = ['/home', '/ajukan-cuti', '/approval-cuti', '/data-karyawan', '/cuti-karyawan', '/cuti-pribadi', '/user-profile', '/account-settings']
     menu = [
       {
         title: 'Home',
-        icon: HomeOutline,
+        icon: 'HomeOutline',
         path: '/home'
       },
       {
         title: 'Ajukan Cuti',
-        icon: Balloon,
+        icon: 'Balloon',
         path: '/ajukan-cuti'
       },
       {
@@ -55,12 +55,12 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Approval Cuti',
-        icon: FileDocumentEditOutline,
+        icon: 'FileDocumentEditOutline',
         path: '/approval-cuti'
       },
       {
         title: 'Data Karyawan',
-        icon: AccountGroup,
+        icon: 'AccountGroup',
         path: '/data-karyawan'
       },
 
@@ -69,13 +69,13 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Cuti Karyawan',
-        icon: TableAccount,
+        icon: 'TableAccount',
         path: '/cuti-karyawan'
       },
       {
         title: 'Cuti Pribadi',
         path: '/cuti-pribadi',
-        icon: TextAccount
+        icon: 'TextAccount'
       }
     ]
   } else if (role == 'staff') {
@@ -91,12 +91,12 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
     menu = [
       {
         title: 'Home',
-        icon: HomeOutline,
+        icon: 'HomeOutline',
         path: '/home'
       },
       {
         title: 'Ajukan Cuti',
-        icon: Balloon,
+        icon: 'Balloon',
         path: '/ajukan-cuti'
       },
       {
@@ -104,7 +104,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Data Karyawan',
-        icon: AccountGroup,
+        icon: 'AccountGroup',
         path: '/data-karyawan'
       },
 
@@ -113,13 +113,13 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Cuti Karyawan',
-        icon: TableAccount,
+        icon: 'TableAccount',
         path: '/cuti-karyawan'
       },
       {
         title: 'Cuti Pribadi',
         path: '/cuti-pribadi',
-        icon: TextAccount
+        icon: 'TextAccount'
       }
     ]
   } else if (role == 'karyawan') {
@@ -127,18 +127,18 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
     menu = [
       {
         title: 'Home',
-        icon: HomeOutline,
+        icon: 'HomeOutline',
         path: '/home'
       },
       {
         title: 'Ajukan Cuti',
-        icon: Balloon,
+        icon: 'Balloon',
         path: '/ajukan-cuti'
       },
       {
         title: 'Laporan Cuti',
         path: '/cuti-pribadi',
-        icon: TextAccount
+        icon: 'TextAccount'
       }
     ]
   } else if (role == 'owner') {
@@ -146,7 +146,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
     menu = [
       {
         title: 'Home',
-        icon: HomeOutline,
+        icon: 'HomeOutline',
         path: '/home'
       },
       {
@@ -154,12 +154,12 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Approval Cuti',
-        icon: FileDocumentEditOutline,
+        icon: 'FileDocumentEditOutline',
         path: '/approval-cuti'
       },
       {
         title: 'Data Karyawan',
-        icon: AccountGroup,
+        icon: 'AccountGroup',
         path: '/data-karyawan'
       },
 
@@ -168,7 +168,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Cuti Karyawan',
-        icon: TableAccount,
+        icon: 'TableAccount',
         path: '/cuti-karyawan'
       }
     ]

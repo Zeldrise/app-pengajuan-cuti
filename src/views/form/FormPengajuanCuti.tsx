@@ -77,6 +77,7 @@ const FormPengajuanCuti = () => {
     if (startDate && endDate && startDate > endDate)
       errors.date = 'Tanggal awal tidak boleh lebih besar dari tanggal akhir'
     setErrors(errors)
+
     return Object.keys(errors).length === 0
   }
 
@@ -93,6 +94,7 @@ const FormPengajuanCuti = () => {
       if (!response.ok) {
         throw new Error('Failed to submit form data')
       }
+
       return response.json()
     } catch (error) {
       console.error('Error submitting form data:', error)
@@ -114,6 +116,7 @@ const FormPengajuanCuti = () => {
        container: 'full-screen-alert'
      }
    })
+
    return
  }
 
@@ -217,7 +220,9 @@ const FormPengajuanCuti = () => {
     setCutiType(selectedType)
     setShowUrgencyFields(selectedType === 'Cuti urgensi')
      const isSickLeave = Number(selectedType) === 2
-     setShowDoctorNoteField(isSickLeave && startDate && endDate && differenceInDays(endDate, startDate) > 0)
+     setShowDoctorNoteField(
+       isSickLeave && startDate && endDate && differenceInDays(endDate, startDate) > 0 ? true : false
+     )
     if (errors.cutiType) {
       setErrors({ ...errors, cutiType: '' })
     }
@@ -300,10 +305,9 @@ const FormPengajuanCuti = () => {
             }
             const userData = await response.json()
             setUserData(userData)
-            setNama(userData.name) // Set the initial state with the fetched user data
-            setPosisi(userData.position) // Set the initial state with the fetched user data
+            setNama(userData.name) 
+            setPosisi(userData.position) 
             setDepartemen(userData.department)
-            // console.log(userData)
           } catch (error) {
             console.error('Terjadi kesalahan:', error)
           }
@@ -549,7 +553,6 @@ const FormPengajuanCuti = () => {
                 selected={startDate}
                 showYearDropdown
                 showMonthDropdown
-                error={!!errors.startDate}
                 placeholderText='MM-DD-YYYY'
                 customInput={<TglAwal />}
                 id='form-layouts-separator-date'

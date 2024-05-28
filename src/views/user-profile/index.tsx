@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import { styled } from '@mui/material/styles'
@@ -17,10 +16,8 @@ const ImgStyled = styled('img')(({ theme }) => ({
 }))
 
 const UserProfile = () => {
-  const [openAlert, setOpenAlert] = useState<boolean>(true)
-  const [imgSrc, setImgSrc] = useState<string>('/images/avatars/1.png')
+  const [imgSrc] = useState<string>('/images/avatars/1.png')
   const [userData, setUserData] = useState<any>(null)
-  const router = useRouter()
 
   const fetchUserData = async () => {
     try {

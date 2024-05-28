@@ -1,8 +1,6 @@
 // ** React Imports
 import { ChangeEvent, ReactNode, useState } from 'react'
 
-// ** Next Imports
-import { useRouter } from 'next/router'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -10,7 +8,7 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
-import { styled, useTheme } from '@mui/material/styles'
+import { styled} from '@mui/material/styles'
 import MuiCard, { CardProps } from '@mui/material/Card'
 
 // ** Layout Import
@@ -38,9 +36,6 @@ const ForgotPage = () => {
     email: '',
     emailError: ''
   })
-  // ** Hook
-  const theme = useTheme()
-  const router = useRouter()
 
   const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value})
@@ -54,6 +49,7 @@ const ForgotPage = () => {
     }else{
       setValues(prevState => ({ ...prevState, emailError: ''}))
     }
+    
     return isValid
   }
 
