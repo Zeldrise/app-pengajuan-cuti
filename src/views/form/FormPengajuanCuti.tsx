@@ -49,7 +49,7 @@ const FormPengajuanCuti = () => {
   const [deskripsi, setDeskripsi] = useState<string>('')
   const [showUrgencyFields, setShowUrgencyFields] = useState<boolean>(false)
   const [showDoctorNoteField, setShowDoctorNoteField] = useState<boolean>(false)
-  const [doctorNoteImage, setDoctorNoteImage] = useState<string | null>(null)
+  const [doctorNoteImage, setDoctorNoteImage] = useState<File | null>(null)
   const [urgencyOptions, setUrgencyOptions] = useState<any[]>([])
   const [leaveOptions, setLeaveOptions] = useState<any[]>([])
   const [urgency, setUrgency] = useState<string>('')
@@ -80,6 +80,26 @@ const FormPengajuanCuti = () => {
 
     return Object.keys(errors).length === 0
   }
+
+    const uploadDoctorNote = async (file: File) => {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch(`${AppURL.Submissions}/upload`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to upload doctor note')
+      }
+
+      const result = await response.json()
+      return result.filename
+    }
 
   const submitFormData = async (data: any) => {
     try {
@@ -135,15 +155,22 @@ const FormPengajuanCuti = () => {
       }).then(async result => {
         if (result.isConfirmed) {
           try {
+             let attachment = null
+
+             if (Number(cutiType) === 2 && doctorNoteImage) {
+               attachment = await uploadDoctorNote(doctorNoteImage)
+             }
             const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
             const dataPengajuan = {
               start_date: startDate,
               end_date: endDate,
               leave_type: finalCutiType,
               emergency_call: telepon,
-              description: deskripsi
+              description: deskripsi,
+              attachment: attachment
             }
             await submitFormData(dataPengajuan)
+            console.log('data yang disubmit :', dataPengajuan)
             Swal.fire({
               title: 'Pengajuan Berhasil Disubmit!',
               icon: 'success',
@@ -235,20 +262,16 @@ const FormPengajuanCuti = () => {
        setShowDoctorNoteField(false)
      }
    }, [cutiType, startDate, endDate])
- const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   const file = event.target.files && event.target.files[0]
   if (file) {
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setDoctorNoteImage(reader.result as string)
-    }
-    setDoctorNoteImage(event.target.value)
-    reader.readAsDataURL(file)
+    setDoctorNoteImage(file)
   }
   if (errors.doctorNote) {
     setErrors({ ...errors, doctorNote: '' })
   }
- }
+}
+
    const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
      setNama(event.target.value)
      if (errors.nama) {
@@ -540,9 +563,9 @@ const FormPengajuanCuti = () => {
                 </label>
                 {doctorNoteImage && (
                   <img
-                    src={doctorNoteImage}
+                    src={URL.createObjectURL(doctorNoteImage)}
                     alt='Doctor Note Preview'
-                    style={{ marginTop: '10px', maxWidth: '100%' }}
+                    style={{ marginTop: '10px', maxWidth: '50%'  }}
                   />
                 )}
                 {errors.doctorNote && <FormHelperText error>{errors.doctorNote}</FormHelperText>}

@@ -1,11 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import Button from '@mui/material/Button'
 import Slide from '@mui/material/Slide'
-
 
 import { TransitionProps } from '@mui/material/transitions'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -35,6 +34,7 @@ interface Data {
   endDate: string
   totalDays: number
   leaveType: string
+  attachment?: string 
   leaveAllowance: number
   description: string
   status: string
@@ -47,8 +47,34 @@ interface PropsApprovalDetail {
   onStatusChange: () => void
 }
 
-
 const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData, onStatusChange }) => {
+  const [attachmentUrl, setAttachmentUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (rowData && rowData.attachment) {
+      const fetchAttachmentUrl = async () => {
+        try {
+          const response = await fetch(`${AppURL.Submissions}/uploads/${rowData.attachment}`, {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+          if (!response.ok) {
+            throw new Error('Failed to fetch attachment')
+          }
+          const data = await response.blob()
+          setAttachmentUrl(URL.createObjectURL(data))
+        } catch (error) {
+          console.error('Error fetching attachment:', error)
+        }
+      }
+      fetchAttachmentUrl()
+    } else {
+      setAttachmentUrl(null)
+    }
+  }, [rowData])
+
   const handleClose = () => {
     onClose()
   }
@@ -69,46 +95,46 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
     }
   }
 
-const handleAccept = () => {
-  Swal.fire({
-    title: 'Terima pengajuan cuti?',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonColor: '#6AD01F',
-    cancelButtonColor: '#FF6166',
-    confirmButtonText: 'Terima',
-    cancelButtonText: 'Batal',
-    customClass: {
-      container: 'full-screen-alert'
-    }
-  }).then(async result => {
-    if (result.isConfirmed && rowData) {
-      try {
-        await updateSubmissionStatus(rowData.id, 'accept')
-        Swal.fire({
-          title: 'Pengajuan Diterima!',
-          icon: 'success',
-          confirmButtonColor: '#6AD01F',
-          customClass: {
-            container: 'full-screen-alert'
-          }
-        })
-        onStatusChange()
-        onClose()
-      } catch (error) {
-        Swal.fire({
-          title: 'Pengajuan Gagal!',
-          text: 'Terjadi kesalahan saat menerima pengajuan.',
-          icon: 'error',
-          confirmButtonColor: '#FF6166',
-          customClass: {
-            container: 'full-screen-alert'
-          }
-        })
+  const handleAccept = () => {
+    Swal.fire({
+      title: 'Terima pengajuan cuti?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#6AD01F',
+      cancelButtonColor: '#FF6166',
+      confirmButtonText: 'Terima',
+      cancelButtonText: 'Batal',
+      customClass: {
+        container: 'full-screen-alert'
       }
-    }
-  })
-}
+    }).then(async result => {
+      if (result.isConfirmed && rowData) {
+        try {
+          await updateSubmissionStatus(rowData.id, 'accept')
+          Swal.fire({
+            title: 'Pengajuan Diterima!',
+            icon: 'success',
+            confirmButtonColor: '#6AD01F',
+            customClass: {
+              container: 'full-screen-alert'
+            }
+          })
+          onStatusChange()
+          onClose()
+        } catch (error) {
+          Swal.fire({
+            title: 'Pengajuan Gagal!',
+            text: 'Terjadi kesalahan saat menerima pengajuan.',
+            icon: 'error',
+            confirmButtonColor: '#FF6166',
+            customClass: {
+              container: 'full-screen-alert'
+            }
+          })
+        }
+      }
+    })
+  }
 
   const handleReject = () => {
     Swal.fire({
@@ -197,6 +223,16 @@ const handleAccept = () => {
           <p>
             <span style={{ display: 'inline-block', width: 180 }}>Tipe Cuti</span>: {rowData?.leaveType}
           </p>
+          {attachmentUrl && (
+            <div>
+              <span style={{ display: 'inline-block', width: 180 }}>Surat Dokter</span>:
+              <img
+                src={attachmentUrl}
+                alt='Attachment'
+                style={{ display: 'inline-flex', maxWidth: '100%', maxHeight: '200px' }}
+              />
+            </div>
+          )}
           <p>
             <span style={{ display: 'inline-block', width: 180 }}>Sisa Cuti</span>: {rowData?.leaveAllowance}
           </p>

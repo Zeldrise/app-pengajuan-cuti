@@ -16,7 +16,7 @@ const UserLayout = ({ children }: Props) => {
   const { settings, saveSettings } = useSettings()
   const router = useRouter()
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
-  const [verticalNavItems, setVerticalNavItems] = useState<VerticalNavItemsType | null>(null)
+  const [verticalNavItems, setVerticalNavItems] = useState<VerticalNavItemsType>([])
 
   useEffect(() => {
     const fetchAuthStatus = async () => {

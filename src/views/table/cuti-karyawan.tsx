@@ -64,7 +64,7 @@ const CutiKaryawan = () => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
   const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
   const [isCutiKaryawanDetailOpen, setIsCutiKaryawanDetailOpen] = useState<boolean>(false)
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc')
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc')
    const [orderBy, setOrderBy] = useState<keyof Data>('submissionDate')
    const [rows, setRows] = useState<Data[]>([])
 
