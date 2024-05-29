@@ -16,13 +16,14 @@ const UserLayout = ({ children }: Props) => {
   const { settings, saveSettings } = useSettings()
   const router = useRouter()
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
-  const [verticalNavItems, setVerticalNavItems] = useState<VerticalNavItemsType>([])
+  const [verticalNavItems, setVerticalNavItems] = useState<VerticalNavItemsType | null>(null)
 
   useEffect(() => {
     const fetchAuthStatus = async () => {
       const token = localStorage.getItem('token')
       const menuAccessJson = localStorage.getItem('menuAccess')
       let menuAccess: string[] = []
+      
       if (menuAccessJson != null) {
         menuAccess = JSON.parse(menuAccessJson)
       }

@@ -32,6 +32,7 @@ const UserProfile = () => {
       }
       const userData = await response.json()
       setUserData(userData)
+      console.log('user data :', userData)
     } catch (error) {
       console.error('Terjadi kesalahan:', error)
     }

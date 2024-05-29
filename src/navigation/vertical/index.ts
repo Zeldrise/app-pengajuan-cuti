@@ -21,7 +21,6 @@ const fetchUserProfile = async () => {
     return await response.json()
   } catch (error) {
     console.error(error)
-    
     return null
   }
 }
@@ -29,14 +28,13 @@ const fetchUserProfile = async () => {
 const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
   const userProfile = await fetchUserProfile()
   if (!userProfile || !userProfile.role) {
-    // Handle missing user profile or role
     return []
   }
 
   const { role } = userProfile
   let menu: VerticalNavItemsType = []
   let menuAccess: string[] = []
-
+  console.log('role', role)
   if (role == 'hr') {
     menuAccess = ['/home', '/ajukan-cuti', '/approval-cuti', '/data-karyawan', '/cuti-karyawan', '/cuti-pribadi', '/user-profile', '/account-settings']
     menu = [
