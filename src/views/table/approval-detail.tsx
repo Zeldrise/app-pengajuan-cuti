@@ -49,6 +49,8 @@ interface PropsApprovalDetail {
 
 const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData, onStatusChange }) => {
   const [attachmentUrl, setAttachmentUrl] = useState<string | null>(null)
+   const [previewOpen, setPreviewOpen] = useState(false)
+   const [previewImage, setPreviewImage] = useState<string | null>(null)
 
   useEffect(() => {
     if (rowData && rowData.attachment) {
@@ -176,81 +178,103 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
       }
     })
   }
+
+  
+  const handleImageClick = (url: string) => {
+    setPreviewImage(url)
+    setPreviewOpen(true)
+  }
+
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
 
   return (
-    <Dialog
-      fullScreen={fullScreen}
-      open={open}
-      fullWidth={true}
-      onClose={handleClose}
-      TransitionComponent={Transition}
-      keepMounted
-    >
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        Detail Pengajuan Cuti
-        <Button onClick={handleClose} color='inherit'>
-          <CloseCircle />
-        </Button>
-      </DialogTitle>
-      <DialogContent>
-        <div>
-          <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Nama</span>: {rowData?.name}
-          </p>
-          <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Tanggal Penyerahan</span>: {rowData?.submissionDate}
-          </p>
-          <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Telephone Darurat</span>: {rowData?.emergencyCall}
-          </p>
-          <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Posisi</span>: {rowData?.position}
-          </p>
-          <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Departemen</span>: {rowData?.department}
-          </p>
-          <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Tanggal Mulai</span>: {rowData?.startDate}
-          </p>
-          <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Tanggal Akhir</span>: {rowData?.endDate}
-          </p>
-          <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Lama Cuti</span>: {rowData?.totalDays}
-          </p>
-          <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Tipe Cuti</span>: {rowData?.leaveType}
-          </p>
-          {attachmentUrl && (
-            <div>
-              <span style={{ display: 'inline-block', width: 180 }}>Surat Dokter</span>:
-              <img
-                src={attachmentUrl}
-                alt='Attachment'
-                style={{ display: 'inline-flex', maxWidth: '100%', maxHeight: '200px' }}
-              />
-            </div>
-          )}
-          <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Sisa Cuti</span>: {rowData?.leaveAllowance}
-          </p>
-          <p>
-            <span style={{ display: 'inline-block', width: 180 }}>Deskripsi</span>:{' '}
-            <span style={{ display: 'inline-flex', width: 300 }}>{rowData?.description}</span>
-          </p>
-        </div>
-      </DialogContent>
-      <DialogActions>
-        <Button variant='contained' color='success' onClick={handleAccept}>
-          Terima
-        </Button>
-        <Button variant='contained' color='error' onClick={handleReject}>
-          Tolak
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <>
+      <Dialog
+        fullScreen={fullScreen}
+        open={open}
+        fullWidth={true}
+        onClose={handleClose}
+        TransitionComponent={Transition}
+        keepMounted
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          Detail Pengajuan Cuti
+          <Button onClick={handleClose} color='inherit'>
+            <CloseCircle />
+          </Button>
+        </DialogTitle>
+        <DialogContent>
+          <div>
+            <p>
+              <span style={{ display: 'inline-block', width: 180 }}>Nama</span>: {rowData?.name}
+            </p>
+            <p>
+              <span style={{ display: 'inline-block', width: 180 }}>Tanggal Penyerahan</span>: {rowData?.submissionDate}
+            </p>
+            <p>
+              <span style={{ display: 'inline-block', width: 180 }}>Telephone Darurat</span>: {rowData?.emergencyCall}
+            </p>
+            <p>
+              <span style={{ display: 'inline-block', width: 180 }}>Posisi</span>: {rowData?.position}
+            </p>
+            <p>
+              <span style={{ display: 'inline-block', width: 180 }}>Departemen</span>: {rowData?.department}
+            </p>
+            <p>
+              <span style={{ display: 'inline-block', width: 180 }}>Tanggal Mulai</span>: {rowData?.startDate}
+            </p>
+            <p>
+              <span style={{ display: 'inline-block', width: 180 }}>Tanggal Akhir</span>: {rowData?.endDate}
+            </p>
+            <p>
+              <span style={{ display: 'inline-block', width: 180 }}>Lama Cuti</span>: {rowData?.totalDays}
+            </p>
+            <p>
+              <span style={{ display: 'inline-block', width: 180 }}>Tipe Cuti</span>: {rowData?.leaveType}
+            </p>
+            {attachmentUrl && (
+              <div>
+                <span style={{ display: 'inline-block', width: 180 }}>Surat Dokter</span>:
+                <img
+                  src={attachmentUrl}
+                  alt='Attachment'
+                  style={{ display: 'inline-flex', maxWidth: '100%', maxHeight: '200px' }}
+                  onClick={() => handleImageClick(attachmentUrl)}
+                />
+              </div>
+            )}
+            <p>
+              <span style={{ display: 'inline-block', width: 180 }}>Sisa Cuti</span>: {rowData?.leaveAllowance} hq
+            </p>
+            <p>
+              <span style={{ display: 'inline-block', width: 180 }}>Deskripsi</span>:{' '}
+              <span style={{ display: 'inline-flex', width: 300 }}>{rowData?.description}</span>
+            </p>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button variant='contained' color='success' onClick={handleAccept}>
+            Terima
+          </Button>
+          <Button variant='contained' color='error' onClick={handleReject}>
+            Tolak
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={previewOpen} onClose={() => setPreviewOpen(false)} maxWidth='md' fullWidth>
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          Surat Dokter
+          <Button onClick={() => setPreviewOpen(false)} color='inherit'>
+            <CloseCircle />
+          </Button>
+        </DialogTitle>
+        <DialogContent>
+          {previewImage && <img src={previewImage} alt='Preview' style={{ width: '100%', height: 'auto' }} />}
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 

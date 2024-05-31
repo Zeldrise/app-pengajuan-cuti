@@ -84,7 +84,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
   const [deskripsi, setDeskripsi] = useState<string>('')
   const [showUrgencyFields, setShowUrgencyFields] = useState<boolean>(false)
   const [showDoctorNoteField, setShowDoctorNoteField] = useState<boolean>(false)
-  const [doctorNoteImage, setDoctorNoteImage] = useState<string | null>(null)
+  const [doctorNoteImage, setDoctorNoteImage] = useState<File | null>(null)
   const [urgencyOptions, setUrgencyOptions] = useState<any[]>([])
   const [leaveOptions, setLeaveOptions] = useState<any[]>([])
   const [urgency, setUrgency] = useState<string>('')
@@ -142,20 +142,36 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
     }
   }, [cutiType, startDate, endDate])
 
-  const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files && event.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setDoctorNoteImage(reader.result as string)
+      const updateDoctorNote = async (file: File) => {
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const response = await fetch(`${AppURL.Submissions}/upload/${rowData?.id}`, {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+          body: formData
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to upload doctor note')
+        }
+
+        const result = await response.json()
+        return result.filename
       }
-      setDoctorNoteImage(event.target.value)
-      reader.readAsDataURL(file)
-    }
-    if (errors.doctorNote) {
-      setErrors({ ...errors, doctorNote: '' })
-    }
-  }
+
+ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+   const file = event.target.files && event.target.files[0]
+   if (file) {
+     setDoctorNoteImage(file)
+   }
+   if (errors.doctorNote) {
+     setErrors({ ...errors, doctorNote: '' })
+   }
+ }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (validateForm()) {
@@ -173,13 +189,19 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
         }
       }).then(async result => {
         if (result.isConfirmed) {
+            let attachment = null
+
+            if (Number(cutiType) === 2 && doctorNoteImage) {
+              attachment = await updateDoctorNote(doctorNoteImage)
+            }
           const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
           const dataPengajuan = {
             start_date: startDate,
             end_date: endDate,
             leave_type: finalCutiType,
             emergency_call: telepon,
-            description: deskripsi
+            description: deskripsi,
+            attachment: attachment
           }
 
           try {
@@ -534,7 +556,7 @@ useEffect(() => {
                   </label>
                   {doctorNoteImage && (
                     <img
-                      src={doctorNoteImage}
+                      src={URL.createObjectURL(doctorNoteImage)}
                       alt='Doctor Note Preview'
                       style={{ marginTop: '10px', maxWidth: '100%' }}
                     />

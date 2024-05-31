@@ -28,6 +28,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
+import { ArrowLeft } from 'mdi-material-ui'
 
 interface State {
   email: string
@@ -139,6 +140,13 @@ const LoginPage = () => {
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
+            <Box>
+              <Link href='/' passHref>
+                <IconButton aria-label='back to home'>
+                  <ArrowLeft />
+                </IconButton>
+              </Link>
+            </Box>
           <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Typography
               variant='h6'
