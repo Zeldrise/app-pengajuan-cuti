@@ -49,7 +49,7 @@ const Card = styled(MuiCard)<CardProps>(({ theme }) => ({
 const ResetPassPage = () => {
   // ** State
     const router = useRouter()
-    const { token } = router.query
+    const [token, setToken] = useState<string | null>(null)
     const [values, setValues] = useState<State>({
       token: token as string,
       newPassword: '',
@@ -61,10 +61,15 @@ const ResetPassPage = () => {
     })
 
      useEffect(() => {
-       if (!token) {
-         router.push('/login') 
+       const { token } = router.query
+       if (typeof token === 'string') {
+         setToken(token)
+         setValues(prevState => ({ ...prevState, token: token }))
+       } else {
+         // Token tidak ditemukan, lakukan penanganan sesuai kebutuhan, seperti redirect ke halaman login
+         router.push('/login')
        }
-     }, [token, router])
+     }, [router.query])
 
 
 
@@ -115,10 +120,10 @@ const ResetPassPage = () => {
        if (validationForm()) {
          try {
            const response = await resetPassword(values.token, values.newPassword, values.confirmPassword)
-         
+           // Handle success response if needed
            console.log(response)
          } catch (error) {
-         
+           // Handle error response if needed
            console.error(error)
          }
        }
@@ -146,12 +151,11 @@ const ResetPassPage = () => {
             icon: 'success',
             confirmButtonText: 'OK'
           })
-          
            return data
          } else {
             Swal.fire({
               title: 'Error!',
-              text: 'Failed to changed password',
+              text: data.message || 'Failed to changed password ',
               icon: 'error',
               confirmButtonText: 'OK'
             })
