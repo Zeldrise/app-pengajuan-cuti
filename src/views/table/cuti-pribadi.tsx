@@ -8,8 +8,9 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import Button from '@mui/material/Button'
-import { PencilBox, TrashCan } from 'mdi-material-ui'
+import { FileEye, PencilBox, TrashCan } from 'mdi-material-ui'
 import EditCutiPribadi from './cuti-edit'
+import CutiPribadiDetail from './cuti-p-detail'
 import Chip from '@mui/material/Chip'
 import Swal from 'sweetalert2'
 import AppURL from '../../api/AppURL'
@@ -64,6 +65,7 @@ const CutiPribadi = () => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
   const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
   const [isEditCutiPribadiOpen, setIsEditCutiPribadiOpen] = useState<boolean>(false)
+  const [isCutiDetailOpen, setIsCutiDetailOpen] = useState<boolean>(false)
   const [order, setOrder] = useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = useState<keyof Data>('submissionDate')
   const [rows, setRows] = useState<Data[]>([])
@@ -104,7 +106,7 @@ const CutiPribadi = () => {
     setRowsPerPage(+event.target.value)
     setPage(0)
   }
-  const handleActionClick = (rowData: Data) => {
+  const handleEditClick = (rowData: Data) => {
     setSelectedRowData(rowData)
     setIsEditCutiPribadiOpen(true)
   }
@@ -113,6 +115,13 @@ const CutiPribadi = () => {
   }
   const handleEditSuccess = () => {
     fetchSubmissions() 
+  }
+  const handleDetailClick = (rowData: Data) => {
+    setSelectedRowData(rowData)
+    setIsCutiDetailOpen(true)
+  }
+  const handleCloseDetailCuti = () => {
+    setIsCutiDetailOpen(false)
   }
   const handleSort = (property: keyof Data) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -230,55 +239,66 @@ const CutiPribadi = () => {
               return (
                 <TableRow hover role='checkbox' tabIndex={-1} key={row.id}>
                   {columns.map(column => {
-                    
-                    if (column.id === 'actions' && row.status === 'Pending') {
-                      return (
-                        <TableCell key={column.id} align='center' colSpan={columns.length}>
-                          <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button onClick={() => handleActionClick(row)}>
-                              <PencilBox />
-                            </Button>
-                            <Button onClick={() => handleDeleteRow(row)}>
-                              <TrashCan />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      )
-                    }else {
+                    if (column.id === 'actions') {
+                      if (row.status === 'Pending') {
+                        return (
+                          <TableCell key={column.id} align='center' colSpan={columns.length}>
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                              <Button onClick={() => handleEditClick(row)}>
+                                <PencilBox />
+                              </Button>
+                              <Button onClick={() => handleDeleteRow(row)}>
+                                <TrashCan />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        )
+                      } else if (row.status === 'Diterima' || row.status === 'Ditolak') {
+                        return (
+                          <TableCell key={column.id} align='center' colSpan={columns.length}>
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                              <Button onClick={() => handleDetailClick(row)}>
+                                <FileEye />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        )
+                      }
+                    } else {
                       const value = row[column.id as keyof Data]
-                    if (column.id === 'status') {
+                      if (column.id === 'status') {
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            <Chip
+                              label={value}
+                              color={
+                                (statusObj[value]?.color as
+                                  | 'success'
+                                  | 'error'
+                                  | 'warning'
+                                  | 'default'
+                                  | 'primary'
+                                  | 'secondary'
+                                  | 'info'
+                                  | undefined) || 'default'
+                              }
+                              sx={{
+                                height: 24,
+                                fontSize: '0.75rem',
+                                textTransform: 'capitalize',
+                                '& .MuiChip-label': { fontWeight: 500 }
+                              }}
+                            />
+                          </TableCell>
+                        )
+                      }
+
                       return (
                         <TableCell key={column.id} align={column.align}>
-                          <Chip
-                            label={value}
-                            color={
-                              (statusObj[value]?.color as
-                                | 'success'
-                                | 'error'
-                                | 'warning'
-                                | 'default'
-                                | 'primary'
-                                | 'secondary'
-                                | 'info'
-                                | undefined) || 'default'
-                            }
-                            sx={{
-                              height: 24,
-                              fontSize: '0.75rem',
-                              textTransform: 'capitalize',
-                              '& .MuiChip-label': { fontWeight: 500 }
-                            }}
-                          />
+                          {column.format && typeof value === 'number' ? column.format(value) : value}
                         </TableCell>
                       )
                     }
-
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format && typeof value === 'number' ? column.format(value) : value}
-                      </TableCell>
-                    )
-                  }
                   })}
                 </TableRow>
               )
@@ -301,7 +321,8 @@ const CutiPribadi = () => {
         rowData={selectedRowData}
         onEditSuccess={handleEditSuccess}
       />
-    </Paper>  
+      <CutiPribadiDetail open={isCutiDetailOpen} onClose={handleCloseDetailCuti} rowData={selectedRowData} />
+    </Paper>
   )
 }
 

@@ -55,6 +55,7 @@ const FormPengajuanCuti = () => {
   const [urgency, setUrgency] = useState<string>('')
   const [userData, setUserData] = useState<any>(null)
   const [errors, setErrors] = useState<any>({})
+  const [maxEndDate, setMaxEndDate] = useState<Date | null>(null)
   
 
   const validateForm = () => {
@@ -212,6 +213,7 @@ const FormPengajuanCuti = () => {
         const urgencyNumber = Number(urgency)
         if (urgencyNumber === 3) {
           handleChangeEndDate(addDays(date, 2))
+          setMaxEndDate(addDays(date, 2))
         } else if (
           urgencyNumber === 4 ||
           urgencyNumber === 5 ||
@@ -220,8 +222,10 @@ const FormPengajuanCuti = () => {
           urgencyNumber === 9
         ) {
           handleChangeEndDate(addDays(date, 1))
+          setMaxEndDate(addDays(date, 1))
         } else if (urgencyNumber === 6) {
           handleChangeEndDate(addDays(date, 0))
+          setMaxEndDate(addDays(date, 0))
         }
 
         if (errors.startDate || errors.endDate) {
@@ -235,12 +239,16 @@ const FormPengajuanCuti = () => {
     }
 
 
-    const handleChangeEndDate = (date: Date | null) => {
-      setEndDate(date)
-      if (errors.endDate) {
-        setErrors({ ...errors, endDate: '' }) 
-      }
-    }
+     const handleChangeEndDate = (date: Date | null) => {
+       if (maxEndDate && date && date > maxEndDate) {
+         setEndDate(maxEndDate)
+       } else {
+         setEndDate(date)
+          if (errors.endDate) {
+            setErrors({ ...errors, endDate: '' })
+          }
+       }
+     }
 
   const handleCutiTypeChange = (event: SelectChangeEvent<string>) => {
     const selectedType = event.target.value as string
@@ -250,6 +258,10 @@ const FormPengajuanCuti = () => {
      setShowDoctorNoteField(
        isSickLeave && startDate && endDate && differenceInDays(endDate, startDate) > 0 ? true : false
      )
+      if (selectedType !== 'Cuti urgensi') {
+        setMaxEndDate(null) 
+        setUrgency('')
+      }
     if (errors.cutiType) {
       setErrors({ ...errors, cutiType: '' })
     }
@@ -565,7 +577,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                   <img
                     src={URL.createObjectURL(doctorNoteImage)}
                     alt='Doctor Note Preview'
-                    style={{ marginTop: '10px', maxWidth: '50%'  }}
+                    style={{ marginTop: '10px', maxWidth: '50%' }}
                   />
                 )}
                 {errors.doctorNote && <FormHelperText error>{errors.doctorNote}</FormHelperText>}
@@ -593,9 +605,9 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                 customInput={<TglAkhir />}
                 id='form-layouts-separator-date'
                 onChange={handleChangeEndDate}
-                minDate={startOfToday()}
+                minDate={startDate}
                 startDate={startDate}
-                disabled={cutiType === 'Cuti urgensi'}
+                maxDate={cutiType === 'Cuti urgensi' ? maxEndDate : null}
               />
               {errors.endDate && <FormHelperText error>{errors.endDate}</FormHelperText>}
             </Grid>
