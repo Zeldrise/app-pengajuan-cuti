@@ -338,7 +338,7 @@ useEffect(() => {
   // Pre-fill form fields with rowData values
   if (rowData) {
     setNama(rowData.name || '');
-    setTelepon(rowData.telephone || '');
+    setTelepon(rowData.emergencyCall || '')
     setPosisi(rowData.position || '');
     setDepartemen(rowData.department || '');
     setDeskripsi(rowData.description || '');
