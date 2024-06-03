@@ -137,7 +137,7 @@ const CutiKaryawanDetail: React.FC<PropsCutiKaryawanDetail> = ({ open, onClose, 
               <span style={{ display: 'inline-block', width: 180 }}>Tanggal Akhir</span>: {rowData?.endDate}
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Lama Cuti</span>: {rowData?.totalDays}
+              <span style={{ display: 'inline-block', width: 180 }}>Lama Cuti</span>: {rowData?.totalDays} Hari
             </p>
             <p>
               <span style={{ display: 'inline-block', width: 180 }}>Tipe Cuti</span>: {rowData?.leaveType}
