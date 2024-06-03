@@ -66,7 +66,7 @@ const ResetPassPage = () => {
          setToken(token)
          setValues(prevState => ({ ...prevState, token: token }))
        } else {
-         // Token tidak ditemukan, lakukan penanganan sesuai kebutuhan, seperti redirect ke halaman login
+  
          router.push('/login')
        }
      }, [router.query])
@@ -120,10 +120,10 @@ const ResetPassPage = () => {
        if (validationForm()) {
          try {
            const response = await resetPassword(values.token, values.newPassword, values.confirmPassword)
-           // Handle success response if needed
+      
            console.log(response)
          } catch (error) {
-           // Handle error response if needed
+         
            console.error(error)
          }
        }
@@ -151,6 +151,7 @@ const ResetPassPage = () => {
             icon: 'success',
             confirmButtonText: 'OK'
           })
+          
            return data
          } else {
             Swal.fire({
