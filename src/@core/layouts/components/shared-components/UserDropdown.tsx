@@ -90,6 +90,7 @@ const UserDropdown = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token')
+    localStorage.removeItem('menuAccess')
     router.push('/')
   }
 
