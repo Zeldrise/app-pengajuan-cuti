@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import Button from '@mui/material/Button'
 import Link from 'next/link'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,

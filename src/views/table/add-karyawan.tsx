@@ -25,7 +25,7 @@ import MenuItem from '@mui/material/MenuItem'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {

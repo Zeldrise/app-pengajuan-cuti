@@ -15,17 +15,17 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemButton, { ListItemButtonProps } from '@mui/material/ListItemButton'
 
 // ** Configs Import
-import themeConfig from 'src/configs/themeConfig'
+import themeConfig from '../../../../../configs/themeConfig'
 
 // ** Types
-import { NavLink } from 'src/@core/layouts/types'
-import { Settings } from 'src/@core/context/settingsContext'
+import { NavLink } from '../../../types'
+import { Settings } from '../../../../context/settingsContext'
 
 // ** Custom Components Imports
-import UserIcon from 'src/layouts/components/UserIcon'
+import UserIcon from '../../../../../layouts/components/UserIcon'
 
 // ** Utils
-import { handleURLQueries } from 'src/@core/layouts/utils'
+import { handleURLQueries } from '../../../utils'
 
 interface Props {
   item: NavLink

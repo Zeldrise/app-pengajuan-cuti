@@ -16,13 +16,13 @@ import Link from 'next/link'
 import IconButton from '@mui/material/IconButton'
 
 // ** Layout Import
-import BlankLayout from 'src/@core/layouts/BlankLayout'
+import BlankLayout from '../../@core/layouts/BlankLayout'
 
 // ** Demo Imports
-import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
+import FooterIllustrationsV1 from '../../views/pages/auth/FooterIllustration'
 
 // ** App URL Import
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 
 // ** SweetAlert2 Import
 import Swal from 'sweetalert2'
@@ -59,6 +59,7 @@ const ForgotPage = () => {
     } else {
       setValues(prevState => ({ ...prevState, emailError: '' }))
     }
+    
     return isValid
   }
 

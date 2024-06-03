@@ -9,7 +9,7 @@ import { TransitionProps } from '@mui/material/transitions'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 import { CloseCircle } from 'mdi-material-ui'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 import { DialogActions } from '@mui/material'
 
 const Transition = React.forwardRef(function Transition(

@@ -11,7 +11,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 import { CloseCircle } from 'mdi-material-ui'
 import Swal from 'sweetalert2'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {

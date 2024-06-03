@@ -27,7 +27,7 @@ import { Account, AccountTie, BadgeAccount } from 'mdi-material-ui'
 import Typography from '@mui/material/Typography'
 import FormHelperText from '@mui/material/FormHelperText'
 import Swal from 'sweetalert2'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 
 
 const TglAwal = forwardRef((props, ref) => {

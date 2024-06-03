@@ -18,7 +18,7 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormHelperText from '@mui/material/FormHelperText'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 
 interface Data {
   id: number

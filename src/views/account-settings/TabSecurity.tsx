@@ -17,7 +17,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import { FormHelperText } from '@mui/material'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 

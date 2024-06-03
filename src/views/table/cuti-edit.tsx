@@ -21,7 +21,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import FormHelperText from '@mui/material/FormHelperText'
 import Swal from 'sweetalert2'
 import CardContent from '@mui/material/CardContent'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 
 // ** Third Party Imports
 import DatePicker from 'react-datepicker'

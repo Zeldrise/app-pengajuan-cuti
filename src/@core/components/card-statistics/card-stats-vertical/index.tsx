@@ -10,7 +10,7 @@ import CardContent from '@mui/material/CardContent'
 import DotsVertical from 'mdi-material-ui/DotsVertical'
 
 // ** Types Imports
-import { CardStatsVerticalProps } from 'src/@core/components/card-statistics/types'
+import { CardStatsVerticalProps } from '../types'
 
 const CardStatsVertical = (props: CardStatsVerticalProps) => {
   // ** Props

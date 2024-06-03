@@ -10,18 +10,18 @@ import Box, { BoxProps } from '@mui/material/Box'
 import ArrowUp from 'mdi-material-ui/ArrowUp'
 
 // ** Theme Config Import
-import themeConfig from 'src/configs/themeConfig'
+import themeConfig from '../../configs/themeConfig'
 
 // ** Type Import
-import { LayoutProps } from 'src/@core/layouts/types'
+import { LayoutProps } from './types'
 
 // ** Components
 import AppBar from './components/vertical/appBar'
 import Navigation from './components/vertical/navigation'
-import ScrollToTop from 'src/@core/components/scroll-to-top'
+import ScrollToTop from '../components/scroll-to-top'
 
 // ** Styled Component
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import DatePickerWrapper from '../styles/libs/react-datepicker'
 
 const VerticalLayoutWrapper = styled('div')({
   height: '100%',

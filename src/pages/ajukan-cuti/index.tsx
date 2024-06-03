@@ -2,12 +2,12 @@
 import Grid from '@mui/material/Grid'
 
 // ** Styled Component
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import DatePickerWrapper from '../../@core/styles/libs/react-datepicker'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
-import FormPengajuanCuti from 'src/views/form/FormPengajuanCuti'
-import UserLayout from 'src/layouts/UserLayout'
+import FormPengajuanCuti from '../../views/form/FormPengajuanCuti'
+import UserLayout from '../../layouts/UserLayout'
 
 
 const index = () => {

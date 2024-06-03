@@ -8,11 +8,11 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import Menu from 'mdi-material-ui/Menu'
 
 // ** Type Import
-import { Settings } from 'src/@core/context/settingsContext'
+import { Settings } from '../../../@core/context/settingsContext'
 
 // ** Components
-import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
-import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
+import ModeToggler from '../../../@core/layouts/components/shared-components/ModeToggler'
+import UserDropdown from '../../../@core/layouts/components/shared-components/UserDropdown'
 
 interface Props {
   hidden: boolean

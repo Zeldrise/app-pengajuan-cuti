@@ -14,12 +14,12 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
 
 // ** Demo Tabs Imports
-import TabAccount from 'src/views/account-settings/TabAccount'
-import TabSecurity from 'src/views/account-settings/TabSecurity'
+import TabAccount from '../../views/account-settings/TabAccount'
+import TabSecurity from '../../views/account-settings/TabSecurity'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
-import UserLayout from 'src/layouts/UserLayout'
+import UserLayout from '../../layouts/UserLayout'
 
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: {

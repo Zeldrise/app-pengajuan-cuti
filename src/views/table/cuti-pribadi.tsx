@@ -12,7 +12,7 @@ import { PencilBox, TrashCan } from 'mdi-material-ui'
 import EditCutiPribadi from './cuti-edit'
 import Chip from '@mui/material/Chip'
 import Swal from 'sweetalert2'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 import axios from 'axios'
 
 interface Column {

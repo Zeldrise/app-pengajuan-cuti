@@ -12,27 +12,27 @@ import { CacheProvider } from '@emotion/react'
 import type { EmotionCache } from '@emotion/cache'
 
 // ** Config Imports
-import themeConfig from 'src/configs/themeConfig'
+import themeConfig from '../configs/themeConfig'
 
 // ** Component Imports
-import ThemeComponent from 'src/@core/theme/ThemeComponent'
+import ThemeComponent from '../@core/theme/ThemeComponent'
 
 // ** Contexts
-import { SettingsConsumer, SettingsProvider } from 'src/@core/context/settingsContext'
+import { SettingsConsumer, SettingsProvider } from '../@core/context/settingsContext'
 
 // ** Utils Imports
-import { createEmotionCache } from 'src/@core/utils/create-emotion-cache'
+import { createEmotionCache } from '../@core/utils/create-emotion-cache'
 
 // ** React Perfect Scrollbar Style
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
 // ** Global css styles
 import '../../styles/globals.css'
-import BlankLayout from 'src/@core/layouts/BlankLayout'
+import BlankLayout from '../@core/layouts/BlankLayout'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
-  Component: NextPage
+  Component: NextPage & { getLayout?: (page: React.ReactElement) => React.ReactNode }
   emotionCache: EmotionCache
 }
 

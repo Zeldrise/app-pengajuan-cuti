@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 
 const Ditolak = () => {
     const [totalCount, setTotalCount] = useState(0)

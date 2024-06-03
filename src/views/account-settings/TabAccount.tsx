@@ -13,7 +13,7 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import EmailOutline from 'mdi-material-ui/EmailOutline'
 import Phone from 'mdi-material-ui/Phone'
 import Swal from 'sweetalert2'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 
 import { useRouter } from 'next/router'
 

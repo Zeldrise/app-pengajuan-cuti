@@ -17,7 +17,7 @@ import Typography from '@mui/material/Typography'
 // ** Icons Imports
 import LogoutVariant from 'mdi-material-ui/LogoutVariant'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../../../api/AppURL'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({

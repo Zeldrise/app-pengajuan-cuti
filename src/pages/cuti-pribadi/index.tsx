@@ -1,8 +1,8 @@
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
-import CutiPribadi from 'src/views/table/cuti-pribadi'
-import UserLayout from 'src/layouts/UserLayout'
+import CutiPribadi from '../../views/table/cuti-pribadi'
+import UserLayout from '../../layouts/UserLayout'
 
 
 const index = () => {

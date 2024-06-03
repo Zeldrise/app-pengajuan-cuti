@@ -1,12 +1,12 @@
 import { ReactNode, useEffect, useState } from 'react'
 import { Theme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import VerticalLayout from 'src/@core/layouts/VerticalLayout'
-import VerticalNavItems from 'src/navigation/vertical'
+import VerticalLayout from '../@core/layouts/VerticalLayout'
+import VerticalNavItems from '../navigation/vertical'
 import VerticalAppBarContent from './components/vertical/AppBarContent'
-import { useSettings } from 'src/@core/hooks/useSettings'
+import { useSettings } from '../@core/hooks/useSettings'
 import { useRouter } from 'next/router'
-import { VerticalNavItemsType } from 'src/@core/layouts/types'
+import { VerticalNavItemsType } from '../@core/layouts/types'
 
 interface Props {
   children: ReactNode

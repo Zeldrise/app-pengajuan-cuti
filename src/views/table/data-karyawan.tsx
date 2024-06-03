@@ -12,7 +12,7 @@ import { PencilBox, PlusCircle, TrashCan } from 'mdi-material-ui'
 import EditDataKaryawan from './data-edit'
 import AddDataKaryawan from './add-karyawan'
 import Swal from 'sweetalert2'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 
 
 interface Column {

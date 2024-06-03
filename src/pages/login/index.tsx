@@ -5,7 +5,7 @@ import { ChangeEvent, MouseEvent, ReactNode, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import axios from 'axios'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -24,10 +24,10 @@ import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 
 // ** Layout Import
-import BlankLayout from 'src/@core/layouts/BlankLayout'
+import BlankLayout from '../../@core/layouts/BlankLayout'
 
 // ** Demo Imports
-import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
+import FooterIllustrationsV1 from '../../views/pages/auth/FooterIllustration'
 import { ArrowLeft } from 'mdi-material-ui'
 
 interface State {

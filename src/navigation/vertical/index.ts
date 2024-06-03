@@ -6,8 +6,8 @@ import Balloon from 'mdi-material-ui/Balloon'
 import HomeOutline from 'mdi-material-ui/HomeOutline'
 
 // ** Type import
-import { VerticalNavItemsType } from 'src/@core/layouts/types'
-import AppURL from 'src/api/AppURL'
+import { VerticalNavItemsType } from '../../@core/layouts/types'
+import AppURL from '../../api/AppURL'
 
 const fetchUserProfile = async () => {
   try {

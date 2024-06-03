@@ -8,8 +8,8 @@ import TabContext from '@mui/lab/TabContext'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
-import UserProfile from 'src/views/user-profile'
-import UserLayout from 'src/layouts/UserLayout'
+import UserProfile from '../../views/user-profile'
+import UserLayout from '../../layouts/UserLayout'
 
 const AccountSettings = () => {
   // ** State

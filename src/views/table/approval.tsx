@@ -10,7 +10,7 @@ import TablePagination from '@mui/material/TablePagination'
 import Button from '@mui/material/Button'
 import { FileEye } from 'mdi-material-ui'
 import ApprovalDetail from './approval-detail'
-import AppURL from 'src/api/AppURL'
+import AppURL from '../../api/AppURL'
 
 interface Column {
   id: keyof Data
