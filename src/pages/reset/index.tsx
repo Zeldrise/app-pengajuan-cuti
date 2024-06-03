@@ -66,10 +66,9 @@ const ResetPassPage = () => {
          setToken(token)
          setValues(prevState => ({ ...prevState, token: token }))
        } else {
-  
          router.push('/login')
        }
-     }, [router.query])
+     }, [router.query, , router])
 
 
 
@@ -151,7 +150,7 @@ const ResetPassPage = () => {
             icon: 'success',
             confirmButtonText: 'OK'
           })
-          
+
            return data
          } else {
             Swal.fire({
