@@ -89,6 +89,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
   const [leaveOptions, setLeaveOptions] = useState<any[]>([])
   const [urgency, setUrgency] = useState<string>('')
   const [errors, setErrors] = useState<any>({})
+  const [maxEndDate, setMaxEndDate] = useState<Date | null>(null)
 
   
 
@@ -128,6 +129,10 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
     setShowDoctorNoteField(
       isSickLeave && startDate && endDate && differenceInDays(endDate, startDate) > 0 ? true : false
     )
+    if (selectedType !== 'Cuti urgensi') {
+      setMaxEndDate(null)
+      setUrgency('')
+    }
     if (errors.cutiType) {
       setErrors({ ...errors, cutiType: '' })
     }
@@ -284,6 +289,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
       const urgencyNumber = Number(urgency)
       if (urgencyNumber === 3) {
         handleChangeEndDate(addDays(date, 2))
+        setMaxEndDate(addDays(date, 2))
       } else if (
         urgencyNumber === 4 ||
         urgencyNumber === 5 ||
@@ -292,8 +298,10 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
         urgencyNumber === 9
       ) {
         handleChangeEndDate(addDays(date, 1))
+        setMaxEndDate(addDays(date, 1))
       } else if (urgencyNumber === 6) {
         handleChangeEndDate(addDays(date, 0))
+        setMaxEndDate(addDays(date, 0))
       }
 
       if (errors.startDate || errors.endDate) {
@@ -306,12 +314,16 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
     }
   }
 
-  const handleChangeEndDate = (date: Date | null) => {
-    setEndDate(date)
-    if (errors.endDate) {
-      setErrors({ ...errors, endDate: '' })
+    const handleChangeEndDate = (date: Date | null) => {
+      if (maxEndDate && date && date > maxEndDate) {
+        setEndDate(maxEndDate)
+      } else {
+        setEndDate(date)
+        if (errors.endDate) {
+          setErrors({ ...errors, endDate: '' })
+        }
+      }
     }
-  }
   const handleChangeUrgency = (event: SelectChangeEvent<string>) => {
     const selectedUrgency = event.target.value as string
     setUrgency(selectedUrgency)
@@ -607,9 +619,9 @@ useEffect(() => {
                   customInput={<TglAkhir />}
                   id='form-layouts-separator-date'
                   onChange={handleChangeEndDate}
-                  minDate={startOfToday()}
+                  minDate={startDate}
                   startDate={startDate}
-                  disabled={cutiType === 'Cuti urgensi'}
+                  maxDate={cutiType === 'Cuti urgensi' ? maxEndDate : null}
                 />
                 {errors.endDate && <FormHelperText error>{errors.endDate}</FormHelperText>}
               </Grid>
