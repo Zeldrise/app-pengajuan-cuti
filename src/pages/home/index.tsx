@@ -89,6 +89,9 @@ const Index = () => {
         <Grid item xs={12} sm={6}>
           <PermintaanCuti />
         </Grid>
+        <Grid item xs={12}>
+          <Tahun />
+        </Grid>
       </Grid>
     ]
   }

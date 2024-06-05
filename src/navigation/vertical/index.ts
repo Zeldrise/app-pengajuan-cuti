@@ -153,7 +153,15 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       }
     ]
   } else if (role == 'owner') {
-    menuAccess = ['/home', '/approval-cuti', '/data-karyawan', '/cuti-karyawan', '/user-profile', '/account-settings']
+    menuAccess = [
+      '/home',
+      '/approval-cuti',
+      '/data-karyawan',
+      '/cuti-karyawan',
+      '/chart',
+      '/user-profile',
+      '/account-settings'
+    ]
     menu = [
       {
         title: 'Home',

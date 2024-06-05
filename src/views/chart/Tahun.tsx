@@ -60,7 +60,11 @@ const Tahun = () => {
       toolbar: { show: false },
       events: {
         click: function (event, chartContext, config) {
-          router.push('/chart')
+          const dataPointIndex = config.dataPointIndex
+          if (dataPointIndex >= 0) {
+            localStorage.setItem('dataPointIndex', dataPointIndex)
+            router.push(`/chart`)
+          }
         }
       }
     },
@@ -133,7 +137,7 @@ const Tahun = () => {
 
   return (
     <Card>
-      <CardHeader
+      <CardHeader item xs={12} sm={6}
         title='Grafik Pengajuan'
         titleTypographyProps={{
           sx: { lineHeight: '2rem !important', letterSpacing: '0.15px !important' }
