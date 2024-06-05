@@ -154,7 +154,7 @@ const Tahun = () => {
         }
       />
       <CardContent sx={{ '& .apexcharts-xcrosshairs.apexcharts-active': { opacity: 0 } }}>
-        <ReactApexcharts type='bar' height={205} options={options} series={[{ name: 'cuti', data: data }]} />
+        <ReactApexcharts type='bar' height={205} options={options} series={[{ name: 'Cuti', data: data }]} />
       </CardContent>
     </Card>
   )

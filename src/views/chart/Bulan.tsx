@@ -188,7 +188,7 @@ const Bulan = () => {
         }
       />
       <CardContent sx={{ '& .apexcharts-xcrosshairs.apexcharts-active': { opacity: 0 } }}>
-        <ReactApexcharts type='bar' height={1200} options={options} series={[{ name: 'cuti', data }]} />
+        <ReactApexcharts type='bar' height={1200} options={options} series={[{ name: 'Cuti', data }]} />
       </CardContent>
     </Card>
   )
