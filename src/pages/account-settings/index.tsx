@@ -60,7 +60,7 @@ const AccountSettings = () => {
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <AccountOutline />
-                <TabName>Account</TabName>
+                <TabName>Akun</TabName>
               </Box>
             }
           />

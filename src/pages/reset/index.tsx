@@ -31,7 +31,6 @@ import Swal from 'sweetalert2'
 
 
 interface State {
-  token: string
   newPassword: string
   confirmPassword: string
   showPassword: boolean
@@ -48,10 +47,7 @@ const Card = styled(MuiCard)<CardProps>(({ theme }) => ({
 
 const ResetPassPage = () => {
   // ** State
-    const router = useRouter()
-    const [token, setToken] = useState<string | null>(null)
     const [values, setValues] = useState<State>({
-      token: token as string,
       newPassword: '',
       confirmPassword: '',
       showPassword: false,
@@ -60,15 +56,7 @@ const ResetPassPage = () => {
       confirmPasswordError: ''
     })
 
-     useEffect(() => {
-       const { token } = router.query
-       if (typeof token === 'string') {
-         setToken(token)
-         setValues(prevState => ({ ...prevState, token: token }))
-       } else {
-         router.push('/login')
-       }
-     }, [router.query, , router])
+   
 
 
 
@@ -117,14 +105,6 @@ const ResetPassPage = () => {
      const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
        event.preventDefault()
        if (validationForm()) {
-         try {
-           const response = await resetPassword(values.token, values.newPassword, values.confirmPassword)
-      
-           console.log(response)
-         } catch (error) {
-         
-           console.error(error)
-         }
        }
      }
 
@@ -185,7 +165,7 @@ const ResetPassPage = () => {
             </Typography>
           </Box>
           <Box sx={{ mb: 6 }}>
-            <Typography variant='body2'>create a strong password 💪</Typography>
+            <Typography variant='body2'>buat password yang kuat 💪</Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={handleSubmit}>
             <FormControl fullWidth sx={{ marginBottom: 4 }}>

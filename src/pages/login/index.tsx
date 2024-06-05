@@ -87,13 +87,13 @@ const LoginPage = () => {
   const validateForm = () => {
     let isValid = true
     if (!values.email.trim()) {
-      setValues(prevState => ({ ...prevState, emailError: 'Email is required' }))
+      setValues(prevState => ({ ...prevState, emailError: 'Email diperlukan' }))
       isValid = false
     } else {
       setValues(prevState => ({ ...prevState, emailError: '' }))
     }
     if (!values.password.trim()) {
-      setValues(prevState => ({ ...prevState, passwordError: 'Password is required' }))
+      setValues(prevState => ({ ...prevState, passwordError: 'Password dibutuhkan' }))
       isValid = false
     } else {
       setValues(prevState => ({ ...prevState, passwordError: '' }))
@@ -140,13 +140,13 @@ const LoginPage = () => {
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
         <CardContent sx={{ padding: theme => `${theme.spacing(12, 9, 7)} !important` }}>
-            <Box>
-              <Link href='/' passHref>
-                <IconButton aria-label='back to home'>
-                  <ArrowLeft />
-                </IconButton>
-              </Link>
-            </Box>
+          <Box>
+            <Link href='/' passHref>
+              <IconButton aria-label='back to home'>
+                <ArrowLeft />
+              </IconButton>
+            </Link>
+          </Box>
           <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Typography
               variant='h6'
@@ -162,7 +162,7 @@ const LoginPage = () => {
             </Typography>
           </Box>
           <Box sx={{ mb: 6 }}>
-            <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
+            <Typography variant='body2'>Silakan masuk ke akun Anda dan mulai petualangan</Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={handleSubmit}>
             <div>
@@ -206,7 +206,7 @@ const LoginPage = () => {
             <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
-              <FormControlLabel control={<Checkbox />} label='Remember Me' />
+              <FormControlLabel control={<Checkbox />} label='Ingat saya' />
               <Link passHref href='/forgot'>
                 <LinkStyled>Forgot Password?</LinkStyled>
               </Link>

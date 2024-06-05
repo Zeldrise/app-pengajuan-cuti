@@ -206,14 +206,30 @@ const FormPengajuanCuti = () => {
     }
   }
 
+  const isWeekend = (date: Date) => {
+    const day = date.getDay()
+    return day === 6 || day === 0 
+  }
+
+  const getNextValidWorkday = (date: Date, duration: number) => {
+    let resultDate = addDays(date, duration)
+    while (isWeekend(resultDate)) {
+      resultDate = addDays(resultDate, 2)
+    }
+    return resultDate
+  }
+
+
     const handleChangeStartDate = (date: Date | null) => {
       setStartDate(date)
 
       if (cutiType === 'Cuti urgensi' && date) {
         const urgencyNumber = Number(urgency)
+        let endDate
         if (urgencyNumber === 3) {
-          handleChangeEndDate(addDays(date, 2))
-          setMaxEndDate(addDays(date, 2))
+          endDate = getNextValidWorkday(date, 2)
+          handleChangeEndDate(endDate)
+          setMaxEndDate(endDate)
         } else if (
           urgencyNumber === 4 ||
           urgencyNumber === 5 ||
@@ -221,11 +237,13 @@ const FormPengajuanCuti = () => {
           urgencyNumber === 8 ||
           urgencyNumber === 9
         ) {
-          handleChangeEndDate(addDays(date, 1))
-          setMaxEndDate(addDays(date, 1))
+            endDate = getNextValidWorkday(date, 1)
+            handleChangeEndDate(endDate)
+            setMaxEndDate(endDate)
         } else if (urgencyNumber === 6) {
-          handleChangeEndDate(addDays(date, 0))
-          setMaxEndDate(addDays(date, 0))
+          endDate = getNextValidWorkday(date, 0)
+          handleChangeEndDate(endDate)
+          setMaxEndDate(endDate)
         }
 
         if (errors.startDate || errors.endDate) {
@@ -236,19 +254,24 @@ const FormPengajuanCuti = () => {
           setErrors({ ...errors, startDate: '' })
         }
       }
+      if (endDate && date && date > endDate) {
+    setEndDate(date)
+  }
     }
 
 
-     const handleChangeEndDate = (date: Date | null) => {
-       if (maxEndDate && date && date > maxEndDate) {
-         setEndDate(maxEndDate)
-       } else {
-         setEndDate(date)
-          if (errors.endDate) {
-            setErrors({ ...errors, endDate: '' })
-          }
+   const handleChangeEndDate = (date: Date | null) => {
+     if (maxEndDate && date && date > maxEndDate) {
+       setEndDate(maxEndDate)
+     } else {
+       const validEndDate = date && isWeekend(date) ? getNextValidWorkday(date, 0) : date
+       setEndDate(validEndDate)
+       if (errors.endDate) {
+         setErrors({ ...errors, endDate: '' })
        }
      }
+   }
+
 
   const handleCutiTypeChange = (event: SelectChangeEvent<string>) => {
     const selectedType = event.target.value as string
@@ -319,6 +342,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const handleChangeUrgency = (event: SelectChangeEvent<string>) => {
         const selectedUrgency = event.target.value as string
         setUrgency(selectedUrgency)
+        setMaxEndDate(null) 
         setStartDate(null)
         setEndDate(null)
         if (errors.urgency) {
@@ -408,7 +432,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             alignItems: 'center'
           }}
         >
-          Sisa cuti : {userData ? userData.total_days : '...'}
+          Sisa Cuti : {userData ? userData.total_days : '...'} Hari
         </Typography>
       </Card>
       <Divider sx={{ margin: 0 }} />
@@ -438,7 +462,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
               <TextField
                 fullWidth
                 type='number'
-                label='Telephone Darurat'
+                label='Telepon Darurat'
                 placeholder='+62-123-456-8790'
                 error={!!errors.telepon}
                 helperText={errors.telepon}
@@ -509,7 +533,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                       {option.type}
                     </MenuItem>
                   ))}
-                  <MenuItem value='Cuti urgensi'>Cuti urgensi</MenuItem>
+                  <MenuItem value='Cuti urgensi'>Cuti Urgensi</MenuItem>
                 </Select>
                 {errors.cutiType && <FormHelperText error>{errors.cutiType}</FormHelperText>}
               </FormControl>

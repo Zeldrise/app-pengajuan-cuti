@@ -87,27 +87,27 @@ const TabSecurity = () => {
     }))
 
     if (!values.currentPassword.trim()) {
-      setValues(prevState => ({ ...prevState, passwordError: 'Current password is required' }))
+      setValues(prevState => ({ ...prevState, passwordError: 'Current password diperlukan' }))
       isValid = false
     } else {
       setValues(prevState => ({ ...prevState, passwordError: '' })) // Menyembunyikan pesan kesalahan jika bidang diisi
     }
 
     if (!values.newPassword.trim()) {
-      setValues(prevState => ({ ...prevState, newPasswordError: 'New password is required' }))
+      setValues(prevState => ({ ...prevState, newPasswordError: 'New password is diperlukan' }))
       isValid = false
     } else if (values.newPassword.length < 8) {
-      setValues(prevState => ({ ...prevState, newPasswordError: 'Password must be at least 8 characters' }))
+      setValues(prevState => ({ ...prevState, newPasswordError: 'Kata sandi minimal harus 8 karakter' }))
       isValid = false
     } else {
       setValues(prevState => ({ ...prevState, newPasswordError: '' })) // Menyembunyikan pesan kesalahan jika bidang diisi
     }
 
     if (!values.confirmPassword.trim()) {
-      setValues(prevState => ({ ...prevState, confirmPasswordError: 'Confirm password is required' }))
+      setValues(prevState => ({ ...prevState, confirmPasswordError: 'Confirm password diperlukan' }))
       isValid = false
     } else if (values.confirmPassword !== values.newPassword) {
-      setValues(prevState => ({ ...prevState, confirmPasswordError: 'Password do not match' }))
+      setValues(prevState => ({ ...prevState, confirmPasswordError: 'Password tidak cocok' }))
       isValid = false
     } else {
       setValues(prevState => ({ ...prevState, confirmPasswordError: '' })) // Menyembunyikan pesan kesalahan jika bidang diisi
@@ -287,7 +287,7 @@ const TabSecurity = () => {
       <CardContent>
         <Box>
           <Button variant='contained' sx={{ marginRight: 3.5 }} type='submit'>
-            Save Changes
+            Simpan
           </Button>
           <Button
             type='reset'

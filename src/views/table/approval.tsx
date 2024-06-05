@@ -22,7 +22,7 @@ interface Column {
 
 const columns: readonly Column[] = [
   { id: 'name', label: 'Nama', minWidth: 170 },
-  { id: 'submissionDate', label: 'Tanggal Penyerahan', minWidth: 100 },
+  { id: 'submissionDate', label: 'Tanggal Pengajuan', minWidth: 100 },
   { id: 'startDate', label: 'Tanggal Mulai', minWidth: 100 },
   { id: 'endDate', label: 'Tanggal Akhir', minWidth: 100 },
   { id: 'totalDays', label: 'Lama Cuti', minWidth: 100 },

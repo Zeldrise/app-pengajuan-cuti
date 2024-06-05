@@ -66,9 +66,9 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
     }
     if (!telephone) errors.telephone = 'Nomor telepon harus diisi'
     if (!role) errors.role = 'Role harus diisi'
-    if (!position) errors.position = 'Position harus diisi'
-    if (!department) errors.department = 'Department harus diisi'
-    if (!gender) errors.gender = 'Gender harus dipilih'
+    if (!position) errors.position = 'Posisi harus diisi'
+    if (!department) errors.department = 'Departemen harus diisi'
+    if (!gender) errors.gender = 'Jenis kelamin harus dipilih'
     if (!join_date) errors.join_date = 'Tanggal bergabung harus diisi'
     setErrors(errors)
 
@@ -78,7 +78,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
     e.preventDefault()
     if (validateForm()) {
       Swal.fire({
-        title: 'Is Employee Data Correct?',
+        title: 'Apakah Data Karyawan Benar?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#6AD01F',
@@ -113,7 +113,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
             }
             const data = await response.json()
             Swal.fire({
-              title: 'Employee data added successfully!!',
+              title: 'Data karyawan berhasil ditambahkan!!',
               icon: 'success',
               confirmButtonColor: '#6AD01F',
               customClass: {
@@ -135,7 +135,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
             console.error('Error editing employee:', error)
             Swal.fire({
               title: 'Error!',
-              text: 'Failed to add employee',
+              text: 'Gagal menambahkan karyawan',
               icon: 'error',
               confirmButtonColor: '#6AD01F',
               customClass: {
@@ -260,7 +260,7 @@ const handleChangeRole = (event: SelectChangeEvent<string>) => {
           <TextField
             fullWidth
             sx={{ marginTop: 5 }}
-            label='No Telephone'
+            label='No Telepon'
             type='number'
             error={!!errors.telephone}
             helperText={errors.telephone}
@@ -275,7 +275,6 @@ const handleChangeRole = (event: SelectChangeEvent<string>) => {
             }}
           />
 
-         
           <FormControl fullWidth sx={{ marginTop: 5 }}>
             <InputLabel id='form-layouts-separator-select-label'>Role</InputLabel>
             <Select
@@ -287,9 +286,9 @@ const handleChangeRole = (event: SelectChangeEvent<string>) => {
               value={role}
               onChange={handleChangeRole}
             >
-              <MenuItem value='hr'>hr</MenuItem>
-              <MenuItem value='staff'>staff</MenuItem>
-              <MenuItem value='karyawan'>karyawan</MenuItem>
+              <MenuItem value='hr'>HR</MenuItem>
+              <MenuItem value='staff'>Staff</MenuItem>
+              <MenuItem value='karyawan'>Karyawan</MenuItem>
             </Select>
             {errors.role && <FormHelperText error>{errors.role}</FormHelperText>}
           </FormControl>
@@ -297,7 +296,7 @@ const handleChangeRole = (event: SelectChangeEvent<string>) => {
           <TextField
             fullWidth
             sx={{ marginTop: 5 }}
-            label='Position'
+            label='Posisi'
             value={position}
             onChange={handleChangeposition}
             error={!!errors.position}
@@ -314,7 +313,7 @@ const handleChangeRole = (event: SelectChangeEvent<string>) => {
           <TextField
             fullWidth
             sx={{ marginTop: 5 }}
-            label='Department'
+            label='Departemen'
             value={department}
             onChange={handleChangedepartment}
             error={!!errors.department}
@@ -328,9 +327,9 @@ const handleChangeRole = (event: SelectChangeEvent<string>) => {
             }}
           />
           <FormControl fullWidth sx={{ marginTop: 5 }}>
-            <InputLabel id='form-layouts-separator-select-label'>Gender</InputLabel>
+            <InputLabel id='form-layouts-separator-select-label'>Jenis Kelamin</InputLabel>
             <Select
-              label='Gender'
+              label='Jenis Kelamin'
               defaultValue=''
               id='form-layouts-separator-select'
               labelId='form-layouts-separator-select-label'
@@ -338,8 +337,8 @@ const handleChangeRole = (event: SelectChangeEvent<string>) => {
               onChange={handleChangeGender}
               error={!!errors.gender}
             >
-              <MenuItem value='male'>Male</MenuItem>
-              <MenuItem value='female'>Female</MenuItem>
+              <MenuItem value='male'>Laki-Laki</MenuItem>
+              <MenuItem value='female'>Perempuan</MenuItem>
             </Select>
             {errors.gender && <FormHelperText error>{errors.gender}</FormHelperText>}
           </FormControl>

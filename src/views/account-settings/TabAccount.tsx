@@ -121,7 +121,7 @@ const TabAccount = () => {
        console.error('Error editing profile:', error)
        Swal.fire({
          title: 'Error!',
-         text: 'Failed to edit profile',
+         text: 'Gagal mengedit profil',
          icon: 'error',
          confirmButtonColor: '#6AD01F',
          customClass: {
@@ -184,7 +184,7 @@ const TabAccount = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label='Full Name'
+              label='Nama Lengkap'
               error={!!errors.name}
               helperText={errors.name}
               value={name}
@@ -220,7 +220,7 @@ const TabAccount = () => {
             <TextField
               fullWidth
               type='number'
-              label='Phone No.'
+              label='No. Telepon'
               error={!!errors.telephone}
               helperText={errors.telephone}
               value={telephone}
@@ -237,9 +237,8 @@ const TabAccount = () => {
 
           <Grid item xs={12}>
             <Button variant='contained' sx={{ marginRight: 3.5 }} onClick={handleSubmit}>
-              Save Changes
+              Simpan
             </Button>
-            
           </Grid>
         </Grid>
       </form>

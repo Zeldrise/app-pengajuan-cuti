@@ -128,7 +128,7 @@ const ForgotPage = () => {
             </Typography>
           </Box>
           <Box sx={{ mb: 6 }}>
-            <Typography variant='body2'>Please enter your email</Typography>
+            <Typography variant='body2'>Masukkan email Anda</Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={handleSubmit}>
             <FormControl fullWidth error={!!values.emailError} sx={{ marginBottom: 4 }}>

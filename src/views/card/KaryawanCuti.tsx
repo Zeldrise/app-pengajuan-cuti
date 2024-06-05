@@ -31,7 +31,7 @@ const KaryawanCuti = () => {
     }, []) 
     
   return (
-    <Card sx={{ border: 0, boxShadow: 0, color: 'common.black', backgroundColor: '#ffcc14' }}>
+    <Card sx={{ border: 0, boxShadow: 0, color: 'common.black', backgroundColor: '#87ceeb' }}>
       <CardContent sx={{ padding: theme => `${theme.spacing(3.25, 5, 4.5)} !important` }}>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography
@@ -44,7 +44,7 @@ const KaryawanCuti = () => {
               color: 'common.black'
             }}
           >
-            Karyawan Cuti
+            Karyawan Cuti Hari Ini
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant='h2' sx={{ color: 'common.black' }}>

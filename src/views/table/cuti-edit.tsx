@@ -236,7 +236,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
             console.error('Error updating leave request:', error)
             Swal.fire({
               title: 'Error',
-              text: 'Failed to update leave request. Please try again later.',
+              text: 'Gagal memperbarui pengajuan cuti',
               icon: 'error',
               confirmButtonColor: '#FF6166',
               customClass: {
@@ -282,51 +282,73 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
     }
   }
 
-  const handleChangeStartDate = (date: Date | null) => {
-    setStartDate(date)
-
-    if (cutiType === 'Cuti urgensi' && date) {
-      const urgencyNumber = Number(urgency)
-      if (urgencyNumber === 3) {
-        handleChangeEndDate(addDays(date, 2))
-        setMaxEndDate(addDays(date, 2))
-      } else if (
-        urgencyNumber === 4 ||
-        urgencyNumber === 5 ||
-        urgencyNumber === 7 ||
-        urgencyNumber === 8 ||
-        urgencyNumber === 9
-      ) {
-        handleChangeEndDate(addDays(date, 1))
-        setMaxEndDate(addDays(date, 1))
-      } else if (urgencyNumber === 6) {
-        handleChangeEndDate(addDays(date, 0))
-        setMaxEndDate(addDays(date, 0))
-      }
-
-      if (errors.startDate || errors.endDate) {
-        setErrors({ ...errors, startDate: '', endDate: '' })
-      }
-    } else {
-      if (errors.startDate) {
-        setErrors({ ...errors, startDate: '' })
-      }
+    const isWeekend = (date: Date) => {
+      const day = date.getDay()
+      return day === 6 || day === 0
     }
-  }
 
-    const handleChangeEndDate = (date: Date | null) => {
-      if (maxEndDate && date && date > maxEndDate) {
-        setEndDate(maxEndDate)
-      } else {
-        setEndDate(date)
-        if (errors.endDate) {
-          setErrors({ ...errors, endDate: '' })
+    const getNextValidWorkday = (date: Date, duration: number) => {
+      let resultDate = addDays(date, duration)
+      while (isWeekend(resultDate)) {
+        resultDate = addDays(resultDate, 2)
+      }
+      return resultDate
+    }
+
+   const handleChangeStartDate = (date: Date | null) => {
+     setStartDate(date)
+
+     if (cutiType === 'Cuti urgensi' && date) {
+       const urgencyNumber = Number(urgency)
+       let endDate
+       if (urgencyNumber === 3) {
+         endDate = getNextValidWorkday(date, 2)
+         handleChangeEndDate(endDate)
+         setMaxEndDate(endDate)
+       } else if (
+         urgencyNumber === 4 ||
+         urgencyNumber === 5 ||
+         urgencyNumber === 7 ||
+         urgencyNumber === 8 ||
+         urgencyNumber === 9
+       ) {
+         endDate = getNextValidWorkday(date, 1)
+         handleChangeEndDate(endDate)
+         setMaxEndDate(endDate)
+       } else if (urgencyNumber === 6) {
+         endDate = getNextValidWorkday(date, 0)
+         handleChangeEndDate(endDate)
+         setMaxEndDate(endDate)
+       }
+
+       if (errors.startDate || errors.endDate) {
+         setErrors({ ...errors, startDate: '', endDate: '' })
+       }
+     } else {
+       if (errors.startDate) {
+         setErrors({ ...errors, startDate: '' })
+       }
+     }
+     if (endDate && date && date > endDate) {
+       setEndDate(date)
+     }
+   }
+
+      const handleChangeEndDate = (date: Date | null) => {
+        if (maxEndDate && date && date > maxEndDate) {
+          setEndDate(maxEndDate)
+        } else {
+          const validEndDate = date && isWeekend(date) ? getNextValidWorkday(date, 0) : date
+          setEndDate(validEndDate)
+          if (errors.endDate) {
+            setErrors({ ...errors, endDate: '' })
+          }
         }
       }
-    }
   const handleChangeUrgency = (event: SelectChangeEvent<string>) => {
     const selectedUrgency = event.target.value as string
     setUrgency(selectedUrgency)
+    setMaxEndDate(null) 
     setStartDate(null)
     setEndDate(null)
     if (errors.urgency) {
@@ -452,7 +474,7 @@ useEffect(() => {
                 <TextField
                   fullWidth
                   type='number'
-                  label='Telephone Darurat'
+                  label='Telepon Darurat'
                   placeholder='+62-123-456-8790'
                   error={!!errors.telepon}
                   helperText={errors.telepon}
@@ -523,7 +545,7 @@ useEffect(() => {
                         {option.type}
                       </MenuItem>
                     ))}
-                    <MenuItem value='Cuti urgensi'>Cuti urgensi</MenuItem>
+                    <MenuItem value='Cuti urgensi'>Cuti Urgensi</MenuItem>
                   </Select>
                   {errors.cutiType && <FormHelperText error>{errors.cutiType}</FormHelperText>}
                 </FormControl>

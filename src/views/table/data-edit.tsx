@@ -85,9 +85,9 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
     }
     if (!telephone) errors.telephone = 'Nomor telepon harus diisi'
     if (!role) errors.role = 'Role harus diisi'
-    if (!position) errors.position = 'Position harus diisi'
-    if (!department) errors.department = 'Department harus diisi'
-    if (!gender) errors.gender = 'Gender harus dipilih'
+    if (!position) errors.position = 'Posisi harus diisi'
+    if (!department) errors.department = 'Departemen harus diisi'
+    if (!gender) errors.gender = 'Jenis kelamin harus dipilih'
     if (!join_date) errors.join_date = 'Tanggal bergabung harus diisi'
     setErrors(errors)
 
@@ -117,7 +117,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
       }
       const data = await response.json()
       Swal.fire({
-        title: 'Employee data edited successfully!',
+        title: 'Data karyawan berhasil diedit!',
         icon: 'success',
         confirmButtonColor: '#6AD01F',
         customClass: {
@@ -139,7 +139,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
       console.error('Error editing employee:', error)
       Swal.fire({
         title: 'Error!',
-        text: 'Failed to edit employee',
+        text: 'Gagal mengedit karyawan',
         icon: 'error',
         confirmButtonColor: '#6AD01F',
         customClass: {
@@ -280,7 +280,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
           <TextField
             fullWidth
             sx={{ marginTop: 5 }}
-            label='No Telephone'
+            label='No Telepon'
             type='number'
             error={!!errors.telephone}
             helperText={errors.telephone}
@@ -306,9 +306,9 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
               value={role}
               onChange={handleChangeRole}
             >
-              <MenuItem value='hr'>hr</MenuItem>
-              <MenuItem value='staff'>staff</MenuItem>
-              <MenuItem value='karyawan'>karyawan</MenuItem>
+              <MenuItem value='hr'>HR</MenuItem>
+              <MenuItem value='staff'>Staff</MenuItem>
+              <MenuItem value='karyawan'>Karyawan</MenuItem>
             </Select>
             {errors.role && <FormHelperText error>{errors.role}</FormHelperText>}
           </FormControl>
@@ -316,7 +316,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
           <TextField
             fullWidth
             sx={{ marginTop: 5 }}
-            label='Position'
+            label='Posisi'
             value={position}
             onChange={handleChangeposition}
             error={!!errors.position}
@@ -334,7 +334,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
           <TextField
             fullWidth
             sx={{ marginTop: 5 }}
-            label='Department'
+            label='Departemen'
             value={department}
             onChange={handleChangedepartment}
             error={!!errors.department}
@@ -349,9 +349,9 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
             }}
           />
           <FormControl fullWidth sx={{ marginTop: 5 }}>
-            <InputLabel id='form-layouts-separator-select-label'>Gender</InputLabel>
+            <InputLabel id='form-layouts-separator-select-label'>Jenis Kelamin</InputLabel>
             <Select
-              label='Gender'
+              label='Jenis Kelamin'
               defaultValue=''
               id='form-layouts-separator-select'
               labelId='form-layouts-separator-select-label'
@@ -359,8 +359,8 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
               onChange={handleChangeGender}
               error={!!errors.gender}
             >
-              <MenuItem value='male'>Male</MenuItem>
-              <MenuItem value='female'>Female</MenuItem>
+              <MenuItem value='male'>Laki-Laki</MenuItem>
+              <MenuItem value='female'>Perempuan</MenuItem>
             </Select>
             {errors.gender && <FormHelperText error>{errors.gender}</FormHelperText>}
           </FormControl>

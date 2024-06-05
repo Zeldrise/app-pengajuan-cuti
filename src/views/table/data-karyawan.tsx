@@ -26,7 +26,7 @@ interface Column {
 const columns: readonly Column[] = [
   { id: 'name', label: 'Nama', minWidth: 170 },
   { id: 'email', label: 'Email', minWidth: 100 },
-  { id: 'telephone', label: 'No Telephone', minWidth: 100 },
+  { id: 'telephone', label: 'No Telepon', minWidth: 100 },
   { id: 'position', label: 'Posisi', minWidth: 100 },
   { id: 'department', label: 'Departemen', minWidth: 100 },
   { id: 'total_days', label: 'Sisa Cuti', minWidth: 100 }, 
@@ -209,10 +209,10 @@ const handleDeleteRow = (rowData: Data) => {
                       return (
                         <TableCell key={column.id} align='center' colSpan={columns.length}>
                           <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button onClick={() => handleActionClick(row)}>
+                            <Button onClick={() => handleActionClick(row)} style={{ left: '10px' }}>
                               <PencilBox />
                             </Button>
-                            <Button onClick={() => handleDeleteRow(row)}>
+                            <Button onClick={() => handleDeleteRow(row)} style={{ right: '10px' }}>
                               <TrashCan />
                             </Button>
                           </div>

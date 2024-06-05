@@ -210,10 +210,10 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
               <span style={{ display: 'inline-block', width: 180 }}>Nama</span>: {rowData?.name}
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Tanggal Penyerahan</span>: {rowData?.submissionDate}
+              <span style={{ display: 'inline-block', width: 180 }}>Tanggal Pengajuan</span>: {rowData?.submissionDate}
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Telephone Darurat</span>: {rowData?.emergencyCall}
+              <span style={{ display: 'inline-block', width: 180 }}>Telepon Darurat</span>: {rowData?.emergencyCall}
             </p>
             <p>
               <span style={{ display: 'inline-block', width: 180 }}>Posisi</span>: {rowData?.position}
@@ -239,7 +239,7 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
                 <img
                   src={attachmentUrl}
                   alt='Attachment'
-                  style={{ display: 'inline-flex', maxWidth: '100%', maxHeight: '200px' }}
+                  style={{ display: 'inline-flex', maxWidth: '100%', maxHeight: '200px', cursor: 'pointer' }}
                   onClick={() => handleImageClick(attachmentUrl)}
                 />
               </div>

@@ -61,7 +61,7 @@ const UserProfile = () => {
               <span style={{ display: 'inline-block', width: 120 }}>Email</span>: {userData ? userData.email : '...'}
             </Typography>
             <Typography variant='body1'>
-              <span style={{ display: 'inline-block', width: 120 }}>No telephone</span>:{' '}
+              <span style={{ display: 'inline-block', width: 120 }}>No telepon</span>:{' '}
               {userData ? userData.telephone : '...'}
             </Typography>
             <Typography variant='body1'>
@@ -74,7 +74,7 @@ const UserProfile = () => {
             </Typography>
             <Typography variant='body1'>
               <span style={{ display: 'inline-block', width: 120 }}>Jatah cuti</span>:{' '}
-              {userData ? userData.total_days : '...'}
+              {userData ? userData.total_days : '...'} Hari
             </Typography>
           </Grid>
 

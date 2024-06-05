@@ -25,7 +25,7 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
-  { id: 'submissionDate', label: 'Tanggal Penyerahan', minWidth: 100 },
+  { id: 'submissionDate', label: 'Tanggal Pengajuan', minWidth: 100 },
   { id: 'startDate', label: 'Tanggal Mulai', minWidth: 100 },
   { id: 'endDate', label: 'Tanggal Akhir', minWidth: 100 },
   { id: 'totalDays', label: 'Lama Cuti', minWidth: 100 },
@@ -244,10 +244,10 @@ const CutiPribadi = () => {
                         return (
                           <TableCell key={column.id} align='center' colSpan={columns.length}>
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                              <Button onClick={() => handleEditClick(row)}>
+                              <Button onClick={() => handleEditClick(row)} style={{ left: '10px' }}>
                                 <PencilBox />
                               </Button>
-                              <Button onClick={() => handleDeleteRow(row)}>
+                              <Button onClick={() => handleDeleteRow(row)} style={{ right: '10px' }}>
                                 <TrashCan />
                               </Button>
                             </div>
