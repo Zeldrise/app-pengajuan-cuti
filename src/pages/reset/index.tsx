@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { ChangeEvent, MouseEvent, ReactNode, useEffect, useState } from 'react'
+import React, { ChangeEvent, MouseEvent, ReactNode, useState } from 'react'
 
 
 // ** MUI Components
@@ -25,10 +25,6 @@ import BlankLayout from '../../@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from '../../views/pages/auth/FooterIllustration'
-import { useRouter } from 'next/router'
-import AppURL from '../../api/AppURL'
-import Swal from 'sweetalert2'
-
 
 interface State {
   newPassword: string
@@ -108,43 +104,43 @@ const ResetPassPage = () => {
        }
      }
 
-     const resetPassword = async (token: string, newPassword: string, confirmPassword: string) => {
-       try {
-         const response = await fetch(`${AppURL.BaseURL}/auth/reset-password`, {
-           method: 'POST',
-           headers: {
-             'Content-Type': 'application/json',
-             Authorization: `Bearer ${localStorage.getItem('token')}`
-           },
-           body: JSON.stringify({
-             token: token,
-             newPassword: newPassword,
-             confirmPassword: confirmPassword
-           })
-         })
-         const data = await response.json()
-         if (response.ok) {
-          Swal.fire({
-            title: 'Success!',
-            text: 'password changed successfully!',
-            icon: 'success',
-            confirmButtonText: 'OK'
-          })
+    //  const resetPassword = async (token: string, newPassword: string, confirmPassword: string) => {
+    //    try {
+    //      const response = await fetch(`${AppURL.BaseURL}/auth/reset-password`, {
+    //        method: 'POST',
+    //        headers: {
+    //          'Content-Type': 'application/json',
+    //          Authorization: `Bearer ${localStorage.getItem('token')}`
+    //        },
+    //        body: JSON.stringify({
+    //          token: token,
+    //          newPassword: newPassword,
+    //          confirmPassword: confirmPassword
+    //        })
+    //      })
+    //      const data = await response.json()
+    //      if (response.ok) {
+    //       Swal.fire({
+    //         title: 'Success!',
+    //         text: 'password changed successfully!',
+    //         icon: 'success',
+    //         confirmButtonText: 'OK'
+    //       })
 
-           return data
-         } else {
-            Swal.fire({
-              title: 'Error!',
-              text: data.message || 'Failed to changed password ',
-              icon: 'error',
-              confirmButtonText: 'OK'
-            })
-           throw new Error(data.message)
-         }
-       } catch (error) {
-         throw error
-       }
-     }
+    //        return data
+    //      } else {
+    //         Swal.fire({
+    //           title: 'Error!',
+    //           text: data.message || 'Failed to changed password ',
+    //           icon: 'error',
+    //           confirmButtonText: 'OK'
+    //         })
+    //        throw new Error(data.message)
+    //      }
+    //    } catch (error) {
+    //      throw error
+    //    }
+    //  }
 
   return (
     <Box className='content-center'>

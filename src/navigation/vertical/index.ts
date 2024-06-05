@@ -46,6 +46,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       '/data-karyawan',
       '/cuti-karyawan',
       '/cuti-pribadi',
+      '/chart',
       '/user-profile',
       '/account-settings'
     ]
