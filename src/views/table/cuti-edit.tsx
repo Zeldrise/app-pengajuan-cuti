@@ -62,6 +62,7 @@ interface Data {
   status: string
   leave_urgency?: string
   doctor_note?: any
+  attachment?: string
 }
 
 
@@ -85,6 +86,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
   const [showUrgencyFields, setShowUrgencyFields] = useState<boolean>(false)
   const [showDoctorNoteField, setShowDoctorNoteField] = useState<boolean>(false)
   const [doctorNoteImage, setDoctorNoteImage] = useState<File | null>(null)
+  const [attachmentUrl, setAttachmentUrl] = useState<string | null>(null)
   const [urgencyOptions, setUrgencyOptions] = useState<any[]>([])
   const [leaveOptions, setLeaveOptions] = useState<any[]>([])
   const [urgency, setUrgency] = useState<string>('')
@@ -146,6 +148,31 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
       setShowDoctorNoteField(false)
     }
   }, [cutiType, startDate, endDate])
+
+   useEffect(() => {
+     if (rowData && rowData.attachment) {
+       const fetchAttachmentUrl = async () => {
+         try {
+           const response = await fetch(`${AppURL.Submissions}/uploads/${rowData.attachment}`, {
+             method: 'GET',
+             headers: {
+               Authorization: `Bearer ${localStorage.getItem('token')}`
+             }
+           })
+           if (!response.ok) {
+             throw new Error('Failed to fetch attachment')
+           }
+           const data = await response.blob()
+           setAttachmentUrl(URL.createObjectURL(data))
+         } catch (error) {
+           console.error('Error fetching attachment:', error)
+         }
+       }
+       fetchAttachmentUrl()
+     } else {
+       setAttachmentUrl(null)
+     }
+   }, [rowData])
 
       const updateDoctorNote = async (file: File) => {
         const formData = new FormData()
@@ -588,13 +615,11 @@ useEffect(() => {
                       Upload Surat Dokter
                     </Button>
                   </label>
-                  {doctorNoteImage && (
-                    <img
-                      src={URL.createObjectURL(doctorNoteImage)}
-                      alt='Doctor Note Preview'
-                      style={{ marginTop: '10px', maxWidth: '100%' }}
-                    />
-                  )}
+                   {doctorNoteImage ? (
+                  <img src={URL.createObjectURL(doctorNoteImage)} alt='Doctor Note Preview' style={{ marginTop: '10px', maxWidth: '100%' }} />
+                ) : attachmentUrl ? (
+                  <img src={attachmentUrl} alt='Attachment Preview' style={{ marginTop: '10px', maxWidth: '100%' }} />
+                ) : null}
                   {errors.doctorNote && <FormHelperText error>{errors.doctorNote}</FormHelperText>}
                 </Grid>
               )}
