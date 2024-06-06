@@ -53,14 +53,14 @@ const Error404 = () => {
         <BoxWrapper>
           <Typography variant='h1'>404</Typography>
           <Typography variant='h5' sx={{ mb: 1, fontSize: '1.5rem !important' }}>
-            Page Not Found ⚠️
+            Halaman tidak ditemukan ⚠️
           </Typography>
-          <Typography variant='body2'>We couldn&prime;t find the page you are looking for.</Typography>
+          <Typography variant='body2'>Kami tidak dapat menemukan halaman yang Anda cari.</Typography>
         </BoxWrapper>
         <Img height='487' alt='error-illustration' src='/images/pages/404.png' />
         <Link passHref href='/home'>
           <Button component='a' variant='contained' sx={{ px: 5.5 }}>
-            Back to Home
+            Kembali
           </Button>
         </Link>
       </Box>
