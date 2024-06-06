@@ -26,6 +26,7 @@ import AppURL from '../../api/AppURL'
 
 // ** SweetAlert2 Import
 import Swal from 'sweetalert2'
+import router from 'next/router'
 
 interface State {
   email: string
@@ -78,15 +79,16 @@ const ForgotPage = () => {
         if (response.ok) {
           Swal.fire({
             title: 'Success!',
-            text: 'Password reset email sent!',
+            text: 'Email pengaturan ulang kata sandi terkirim!',
             icon: 'success',
             confirmButtonText: 'OK'
           })
+          router.push('/reset')
         } else {
           const errorData = await response.json()
           Swal.fire({
             title: 'Error!',
-            text: errorData.message || 'Failed to send reset email',
+            text: errorData.message || 'Gagal mengirim email',
             icon: 'error',
             confirmButtonText: 'OK'
           })
@@ -94,7 +96,7 @@ const ForgotPage = () => {
       } catch (error) {
         Swal.fire({
           title: 'Error!',
-          text: 'An error occurred. Please try again.',
+          text: 'Terjadi kesalahan. Silakan coba lagi.',
           icon: 'error',
           confirmButtonText: 'OK'
         })

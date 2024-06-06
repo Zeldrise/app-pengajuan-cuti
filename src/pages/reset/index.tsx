@@ -1,6 +1,5 @@
 // ** React Imports
-import React, { ChangeEvent, MouseEvent, ReactNode, useState } from 'react'
-
+import React, { ChangeEvent, MouseEvent, ReactNode, useEffect, useState } from 'react'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -15,24 +14,27 @@ import { styled } from '@mui/material/styles'
 import MuiCard, { CardProps } from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 
-
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-
 
 // ** Layout Import
 import BlankLayout from '../../@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from '../../views/pages/auth/FooterIllustration'
+import AppURL from '../../api/AppURL'
+import Swal from 'sweetalert2'
+import router from 'next/router'
 
 interface State {
+  token: string
   newPassword: string
   confirmPassword: string
   showPassword: boolean
   showConfirmPassword: boolean
-  passwordError: string
+  newPasswordError: string
   confirmPasswordError: string
+  tokenError: string
 }
 
 // ** Styled Components
@@ -40,24 +42,64 @@ const Card = styled(MuiCard)<CardProps>(({ theme }) => ({
   [theme.breakpoints.up('sm')]: { width: '28rem' }
 }))
 
-
 const ResetPassPage = () => {
   // ** State
-    const [values, setValues] = useState<State>({
-      newPassword: '',
-      confirmPassword: '',
-      showPassword: false,
-      showConfirmPassword: false,
-      passwordError: '',
-      confirmPasswordError: ''
-    })
+  const [values, setValues] = useState<State>({
+    token: '',
+    newPassword: '',
+    confirmPassword: '',
+    showPassword: false,
+    showConfirmPassword: false,
+    newPasswordError: '',
+    confirmPasswordError: '',
+    tokenError: ''
+  })
 
-   
+  useEffect(() => {
+    const resetFormValues = () => {
+      setValues({
+        token: '',
+        newPassword: '',
+        confirmPassword: '',
+        showPassword: false,
+        showConfirmPassword: false,
+        newPasswordError: '',
+        confirmPasswordError: '',
+        tokenError: ''
+      })
+    }
 
+    resetFormValues()
 
+    return () => {
+      resetFormValues()
+    }
+  }, [])
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setValues({
+        token: '',
+        newPassword: '',
+        confirmPassword: '',
+        showPassword: false,
+        showConfirmPassword: false,
+        newPasswordError: '',
+        confirmPasswordError: '',
+        tokenError: ''
+      })
+    }
+
+    // Listen to route changes
+    router.events.on('routeChangeStart', handleRouteChange)
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange)
+    }
+  }, [])
 
   const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
+    setValues({ ...values, [prop]: event.target.value, newPasswordError: '', confirmPasswordError: '', tokenError: '' })
   }
 
   const handleClickShowPassword = () => {
@@ -74,73 +116,86 @@ const ResetPassPage = () => {
     event.preventDefault()
   }
 
-
   const validationForm = () => {
     let isValid = true
-    setValues(prevState => ({ ...prevState, passwordError: '', confirmPasswordError: '' }))
+    setValues(prevState => ({ ...prevState, newPasswordError: '', confirmPasswordError: '', tokenError: '' }))
+
+    if (!values.token.trim()) {
+      setValues(prevState => ({ ...prevState, tokenError: 'Token diperlukan' }))
+      isValid = false
+    }
 
     if (!values.newPassword.trim()) {
-      setValues(prevState => ({ ...prevState, passwordError: 'Password is required' }))
+      setValues(prevState => ({ ...prevState, newPasswordError: 'Password diperlukan' }))
       isValid = false
     } else if (values.newPassword.length < 8) {
-      setValues(prevState => ({ ...prevState, passwordError: 'Password must be at least 8 characters' }))
+      setValues(prevState => ({ ...prevState, newPasswordError: 'Password minimal harus 8 karakter' }))
       isValid = false
     }
 
     if (!values.confirmPassword.trim()) {
-      setValues(prevState => ({ ...prevState, confirmPasswordError: 'Confirm password is required' }))
+      setValues(prevState => ({ ...prevState, confirmPasswordError: 'Confirm password diperlukan' }))
       isValid = false
     } else if (values.confirmPassword !== values.newPassword) {
-      setValues(prevState => ({ ...prevState, confirmPasswordError: 'Passwords do not match' }))
+      setValues(prevState => ({ ...prevState, confirmPasswordError: 'Passwords tidak cocok' }))
       isValid = false
     }
 
     return isValid
   }
 
-     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-       event.preventDefault()
-       if (validationForm()) {
-       }
-     }
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (validationForm()) {
+      try {
+        const response = await fetch(AppURL.ResetPassword, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            token: values.token,
+            newPassword: values.newPassword,
+            confirmPassword: values.confirmPassword
+          })
+        })
 
-    //  const resetPassword = async (token: string, newPassword: string, confirmPassword: string) => {
-    //    try {
-    //      const response = await fetch(`${AppURL.BaseURL}/auth/reset-password`, {
-    //        method: 'POST',
-    //        headers: {
-    //          'Content-Type': 'application/json',
-    //          Authorization: `Bearer ${localStorage.getItem('token')}`
-    //        },
-    //        body: JSON.stringify({
-    //          token: token,
-    //          newPassword: newPassword,
-    //          confirmPassword: confirmPassword
-    //        })
-    //      })
-    //      const data = await response.json()
-    //      if (response.ok) {
-    //       Swal.fire({
-    //         title: 'Success!',
-    //         text: 'password changed successfully!',
-    //         icon: 'success',
-    //         confirmButtonText: 'OK'
-    //       })
+        if (!response.ok) {
+          throw new Error('Network response was not ok')
+        }
 
-    //        return data
-    //      } else {
-    //         Swal.fire({
-    //           title: 'Error!',
-    //           text: data.message || 'Failed to changed password ',
-    //           icon: 'error',
-    //           confirmButtonText: 'OK'
-    //         })
-    //        throw new Error(data.message)
-    //      }
-    //    } catch (error) {
-    //      throw error
-    //    }
-    //  }
+        const data = await response.json()
+        console.log(data)
+        Swal.fire({
+          title: 'Success!',
+          text: 'Password berhasil diubah!',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          setValues({
+            token: '',
+            newPassword: '',
+            confirmPassword: '',
+            showPassword: false,
+            showConfirmPassword: false,
+            newPasswordError: '',
+            confirmPasswordError: '',
+            tokenError: ''
+          })
+        })
+        router.push('/')
+      } catch (error) {
+        console.error('Error:', error)
+        Swal.fire({
+          title: 'Error!',
+          text: 'Password gagal diubah',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        })
+      }
+    }
+  }
 
   return (
     <Box className='content-center'>
@@ -157,7 +212,7 @@ const ResetPassPage = () => {
                 fontSize: '1.5rem !important'
               }}
             >
-              Change Password
+              Reset Password
             </Typography>
           </Box>
           <Box sx={{ mb: 6 }}>
@@ -165,7 +220,22 @@ const ResetPassPage = () => {
           </Box>
           <form noValidate autoComplete='off' onSubmit={handleSubmit}>
             <FormControl fullWidth sx={{ marginBottom: 4 }}>
-              <InputLabel htmlFor='auth-reset-password'>Password</InputLabel>
+              <InputLabel htmlFor='auth-reset-token'>Token</InputLabel>
+              <OutlinedInput
+                label='Token'
+                type='number'
+                value={values.token}
+                id='auth-reset-token'
+                onChange={handleChange('token')}
+              />
+              {values.tokenError && (
+                <Typography variant='body2' color='error'>
+                  {values.tokenError}
+                </Typography>
+              )}
+            </FormControl>
+            <FormControl fullWidth sx={{ marginBottom: 4 }}>
+              <InputLabel htmlFor='auth-reset-password'>New Password</InputLabel>
               <OutlinedInput
                 label='New Password'
                 value={values.newPassword}
@@ -185,9 +255,9 @@ const ResetPassPage = () => {
                   </InputAdornment>
                 }
               />
-              {values.passwordError && (
+              {values.newPasswordError && (
                 <Typography variant='body2' color='error'>
-                  {values.passwordError}
+                  {values.newPasswordError}
                 </Typography>
               )}
             </FormControl>
@@ -219,7 +289,7 @@ const ResetPassPage = () => {
               )}
             </FormControl>
             <Button fullWidth size='large' variant='contained' sx={{ marginBottom: 7 }} type='submit'>
-              Change Password
+              Reset Password
             </Button>
           </form>
         </CardContent>
