@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useEffect } from 'react'
+import { forwardRef, useState, ChangeEvent, useEffect } from 'react'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableRow from '@mui/material/TableRow'
@@ -12,6 +12,20 @@ import { FileEye } from 'mdi-material-ui'
 import Chip from '@mui/material/Chip'
 import CutiKaryawanDetail from './cuti-k-detail'
 import AppURL from '../../api/AppURL'
+import CardHeader from '@mui/material/CardHeader'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import Grid from '@mui/material/Grid'
+import TextField from '@mui/material/TextField'
+
+
+const TglAwal = forwardRef((props, ref) => {
+  return <TextField fullWidth {...props} inputRef={ref} label='Tanggal Awal' autoComplete='off' />
+})
+const TglAkhir = forwardRef((props, ref) => {
+  return <TextField fullWidth {...props} inputRef={ref} label='Tanggal Akhir' autoComplete='off' />
+})
+
 
 interface Column {
   id: keyof Data
@@ -67,15 +81,25 @@ const CutiKaryawan = () => {
   const [order, setOrder] = useState<'asc' | 'desc'>('desc')
    const [orderBy, setOrderBy] = useState<keyof Data>('submissionDate')
    const [rows, setRows] = useState<Data[]>([])
+   const [startDate, setStartDate] = useState<Date | null>(null)
+   const [endDate, setEndDate] = useState<Date | null>(null)
 
 
-   useEffect(() => {
-     fetchSubmissions()
-   }, [order])
+  useEffect(() => {
+    fetchSubmissions()
+  }, [order, startDate, endDate])
 
    const fetchSubmissions = async () => {
      try {
-       const response = await fetch(`${AppURL.Submissions}?status=diterima,ditolak&sort_by=${order}`, {
+       let url = `${AppURL.Submissions}?status=diterima,ditolak&sort_by=${order}`
+       if (startDate) {
+         url += `&start_date=${startDate.toISOString().split('T')[0]}`
+       }
+       if (endDate) {
+         url += `&end_date=${endDate.toISOString().split('T')[0]}`
+       }
+
+       const response = await fetch(url, {
          method: 'GET',
          headers: {
            Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -131,6 +155,37 @@ const CutiKaryawan = () => {
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <CardHeader
+        title='Laporan Cuti'
+        titleTypographyProps={{ variant: 'h6' }}
+        action={
+          <Grid container spacing={2}>
+            <Grid item sx={{ zIndex: 999999 }}>
+              <DatePicker
+                selected={startDate}
+                showYearDropdown
+                showMonthDropdown
+                placeholderText='MM-DD-YYYY'
+                customInput={<TglAwal />}
+                id='form-layouts-separator-date'
+                onChange={newValue => setStartDate(newValue)}
+              />
+            </Grid>
+            <Grid item sx={{ zIndex: 999999 }}>
+              <DatePicker
+                selected={endDate}
+                showYearDropdown
+                showMonthDropdown
+                placeholderText='MM-DD-YYYY'
+                customInput={<TglAkhir />}
+                id='form-layouts-separator-date'
+                onChange={newValue => setEndDate(newValue)}
+                minDate={startDate}
+              />
+            </Grid>
+          </Grid>
+        }
+      />
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label='sticky table'>
           <TableHead>
@@ -155,7 +210,6 @@ const CutiKaryawan = () => {
                   {columns.map(column => {
                     const value = row[column.id]
                     if (column.id === 'actions') {
-
                       return (
                         <TableCell key={column.id} align={column.align}>
                           <Button onClick={() => handleActionClick(row)}>
@@ -165,7 +219,6 @@ const CutiKaryawan = () => {
                       )
                     }
                     if (column.id === 'status') {
-
                       return (
                         <TableCell key={column.id} align={column.align}>
                           <Chip
