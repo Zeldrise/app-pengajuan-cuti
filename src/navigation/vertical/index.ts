@@ -46,7 +46,6 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       '/data-karyawan',
       '/cuti-karyawan',
       '/cuti-pribadi',
-      '/chart',
       '/user-profile',
       '/account-settings'
     ]
@@ -158,7 +157,6 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       '/approval-cuti',
       '/data-karyawan',
       '/cuti-karyawan',
-      '/chart',
       '/user-profile',
       '/account-settings'
     ]

@@ -156,56 +156,56 @@ const CutiPribadi = () => {
           }
         })
         
-  const handleDeleteRow = async (rowData: Data) => {
-    Swal.fire({
-      title: 'Apakah Anda yakin?',
-      text: `Anda akan menghapus pengajuan cuti`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#6AD01F',
-      cancelButtonColor: '#FF6166',
-      confirmButtonText: 'Ya, hapus!',
-      cancelButtonText: 'Batal',
-      customClass: {
-        container: 'full-screen-alert'
-      }
-    }).then(async result => {
-      if (result.isConfirmed) {
-        try {
-          const response = await axios.put(`${AppURL.Submissions}/delete/${rowData.id}`, null, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-          })
+  // const handleDeleteRow = async (rowData: Data) => {
+  //   Swal.fire({
+  //     title: 'Apakah Anda yakin?',
+  //     text: `Anda akan menghapus pengajuan cuti`,
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#6AD01F',
+  //     cancelButtonColor: '#FF6166',
+  //     confirmButtonText: 'Ya, hapus!',
+  //     cancelButtonText: 'Batal',
+  //     customClass: {
+  //       container: 'full-screen-alert'
+  //     }
+  //   }).then(async result => {
+  //     if (result.isConfirmed) {
+  //       try {
+  //         const response = await axios.put(`${AppURL.Submissions}/delete/${rowData.id}`, null, {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem('token')}`
+  //           }
+  //         })
 
-          if (response.status !== 200) {
-            throw new Error('Gagal menghapus pengajuan')
-          }
-          const updatedRows = rows.filter(row => row.id !== rowData.id)
-          setRows(updatedRows)
-          Swal.fire({
-            title: 'Pengajuan berhasil dihapus!',
-            icon: 'success',
-            confirmButtonColor: '#6AD01F',
-            customClass: {
-              container: 'full-screen-alert'
-            }
-          })
-        } catch (error) {
-          console.error('Terjadi kesalahan:', error)
-          Swal.fire({
-            title: 'Terjadi kesalahan!',
-            text: 'Gagal menghapus data karyawan',
-            icon: 'error',
-            confirmButtonColor: '#FF6166',
-            customClass: {
-              container: 'full-screen-alert'
-            }
-          })
-        }
-      }
-    })
-  }
+  //         if (response.status !== 200) {
+  //           throw new Error('Gagal menghapus pengajuan')
+  //         }
+  //         const updatedRows = rows.filter(row => row.id !== rowData.id)
+  //         setRows(updatedRows)
+  //         Swal.fire({
+  //           title: 'Pengajuan berhasil dihapus!',
+  //           icon: 'success',
+  //           confirmButtonColor: '#6AD01F',
+  //           customClass: {
+  //             container: 'full-screen-alert'
+  //           }
+  //         })
+  //       } catch (error) {
+  //         console.error('Terjadi kesalahan:', error)
+  //         Swal.fire({
+  //           title: 'Terjadi kesalahan!',
+  //           text: 'Gagal menghapus data karyawan',
+  //           icon: 'error',
+  //           confirmButtonColor: '#FF6166',
+  //           customClass: {
+  //             container: 'full-screen-alert'
+  //           }
+  //         })
+  //       }
+  //     }
+  //   })
+  // }
 
 
 
@@ -244,12 +244,12 @@ const CutiPribadi = () => {
                         return (
                           <TableCell key={column.id} align='center' colSpan={columns.length}>
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                              <Button onClick={() => handleEditClick(row)} style={{ left: '10px' }}>
+                              <Button onClick={() => handleEditClick(row)}>
                                 <PencilBox />
                               </Button>
-                              <Button onClick={() => handleDeleteRow(row)} style={{ right: '10px' }}>
+                              {/* <Button onClick={() => handleDeleteRow(row)} style={{ right: '10px' }}>
                                 <TrashCan />
-                              </Button>
+                              </Button> */}
                             </div>
                           </TableCell>
                         )

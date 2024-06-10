@@ -49,7 +49,6 @@ interface Data {
   actions: any
 }
 
-
 const Approval = () => {
   const [page, setPage] = useState<number>(0)
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
@@ -81,7 +80,6 @@ const Approval = () => {
     }
   }
 
-
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
   }
@@ -91,32 +89,31 @@ const Approval = () => {
     setPage(0)
   }
 
- const handleActionClick = (rowData: Data) => {
-   setSelectedRowData(rowData)
-   setIsApprovalDetailOpen(true)
- }
+  const handleActionClick = (rowData: Data) => {
+    setSelectedRowData(rowData)
+    setIsApprovalDetailOpen(true)
+  }
 
- const handleCloseApprovalDetail = () => {
-   setIsApprovalDetailOpen(false)
- }
- const handleSort = (property: keyof Data) => {
-   const isAsc = orderBy === property && order === 'asc'
-   setOrder(isAsc ? 'desc' : 'asc')
-   setOrderBy(property)
- }
+  const handleCloseApprovalDetail = () => {
+    setIsApprovalDetailOpen(false)
+  }
+  const handleSort = (property: keyof Data) => {
+    const isAsc = orderBy === property && order === 'asc'
+    setOrder(isAsc ? 'desc' : 'asc')
+    setOrderBy(property)
+  }
 
- const sortedRows = rows.sort((a, b) => {
-   if (orderBy === 'submissionDate' || orderBy === 'startDate' || orderBy === 'endDate') {
-     return order === 'asc'
-       ? new Date(a[orderBy]).getTime() - new Date(b[orderBy]).getTime()
-       : new Date(b[orderBy]).getTime() - new Date(a[orderBy]).getTime()
-   } else if (orderBy === 'leaveAllowance') {
+  const sortedRows = rows.sort((a, b) => {
+    if (orderBy === 'submissionDate' || orderBy === 'startDate' || orderBy === 'endDate') {
+      return order === 'asc'
+        ? new Date(a[orderBy]).getTime() - new Date(b[orderBy]).getTime()
+        : new Date(b[orderBy]).getTime() - new Date(a[orderBy]).getTime()
+    } else if (orderBy === 'leaveAllowance') {
+      return order === 'asc' ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy]
+    }
 
-     return order === 'asc' ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy]
-   }
-
-   return 0
- })
+    return 0
+  })
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>

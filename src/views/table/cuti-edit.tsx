@@ -91,7 +91,6 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
   const [leaveOptions, setLeaveOptions] = useState<any[]>([])
   const [urgency, setUrgency] = useState<string>('')
   const [errors, setErrors] = useState<any>({})
-  const [maxEndDate, setMaxEndDate] = useState<Date | null>(null)
 
   
 
@@ -132,7 +131,6 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
       isSickLeave && startDate && endDate && differenceInDays(endDate, startDate) > 0 ? true : false
     )
     if (selectedType !== 'Cuti urgensi') {
-      setMaxEndDate(null)
       setUrgency('')
     }
     if (errors.cutiType) {
@@ -331,21 +329,19 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
        if (urgencyNumber === 3) {
          endDate = getNextValidWorkday(date, 2)
          handleChangeEndDate(endDate)
-         setMaxEndDate(endDate)
        } else if (
          urgencyNumber === 4 ||
          urgencyNumber === 5 ||
          urgencyNumber === 7 ||
          urgencyNumber === 8 ||
-         urgencyNumber === 9
+         urgencyNumber === 9 ||
+         urgencyNumber === 11
        ) {
          endDate = getNextValidWorkday(date, 1)
          handleChangeEndDate(endDate)
-         setMaxEndDate(endDate)
        } else if (urgencyNumber === 6) {
          endDate = getNextValidWorkday(date, 0)
          handleChangeEndDate(endDate)
-         setMaxEndDate(endDate)
        }
 
        if (errors.startDate || errors.endDate) {
@@ -362,20 +358,16 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
    }
 
       const handleChangeEndDate = (date: Date | null) => {
-        if (maxEndDate && date && date > maxEndDate) {
-          setEndDate(maxEndDate)
-        } else {
-          const validEndDate = date && isWeekend(date) ? getNextValidWorkday(date, 0) : date
-          setEndDate(validEndDate)
-          if (errors.endDate) {
-            setErrors({ ...errors, endDate: '' })
-          }
+        const validEndDate = date && isWeekend(date) ? getNextValidWorkday(date, 0) : date
+        setEndDate(validEndDate)
+        if (errors.endDate) {
+          setErrors({ ...errors, endDate: '' })
         }
       }
+
   const handleChangeUrgency = (event: SelectChangeEvent<string>) => {
     const selectedUrgency = event.target.value as string
     setUrgency(selectedUrgency)
-    setMaxEndDate(null) 
     setStartDate(null)
     setEndDate(null)
     if (errors.urgency) {
@@ -572,7 +564,7 @@ useEffect(() => {
                         {option.type}
                       </MenuItem>
                     ))}
-                    <MenuItem value='Cuti urgensi'>Cuti Urgensi</MenuItem>
+                    <MenuItem value='Cuti urgensi'>Cuti Penting</MenuItem>
                   </Select>
                   {errors.cutiType && <FormHelperText error>{errors.cutiType}</FormHelperText>}
                 </FormControl>
@@ -580,9 +572,9 @@ useEffect(() => {
               {showUrgencyFields && (
                 <Grid item xs={12}>
                   <FormControl fullWidth>
-                    <InputLabel id='form-layouts-separator-select-label'>Cuti urgensi</InputLabel>
+                    <InputLabel id='form-layouts-separator-select-label'>Tipe Cuti Penting</InputLabel>
                     <Select
-                      label='Tipe urgensi'
+                      label='Tipe Cuti Penting'
                       defaultValue=''
                       id='form-layouts-separator-select'
                       labelId='form-layouts-separator-select-label'
@@ -615,11 +607,15 @@ useEffect(() => {
                       Upload Surat Dokter
                     </Button>
                   </label>
-                   {doctorNoteImage ? (
-                  <img src={URL.createObjectURL(doctorNoteImage)} alt='Doctor Note Preview' style={{ marginTop: '10px', maxWidth: '100%' }} />
-                ) : attachmentUrl ? (
-                  <img src={attachmentUrl} alt='Attachment Preview' style={{ marginTop: '10px', maxWidth: '100%' }} />
-                ) : null}
+                  {doctorNoteImage ? (
+                    <img
+                      src={URL.createObjectURL(doctorNoteImage)}
+                      alt='Doctor Note Preview'
+                      style={{ marginTop: '10px', maxWidth: '100%' }}
+                    />
+                  ) : attachmentUrl ? (
+                    <img src={attachmentUrl} alt='Attachment Preview' style={{ marginTop: '10px', maxWidth: '100%' }} />
+                  ) : null}
                   {errors.doctorNote && <FormHelperText error>{errors.doctorNote}</FormHelperText>}
                 </Grid>
               )}
@@ -668,7 +664,6 @@ useEffect(() => {
                   onChange={handleChangeEndDate}
                   minDate={startDate}
                   startDate={startDate}
-                  maxDate={cutiType === 'Cuti urgensi' ? maxEndDate : null}
                 />
                 {errors.endDate && <FormHelperText error>{errors.endDate}</FormHelperText>}
               </Grid>

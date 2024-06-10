@@ -4,7 +4,7 @@ import PermintaanCuti from '../../views/card/PermintaanCuti'
 import Ditolak from '../../views/card/Ditolak'
 import Diterima from '../../views/card/Diterima'
 import UserLayout from '../../layouts/UserLayout'
-import Tahun from '../../views/chart/Tahun'
+import Grafik from 'src/views/table/grafik'
 import React, { useEffect, useState } from 'react'
 import AppURL from '../../api/AppURL'
 
@@ -51,7 +51,7 @@ const Index = () => {
           <Ditolak />
         </Grid>
         <Grid item xs={12}>
-          <Tahun />
+          <Grafik />
         </Grid>
       </Grid>
     ]
@@ -90,7 +90,7 @@ const Index = () => {
           <PermintaanCuti />
         </Grid>
         <Grid item xs={12}>
-          <Tahun />
+          <Grafik />
         </Grid>
       </Grid>
     ]

@@ -55,7 +55,6 @@ const FormPengajuanCuti = () => {
   const [urgency, setUrgency] = useState<string>('')
   const [userData, setUserData] = useState<any>(null)
   const [errors, setErrors] = useState<any>({})
-  const [maxEndDate, setMaxEndDate] = useState<Date | null>(null)
   
 
   const validateForm = () => {
@@ -66,11 +65,11 @@ const FormPengajuanCuti = () => {
     if (!departemen) errors.departemen = 'Departemen harus diisi'
     if (!cutiType) errors.cutiType = 'Tipe cuti harus dipilih'
     if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
-    const isSickLeave = Number(cutiType) === 2
-    const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
-    if (isSickLeave && duration > 1 && !doctorNoteImage) {
-      errors.doctorNote = 'Surat dokter harus diunggah'
-    }
+    // const isSickLeave = Number(cutiType) === 2
+    // const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
+    // if (isSickLeave && duration > 1 && !doctorNoteImage) {
+    //   errors.doctorNote = 'Surat dokter harus diunggah'
+    // }
     if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
     if (!startDate) errors.startDate = 'Tanggal awal harus diisi' 
     if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
@@ -158,8 +157,8 @@ const FormPengajuanCuti = () => {
           try {
              let attachment = null
 
-             if (Number(cutiType) === 2 && doctorNoteImage) {
-               attachment = await uploadDoctorNote(doctorNoteImage)
+             if (Number(cutiType) !== 2 || doctorNoteImage) {
+               attachment = doctorNoteImage ? await uploadDoctorNote(doctorNoteImage) : null
              }
             const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
             const dataPengajuan = {
@@ -229,21 +228,19 @@ const FormPengajuanCuti = () => {
         if (urgencyNumber === 3) {
           endDate = getNextValidWorkday(date, 2)
           handleChangeEndDate(endDate)
-          setMaxEndDate(endDate)
         } else if (
           urgencyNumber === 4 ||
           urgencyNumber === 5 ||
           urgencyNumber === 7 ||
           urgencyNumber === 8 ||
-          urgencyNumber === 9
+          urgencyNumber === 9 ||
+          urgencyNumber === 11
         ) {
-            endDate = getNextValidWorkday(date, 1)
-            handleChangeEndDate(endDate)
-            setMaxEndDate(endDate)
+          endDate = getNextValidWorkday(date, 1)
+          handleChangeEndDate(endDate)
         } else if (urgencyNumber === 6) {
           endDate = getNextValidWorkday(date, 0)
           handleChangeEndDate(endDate)
-          setMaxEndDate(endDate)
         }
 
         if (errors.startDate || errors.endDate) {
@@ -259,18 +256,14 @@ const FormPengajuanCuti = () => {
   }
     }
 
+const handleChangeEndDate = (date: Date | null) => {
+  const validEndDate = date && isWeekend(date) ? getNextValidWorkday(date, 0) : date
+  setEndDate(validEndDate)
+  if (errors.endDate) {
+    setErrors({ ...errors, endDate: '' })
+  }
+}
 
-   const handleChangeEndDate = (date: Date | null) => {
-     if (maxEndDate && date && date > maxEndDate) {
-       setEndDate(maxEndDate)
-     } else {
-       const validEndDate = date && isWeekend(date) ? getNextValidWorkday(date, 0) : date
-       setEndDate(validEndDate)
-       if (errors.endDate) {
-         setErrors({ ...errors, endDate: '' })
-       }
-     }
-   }
 
 
   const handleCutiTypeChange = (event: SelectChangeEvent<string>) => {
@@ -282,7 +275,6 @@ const FormPengajuanCuti = () => {
        isSickLeave && startDate && endDate && differenceInDays(endDate, startDate) > 0 ? true : false
      )
       if (selectedType !== 'Cuti urgensi') {
-        setMaxEndDate(null) 
         setUrgency('')
       }
     if (errors.cutiType) {
@@ -342,7 +334,6 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const handleChangeUrgency = (event: SelectChangeEvent<string>) => {
         const selectedUrgency = event.target.value as string
         setUrgency(selectedUrgency)
-        setMaxEndDate(null) 
         setStartDate(null)
         setEndDate(null)
         if (errors.urgency) {
@@ -533,7 +524,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                       {option.type}
                     </MenuItem>
                   ))}
-                  <MenuItem value='Cuti urgensi'>Cuti Urgensi</MenuItem>
+                  <MenuItem value='Cuti urgensi'>Cuti Penting</MenuItem>
                 </Select>
                 {errors.cutiType && <FormHelperText error>{errors.cutiType}</FormHelperText>}
               </FormControl>
@@ -562,9 +553,9 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             {showUrgencyFields && (
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel id='form-layouts-separator-select-label'>Cuti urgensi</InputLabel>
+                  <InputLabel id='form-layouts-separator-select-label'>Tipe Cuti Penting</InputLabel>
                   <Select
-                    label='Tipe urgensi'
+                    label='Tipe Cuti Penting'
                     defaultValue=''
                     id='form-layouts-separator-select'
                     labelId='form-layouts-separator-select-label'
@@ -584,7 +575,6 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             )}
             {showDoctorNoteField && (
               <Grid item xs={12}>
-                {/* Additional field for Cuti sakit */}
                 <input
                   accept='image/*'
                   id='contained-button-file'
@@ -631,7 +621,6 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                 onChange={handleChangeEndDate}
                 minDate={startDate}
                 startDate={startDate}
-                maxDate={cutiType === 'Cuti urgensi' ? maxEndDate : null}
               />
               {errors.endDate && <FormHelperText error>{errors.endDate}</FormHelperText>}
             </Grid>

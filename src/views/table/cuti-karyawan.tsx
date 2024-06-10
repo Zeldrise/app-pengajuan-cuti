@@ -79,10 +79,10 @@ const CutiKaryawan = () => {
   const [selectedRowData, setSelectedRowData] = useState<Data | null>(null)
   const [isCutiKaryawanDetailOpen, setIsCutiKaryawanDetailOpen] = useState<boolean>(false)
   const [order, setOrder] = useState<'asc' | 'desc'>('desc')
-   const [orderBy, setOrderBy] = useState<keyof Data>('submissionDate')
-   const [rows, setRows] = useState<Data[]>([])
-   const [startDate, setStartDate] = useState<Date | null>(null)
-   const [endDate, setEndDate] = useState<Date | null>(null)
+  const [orderBy, setOrderBy] = useState<keyof Data>('submissionDate')
+  const [rows, setRows] = useState<Data[]>([])
+  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
 
 
   useEffect(() => {
@@ -92,11 +92,8 @@ const CutiKaryawan = () => {
    const fetchSubmissions = async () => {
      try {
        let url = `${AppURL.Submissions}?status=diterima,ditolak&sort_by=${order}`
-       if (startDate) {
-         url += `&start_date=${startDate.toISOString().split('T')[0]}`
-       }
-       if (endDate) {
-         url += `&end_date=${endDate.toISOString().split('T')[0]}`
+       if (startDate && endDate) {
+         url += `&start_date=${startDate.toISOString().split('T')[0]}&end_date=${endDate.toISOString().split('T')[0]}`
        }
 
        const response = await fetch(url, {
@@ -160,7 +157,7 @@ const CutiKaryawan = () => {
         titleTypographyProps={{ variant: 'h6' }}
         action={
           <Grid container spacing={2}>
-            <Grid item sx={{ zIndex: 999999 }}>
+            <Grid item sx={{ zIndex: 50 }}>
               <DatePicker
                 selected={startDate}
                 showYearDropdown
@@ -171,7 +168,7 @@ const CutiKaryawan = () => {
                 onChange={newValue => setStartDate(newValue)}
               />
             </Grid>
-            <Grid item sx={{ zIndex: 999999 }}>
+            <Grid item sx={{ zIndex: 50 }}>
               <DatePicker
                 selected={endDate}
                 showYearDropdown
