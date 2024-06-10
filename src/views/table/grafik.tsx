@@ -77,6 +77,7 @@ const Grafik = () => {
 
   const [tahun, setTahun] = useState(new Date().getFullYear().toString())
   const [bulan, setBulan] = useState(new Date().getMonth() + 1)
+  
   const [page, setPage] = useState<number>(0)
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
 
