@@ -11,6 +11,7 @@ import TextField from '@mui/material/TextField'
 import CardHeader from '@mui/material/CardHeader'
 import Box from '@mui/material/Box'
 import MenuItem from '@mui/material/MenuItem'
+import AppURL from 'src/api/AppURL'
 
 const generateYears = () => {
   const currentYear = new Date().getFullYear()
@@ -21,10 +22,6 @@ const generateYears = () => {
   return years
 }
 
-interface MonthlyLeave {
-  month: string
-  totalLeaveDays: number
-}
 
 interface Column {
   id: keyof Data
@@ -36,41 +33,22 @@ interface Column {
 
 const columns: readonly Column[] = [
   { id: 'name', label: 'Nama', minWidth: 170 },
-  { id: 'submission', label: 'Total Pengajuan', minWidth: 100 },
-  { id: 'accept', label: 'Diterima', minWidth: 100 },
-  { id: 'reject', label: 'Ditolak', minWidth: 100 },
-  { id: 'pending', label: 'Pending', minWidth: 100 },
-  { id: 'total_days', label: 'Sisa Cuti', minWidth: 100 }
+  { id: 'totalCuti', label: 'Total Pengajuan', minWidth: 100 },
+  { id: 'cutiDiterima', label: 'Diterima', minWidth: 100 },
+  { id: 'cutiDitolak', label: 'Ditolak', minWidth: 100 },
+  { id: 'cutiPending', label: 'Pending', minWidth: 100 },
+  { id: 'sisaCuti', label: 'Sisa Cuti', minWidth: 100 }
 ]
 
 interface Data {
   id: number
   name: string
-  submission: number
-  accept: number
-  reject: number
-  pending: number
-  total_days: number
+  totalCuti: number
+  cutiDiterima: number
+  cutiDitolak: number
+  cutiPending: number
+  sisaCuti: number
 }
-
-const createData = (
-  name: string,
-  submission: number,
-  accept: number,
-  reject: number,
-  pending: number,
-  total_days: number
-) => {
-  return { name, submission, accept, reject, pending, total_days }
-}
-
-const rows = [
-  createData('Karyawan A', 10, 8, 2, 0, 7),
-  createData('Karyawan B', 10, 8, 2, 0, 9),
-  createData('Karyawan C', 10, 8, 2, 0, 3),
-  createData('Karyawan D', 10, 8, 2, 0, 4),
-  createData('Karyawan E', 10, 8, 2, 0, 8)
-]
 
 const Grafik = () => {
   // ** Hook
@@ -79,6 +57,9 @@ const Grafik = () => {
   const [bulan, setBulan] = useState(new Date().getMonth() + 1)
   const [page, setPage] = useState<number>(0)
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
+  const [rows, setRows] = useState<Data[]>([])
+   const [order, setOrder] = useState<'asc' | 'desc'>('desc')
+   const [orderBy, setOrderBy] = useState<keyof Data>('totalCuti')
 
   const handleChangeTahun = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTahun(e.target.value)
@@ -97,8 +78,56 @@ const Grafik = () => {
     setPage(0)
   }
 
+   useEffect(() => {
+     const fetchData = async () => {
+       try {
+         const response = await fetch(
+           `${AppURL.Submissions}/history-user?month=${bulan}&year=${tahun}&sort_by=${order}`,
+           {
+             method: 'GET',
+             headers: {
+               Authorization: `Bearer ${localStorage.getItem('token')}`
+             }
+           }
+         )
+         if (!response.ok) {
+           throw new Error('Network response was not ok')
+         }
+         const data = await response.json()
+         setRows(data.stats)
+       } catch (error) {
+         console.error('Error fetching data:', error)
+       }
+     }
+
+     fetchData()
+   }, [tahun, bulan, order])
+
+     const handleSort = (property: keyof Data) => {
+       const isAsc = orderBy === property && order === 'asc'
+       setOrder(isAsc ? 'desc' : 'asc')
+       setOrderBy(property)
+     }
+
+     const sortedRows = rows.sort((a, b) => {
+       if (
+         orderBy === 'totalCuti' ||
+         orderBy === 'cutiDiterima' ||
+         orderBy === 'cutiDitolak' ||
+         orderBy === 'cutiPending'
+       ) {
+         return order === 'asc'
+           ? new Date(a[orderBy]).getTime() - new Date(b[orderBy]).getTime()
+           : new Date(b[orderBy]).getTime() - new Date(a[orderBy]).getTime()
+       } else if (orderBy === 'sisaCuti') {
+         return order === 'asc' ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy]
+       }
+
+       return 0
+     })
+
   return (
-    <Paper >
+    <Paper>
       <CardHeader
         item
         xs={12}
@@ -143,14 +172,20 @@ const Grafik = () => {
           <TableHead>
             <TableRow>
               {columns.map(column => (
-                <TableCell key={column.id} align={column.align} sx={{ minWidth: column.minWidth }}>
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  sx={{ minWidth: column.minWidth }}
+                  onClick={() => handleSort(column.id as keyof Data)}
+                >
                   {column.label}
+                  {orderBy === column.id ? <span>{order === 'asc' ? '↓' : '↑'}</span> : null}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
+            {sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
               return (
                 <TableRow hover role='checkbox' tabIndex={-1} key={row.id}>
                   {columns.map(column => {

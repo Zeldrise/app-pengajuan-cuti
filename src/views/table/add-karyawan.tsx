@@ -132,7 +132,7 @@ const AddDataKaryawan: React.FC<PropsAddDataKaryawan> = ({ open, onClose, onAddE
             onClose()
             onAddEmployeeSuccess()
           } catch (error) {
-            console.error('Error editing employee:', error)
+            console.error('Error add employee:', error)
             Swal.fire({
               title: 'Error!',
               text: 'Gagal menambahkan karyawan',

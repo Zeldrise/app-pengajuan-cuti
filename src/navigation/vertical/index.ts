@@ -8,6 +8,7 @@ import HomeOutline from 'mdi-material-ui/HomeOutline'
 // ** Type import
 import { VerticalNavItemsType } from '../../@core/layouts/types'
 import AppURL from '../../api/AppURL'
+import Airballoon from 'mdi-material-ui/Airballoon'
 
 const fetchUserProfile = async () => {
   try {
@@ -42,6 +43,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
     menuAccess = [
       '/home',
       '/ajukan-cuti',
+      '/pengajuan-karyawan',
       '/approval-cuti',
       '/data-karyawan',
       '/cuti-karyawan',
@@ -67,6 +69,11 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
         title: 'Approval Cuti',
         icon: FileDocumentEditOutline,
         path: '/approval-cuti'
+      },
+      {
+        title: 'Pengajuan Karyawan',
+        icon: Airballoon,
+        path: '/pengajuan-karyawan'
       },
       {
         title: 'Data Karyawan',

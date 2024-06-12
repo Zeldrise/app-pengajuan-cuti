@@ -41,6 +41,7 @@ interface Data {
   position: string
   department: string
   total_days: number
+  leave_allowance: number
   role: string
   gender: string
   join_date: string
