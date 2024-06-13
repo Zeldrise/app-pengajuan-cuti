@@ -50,6 +50,17 @@ interface User {
   join_date: string
 }
 
+interface FormData {
+  user_id: number | null
+  start_date: Date | null | undefined
+  end_date: Date | null | undefined
+  leave_type: string
+  emergency_call: string
+  description: string
+  attachment: any
+  force_submit?: boolean
+}
+
 
 
 
@@ -70,7 +81,7 @@ const FormPengajuanKaryawan = () => {
   const [leaveOptions, setLeaveOptions] = useState<any[]>([])
   const [urgency, setUrgency] = useState<string>('')
   const [userData, setUserData] = useState<any>(null)
-const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
   const [errors, setErrors] = useState<any>({})
   const [users, setUsers] = useState<User[]>([])
 
@@ -115,7 +126,7 @@ const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
     return result.filename
   }
 
- const submitFormData = async (data: any, id: number) => {
+ const submitFormData = async (data: FormData, id: number) => {
    try {
      const response = await fetch(`${AppURL.Submissions}/${id}`, {
        method: 'POST',
@@ -138,10 +149,63 @@ const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (validateForm() && selectedUserId) {
+    const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
+  if (
+    Number(cutiType) === 1 &&
+    duration > (selectedUserId ? users.find(user => user.id === selectedUserId)?.total_days || 0 : 0)
+  ) {
+    Swal.fire({
+      title: 'Maaf, jatah cuti tidak mencukupi',
+      text: 'Total hari pengajuan cuti melebihi jatah cuti yang  dimiliki. Jatah cuti mungkin akan minus.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#6AD01F',
+      cancelButtonColor: '#FF6166',
+      confirmButtonText: 'Ajukan',
+      cancelButtonText: 'Batal',
+      customClass: {
+        container: 'full-screen-alert'
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        proceedWithFormSubmission()
+      }
+    })
+  } else {
+    if (validateForm() && selectedUserId !== null) {
+      if (checkUrgencyLeaveDuration()) {
+        proceedWithFormSubmission()
+      }
+    }
+  }
+}
+const checkUrgencyLeaveDuration = () => {
+  const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
+
+  if (cutiType === 'Cuti urgensi') {
+    const urgencyNumber = Number(urgency)
+    let maxDays: number | undefined
+
+    if (urgencyNumber === 3) {
+      maxDays = 3
+    } else if (
+      urgencyNumber === 4 ||
+      urgencyNumber === 5 ||
+      urgencyNumber === 7 ||
+      urgencyNumber === 8 ||
+      urgencyNumber === 9 ||
+      urgencyNumber === 11
+    ) {
+      maxDays = 2
+    } else if (urgencyNumber === 6) {
+      maxDays = 1
+    }
+
+    if (maxDays !== undefined && duration > maxDays) {
       Swal.fire({
-        title: 'Apa Pengajuan Sudah Benar?',
-        icon: 'question',
+        title: 'Pengambilan Hari Melebihi Jatah',
+        text: 'Pengambilan hari pada cuti penting melebihi jatah yang ditentukan, ini mungkin akan memotong jatah cuti tahunan. Apa tetap mengajukan?',
+        icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#6AD01F',
         cancelButtonColor: '#FF6166',
@@ -150,59 +214,92 @@ const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
         customClass: {
           container: 'full-screen-alert'
         }
-      }).then(async result => {
+      }).then(result => {
         if (result.isConfirmed) {
-          try {
-            let attachment = null
-
-            if (Number(cutiType) !== 2 || doctorNoteImage) {
-              attachment = doctorNoteImage ? await uploadDoctorNote(doctorNoteImage) : null
-            }
-            const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
-            const dataPengajuan = {
-              user_id: selectedUserId,
-              start_date: startDate,
-              end_date: endDate,
-              leave_type: finalCutiType,
-              emergency_call: telepon,
-              description: deskripsi,
-              attachment: attachment
-            }
-            await submitFormData(dataPengajuan, selectedUserId)
-            console.log('data yang disubmit :', dataPengajuan)
-            Swal.fire({
-              title: 'Pengajuan Berhasil Disubmit!',
-              icon: 'success',
-              confirmButtonColor: '#6AD01F',
-              customClass: {
-                container: 'full-screen-alert'
-              }
-            })
-            setStartDate(null)
-            setEndDate(null)
-            setCutiType('')
-            setTelepon('')
-            setDeskripsi('')
-            setShowUrgencyFields(false)
-            setShowDoctorNoteField(false)
-            setDoctorNoteImage(null)
-            setUrgency('')
-            setErrors({})
-          } catch (error) {
-            Swal.fire({
-              title: 'Terjadi Kesalahan!',
-              text: 'Gagal mengirim data pengajuan cuti. Silakan coba lagi.',
-              icon: 'error',
-              confirmButtonColor: '#FF6166',
-              customClass: {
-                container: 'full-screen-alert'
-              }
-            })
-          }
+          proceedWithFormSubmission()
         }
       })
+      return false
     }
   }
+
+  return true
+}
+
+const proceedWithFormSubmission = async () => {
+  Swal.fire({
+    title: 'Apa Pengajuan Sudah Benar?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#6AD01F',
+    cancelButtonColor: '#FF6166',
+    confirmButtonText: 'Ajukan',
+    cancelButtonText: 'Batal',
+    customClass: {
+      container: 'full-screen-alert'
+    }
+  }).then(async result => {
+    if (result.isConfirmed) {
+      try {
+        let attachment = null
+
+        if (Number(cutiType) !== 2 || doctorNoteImage) {
+          attachment = doctorNoteImage ? await uploadDoctorNote(doctorNoteImage) : null
+        }
+         if (selectedUserId === null) {
+           // Handle the case where selectedUserId is null
+           console.error('selectedUserId cannot be null')
+           return
+         }
+        const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
+        const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
+        const dataPengajuan: FormData = {
+          user_id: selectedUserId,
+          start_date: startDate,
+          end_date: endDate,
+          leave_type: finalCutiType,
+          emergency_call: telepon,
+          description: deskripsi,
+          attachment: attachment
+        }
+        if (duration > (selectedUserId ? users.find(user => user.id === selectedUserId)?.total_days || 0 : 0)) {
+          dataPengajuan.force_submit = true
+        }
+        await submitFormData(dataPengajuan, selectedUserId)
+        console.log('data yang disubmit :', dataPengajuan)
+        Swal.fire({
+          title: 'Pengajuan Berhasil Disubmit!',
+          icon: 'success',
+          confirmButtonColor: '#6AD01F',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        })
+        setStartDate(null)
+        setEndDate(null)
+        setCutiType('')
+        setTelepon('')
+        setDeskripsi('')
+        setShowUrgencyFields(false)
+        setShowDoctorNoteField(false)
+        setDoctorNoteImage(null)
+        setUrgency('')
+        setErrors({})
+      } catch (error) {
+        Swal.fire({
+          title: 'Pengajuan Gagal',
+          text: 'Gagal mengajukan cuti. Silakan cek sisa cuti karyawan yang anda pilih atau coba lagi nanti.',
+          icon: 'error',
+          confirmButtonColor: '#FF6166',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        })
+      }
+    }
+  })
+}
+
 
   const isWeekend = (date: Date) => {
     const day = date.getDay()
@@ -351,7 +448,8 @@ const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
           id: user.id,
           name: user.name,
           position: user.position,
-          department: user.department
+          department: user.department,
+          total_days: user.total_days
         }))
       )
 
@@ -411,6 +509,17 @@ const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
     <Card>
       <Card sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <CardHeader title='Form Pengajuan Karyawan' titleTypographyProps={{ variant: 'h6' }} />
+        <Typography
+          variant='body1'
+          sx={{
+            display: 'flex',
+            fontWeight: 'medium',
+            marginRight: 5,
+            alignItems: 'center'
+          }}
+        >
+          Sisa Cuti: {selectedUserId ? users.find(user => user.id === selectedUserId)?.total_days || '...' : '...'} Hari
+        </Typography>
       </Card>
       <Divider sx={{ margin: 0 }} />
       <form onSubmit={handleSubmit}>

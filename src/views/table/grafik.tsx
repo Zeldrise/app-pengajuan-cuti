@@ -245,7 +245,7 @@ const Grafik = () => {
         onClick={handleDownload}
         startIcon={<MicrosoftExcel />}
       >
-        Download Data
+        Unduh Data
       </Button>
     </Paper>
   )

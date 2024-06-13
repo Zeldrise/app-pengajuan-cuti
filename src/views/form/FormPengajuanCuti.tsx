@@ -29,6 +29,16 @@ import FormHelperText from '@mui/material/FormHelperText'
 import Swal from 'sweetalert2'
 import AppURL from '../../api/AppURL'
 
+interface FormData {
+  start_date: Date | null | undefined
+  end_date: Date | null | undefined
+  leave_type: string
+  emergency_call: string
+  description: string
+  attachment: any
+  force_submit?: boolean
+}
+
 
 const TglAwal = forwardRef((props, ref) => {
   return <TextField fullWidth {...props} inputRef={ref} label='Tanggal Awal' autoComplete='off' />
@@ -65,11 +75,6 @@ const FormPengajuanCuti = () => {
     if (!departemen) errors.departemen = 'Departemen harus diisi'
     if (!cutiType) errors.cutiType = 'Tipe cuti harus dipilih'
     if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
-    // const isSickLeave = Number(cutiType) === 2
-    // const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
-    // if (isSickLeave && duration > 1 && !doctorNoteImage) {
-    //   errors.doctorNote = 'Surat dokter harus diunggah'
-    // }
     if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
     if (!startDate) errors.startDate = 'Tanggal awal harus diisi' 
     if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
@@ -124,26 +129,63 @@ const FormPengajuanCuti = () => {
 
 
   
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
- if (Number(cutiType) === 1 && userData?.total_days === 0) {
-   Swal.fire({
-     title: 'Sisa cuti 0',
-     text: 'Maaf sisa cuti anda 0 tidak dapat mengajukan cuti tahunan',
-     icon: 'warning',
-     confirmButtonColor: '#FF6166',
-     customClass: {
-       container: 'full-screen-alert'
-     }
-   })
-
-   return
- }
-
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault()
+const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
+  if (Number(cutiType) === 1 && duration > (userData?.total_days || 0)) {
+    Swal.fire({
+      title: 'Maaf, jatah cuti Anda tidak mencukupi',
+      text: 'Total hari pengajuan cuti melebihi jatah cuti yang Anda miliki. Ingin tetap mengajukan? Jatah cuti mungkin akan minus.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#6AD01F',
+      cancelButtonColor: '#FF6166',
+      confirmButtonText: 'Ajukan',
+      cancelButtonText: 'Batal',
+      customClass: {
+        container: 'full-screen-alert'
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        proceedWithFormSubmission()
+      }
+    })
+  } else {
     if (validateForm()) {
+      if (checkUrgencyLeaveDuration()) {
+        proceedWithFormSubmission()
+      }
+    }
+  }
+}
+
+const checkUrgencyLeaveDuration = () => {
+  const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
+
+  if (cutiType === 'Cuti urgensi') {
+    const urgencyNumber = Number(urgency)
+    let maxDays: number | undefined
+
+    if (urgencyNumber === 3) {
+      maxDays = 3
+    } else if (
+      urgencyNumber === 4 ||
+      urgencyNumber === 5 ||
+      urgencyNumber === 7 ||
+      urgencyNumber === 8 ||
+      urgencyNumber === 9 ||
+      urgencyNumber === 11
+    ) {
+      maxDays = 2
+    } else if (urgencyNumber === 6) {
+      maxDays = 1
+    }
+
+    if (maxDays !== undefined && duration > maxDays) {
       Swal.fire({
-        title: 'Apa Pengajuan Sudah Benar?',
-        icon: 'question',
+        title: 'Pengambilan Hari Melebihi Jatah',
+        text: 'Pengambilan hari pada cuti penting melebihi jatah yang ditentukan, ini mungkin akan memotong jatah cuti tahunan. Apa tetap mengajukan?',
+        icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#6AD01F',
         cancelButtonColor: '#FF6166',
@@ -152,58 +194,89 @@ const FormPengajuanCuti = () => {
         customClass: {
           container: 'full-screen-alert'
         }
-      }).then(async result => {
+      }).then(result => {
         if (result.isConfirmed) {
-          try {
-             let attachment = null
-
-             if (Number(cutiType) !== 2 || doctorNoteImage) {
-               attachment = doctorNoteImage ? await uploadDoctorNote(doctorNoteImage) : null
-             }
-            const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
-            const dataPengajuan = {
-              start_date: startDate,
-              end_date: endDate,
-              leave_type: finalCutiType,
-              emergency_call: telepon,
-              description: deskripsi,
-              attachment: attachment
-            }
-            await submitFormData(dataPengajuan)
-            console.log('data yang disubmit :', dataPengajuan)
-            Swal.fire({
-              title: 'Pengajuan Berhasil Disubmit!',
-              icon: 'success',
-              confirmButtonColor: '#6AD01F',
-              customClass: {
-                container: 'full-screen-alert'
-              }
-            })
-             setStartDate(null)
-             setEndDate(null)
-             setCutiType('')
-             setTelepon('')
-             setDeskripsi('')
-             setShowUrgencyFields(false)
-             setShowDoctorNoteField(false)
-             setDoctorNoteImage(null)
-             setUrgency('')
-             setErrors({})
-          } catch (error) {
-            Swal.fire({
-              title: 'Terjadi Kesalahan!',
-              text: 'Gagal mengirim data pengajuan cuti. Silakan coba lagi.',
-              icon: 'error',
-              confirmButtonColor: '#FF6166',
-              customClass: {
-                container: 'full-screen-alert'
-              }
-            })
-          }
+          proceedWithFormSubmission()
         }
       })
+      return false
     }
   }
+
+  return true
+}
+
+const proceedWithFormSubmission = async () => {
+  Swal.fire({
+    title: 'Apa Pengajuan Sudah Benar?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#6AD01F',
+    cancelButtonColor: '#FF6166',
+    confirmButtonText: 'Ajukan',
+    cancelButtonText: 'Batal',
+    customClass: {
+      container: 'full-screen-alert'
+    }
+  }).then(async result => {
+    if (result.isConfirmed) {
+      try {
+        let attachment = null
+
+        if (Number(cutiType) !== 2 || doctorNoteImage) {
+          attachment = doctorNoteImage ? await uploadDoctorNote(doctorNoteImage) : null
+        }
+
+         const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
+          const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
+           const dataPengajuan: FormData = {
+             start_date: startDate,
+             end_date: endDate,
+             leave_type: finalCutiType,
+             emergency_call: telepon,
+             description: deskripsi,
+             attachment: attachment
+           }
+           if (duration > userData?.total_days) {
+             dataPengajuan.force_submit = true
+           }
+
+        await submitFormData(dataPengajuan)
+        console.log('data yang disubmit :', dataPengajuan)
+        Swal.fire({
+          title: 'Pengajuan Berhasil Disubmit!',
+          icon: 'success',
+          confirmButtonColor: '#6AD01F',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        })
+
+        setStartDate(null)
+        setEndDate(null)
+        setCutiType('')
+        setTelepon('')
+        setDeskripsi('')
+        setShowUrgencyFields(false)
+        setShowDoctorNoteField(false)
+        setDoctorNoteImage(null)
+        setUrgency('')
+        setErrors({})
+      } catch (error) {
+        Swal.fire({
+          title: 'Pengajuan Gagal',
+          text: 'Gagal mengajukan cuti. Silakan cek sisa cuti Anda atau coba lagi nanti.',
+          icon: 'error',
+          confirmButtonColor: '#FF6166',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        })
+      }
+    }
+  })
+}
+
 
   const isWeekend = (date: Date) => {
     const day = date.getDay()

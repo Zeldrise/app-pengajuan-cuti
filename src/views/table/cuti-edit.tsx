@@ -27,6 +27,7 @@ import AppURL from '../../api/AppURL'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
 
 const TglAwal = forwardRef((props, ref) => {
   return <TextField fullWidth {...props} inputRef={ref} label='Tanggal Awal' autoComplete='off' />
@@ -34,6 +35,16 @@ const TglAwal = forwardRef((props, ref) => {
 const TglAkhir = forwardRef((props, ref) => {
   return <TextField fullWidth {...props} inputRef={ref} label='Tanggal Akhir' autoComplete='off' />
 })
+
+interface FormData {
+  start_date: Date | null | undefined
+  end_date: Date | null | undefined
+  leave_type: string
+  emergency_call: string
+  description: string
+  attachment: any
+  force_submit?: boolean
+}
 
 
 const Transition = React.forwardRef(function Transition(
@@ -89,6 +100,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
   const [attachmentUrl, setAttachmentUrl] = useState<string | null>(null)
   const [urgencyOptions, setUrgencyOptions] = useState<any[]>([])
   const [leaveOptions, setLeaveOptions] = useState<any[]>([])
+  const [userData, setUserData] = useState<any>(null)
   const [urgency, setUrgency] = useState<string>('')
   const [errors, setErrors] = useState<any>({})
 
@@ -106,11 +118,6 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
     if (!departemen) errors.departemen = 'Departemen harus diisi'
     if (!cutiType) errors.cutiType = 'Tipe cuti harus dipilih'
     if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
-    const isSickLeave = Number(cutiType) === 2
-    const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
-    if (isSickLeave && duration > 1 && !doctorNoteImage) {
-      errors.doctorNote = 'Surat dokter harus diunggah'
-    }
     if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
     if (!startDate) errors.startDate = 'Tanggal awal harus diisi'
     if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
@@ -204,75 +211,153 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
+  if (Number(cutiType) === 1 && duration > (userData?.total_days || 0)) {
+    Swal.fire({
+      title: 'Maaf, jatah cuti Anda tidak mencukupi',
+      text: 'Total hari pengajuan cuti melebihi jatah cuti yang Anda miliki. Ingin tetap mengajukan? Jatah cuti mungkin akan minus.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#6AD01F',
+      cancelButtonColor: '#FF6166',
+      confirmButtonText: 'Ajukan',
+      cancelButtonText: 'Batal',
+      customClass: {
+        container: 'full-screen-alert'
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        proceedWithFormSubmission()
+      }
+    })
+  } else {
     if (validateForm()) {
+      if (checkUrgencyLeaveDuration()) {
+        proceedWithFormSubmission()
+      }
+    }
+  }
+}
+const checkUrgencyLeaveDuration = () => {
+  const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
+
+  if (cutiType === 'Cuti urgensi') {
+    const urgencyNumber = Number(urgency)
+    let maxDays: number | undefined
+
+    if (urgencyNumber === 3) {
+      maxDays = 3
+    } else if (
+      urgencyNumber === 4 ||
+      urgencyNumber === 5 ||
+      urgencyNumber === 7 ||
+      urgencyNumber === 8 ||
+      urgencyNumber === 9 ||
+      urgencyNumber === 11
+    ) {
+      maxDays = 2
+    } else if (urgencyNumber === 6) {
+      maxDays = 1
+    }
+
+    if (maxDays !== undefined && duration > maxDays) {
       Swal.fire({
-        title: 'Apa Anda yakin?',
-        text: 'Pengajuan Akan Diedit',
-        icon: 'question',
+        title: 'Pengambilan Hari Melebihi Jatah',
+        text: 'Pengambilan hari pada cuti penting melebihi jatah yang ditentukan, ini mungkin akan memotong jatah cuti tahunan. Apa tetap mengajukan?',
+        icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#6AD01F',
         cancelButtonColor: '#FF6166',
-        confirmButtonText: 'Edit',
+        confirmButtonText: 'Ajukan',
         cancelButtonText: 'Batal',
         customClass: {
           container: 'full-screen-alert'
         }
-      }).then(async result => {
+      }).then(result => {
         if (result.isConfirmed) {
-            let attachment = null
-
-            if (Number(cutiType) === 2 && doctorNoteImage) {
-              attachment = await updateDoctorNote(doctorNoteImage)
-            }
-          const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
-          const dataPengajuan = {
-            start_date: startDate,
-            end_date: endDate,
-            leave_type: finalCutiType,
-            emergency_call: telepon,
-            description: deskripsi,
-            attachment: attachment
-          }
-
-          try {
-            const response = await fetch(`${AppURL.Submissions}/${rowData?.id}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-              },
-              body: JSON.stringify(dataPengajuan)
-            })
-            if (!response.ok) {
-              throw new Error('Failed to update leave request')
-            }
-
-            Swal.fire({
-              title: 'Pengajuan Cuti berhasil diedit!',
-              icon: 'success',
-              confirmButtonColor: '#6AD01F',
-              customClass: {
-                container: 'full-screen-alert'
-              }
-            })
-            onClose()
-            onEditSuccess()
-          } catch (error) {
-            console.error('Error updating leave request:', error)
-            Swal.fire({
-              title: 'Error',
-              text: 'Gagal memperbarui pengajuan cuti',
-              icon: 'error',
-              confirmButtonColor: '#FF6166',
-              customClass: {
-                container: 'full-screen-alert'
-              }
-            })
-          }
+          proceedWithFormSubmission()
         }
       })
+      return false
     }
   }
+
+  return true
+}
+
+const proceedWithFormSubmission = async () => {
+  Swal.fire({
+    title: 'Apa Anda yakin?',
+    text: 'Pengajuan Akan Diedit',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#6AD01F',
+    cancelButtonColor: '#FF6166',
+    confirmButtonText: 'Edit',
+    cancelButtonText: 'Batal',
+    customClass: {
+      container: 'full-screen-alert'
+    }
+  }).then(async result => {
+    if (result.isConfirmed) {
+      let attachment = null
+
+      if (Number(cutiType) !== 2 || doctorNoteImage) {
+        attachment = doctorNoteImage ? await updateDoctorNote(doctorNoteImage) : null
+      }
+
+      const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
+      const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
+      const dataPengajuan: FormData = {
+        start_date: startDate,
+        end_date: endDate,
+        leave_type: finalCutiType,
+        emergency_call: telepon,
+        description: deskripsi,
+        attachment: attachment
+      }
+      if (duration > userData?.total_days) {
+        dataPengajuan.force_submit = true
+      }
+
+      try {
+        const response = await fetch(`${AppURL.Submissions}/${rowData?.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify(dataPengajuan)
+        })
+        if (!response.ok) {
+          throw new Error('Failed to update leave request')
+        }
+
+        Swal.fire({
+          title: 'Pengajuan Cuti berhasil diedit!',
+          icon: 'success',
+          confirmButtonColor: '#6AD01F',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        })
+        onClose()
+        onEditSuccess()
+      } catch (error) {
+        console.error('Error updating leave request:', error)
+        Swal.fire({
+          title: 'Error',
+          text: 'Gagal memperbarui pengajuan cuti',
+          icon: 'error',
+          confirmButtonColor: '#FF6166',
+          customClass: {
+            container: 'full-screen-alert'
+          }
+        })
+      }
+    }
+  })
+}
 
   const handleChangeNama = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNama(event.target.value)
@@ -406,6 +491,28 @@ useEffect(() => {
 
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
+
+
+        useEffect(() => {
+          const fetchUserData = async () => {
+            try {
+              const response = await fetch(AppURL.Profile, {
+                method: 'GET',
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+              })
+              if (!response.ok) {
+                throw new Error('Gagal mengambil data user')
+              }
+              const userData = await response.json()
+              setUserData(userData)
+            } catch (error) {
+              console.error('Terjadi kesalahan:', error)
+            }
+          }
+          fetchUserData()
+        }, [])
 
   useEffect(() => {
     const fetchUrgencyOptions = async () => {
@@ -672,6 +779,17 @@ useEffect(() => {
         </form>
       </DialogContent>
       <DialogActions>
+        <Typography
+          variant='body1'
+          sx={{
+            display: 'flex',
+            fontWeight: 'medium',
+            marginRight: 5,
+            alignItems: 'center'
+          }}
+        >
+          Sisa Cuti : {userData ? userData.total_days : '...'} Hari
+        </Typography>
         <Button variant='contained' color='success' onClick={handleSubmit}>
           Submit
         </Button>
