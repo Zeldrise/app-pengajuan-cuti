@@ -12,6 +12,8 @@ import CardHeader from '@mui/material/CardHeader'
 import Box from '@mui/material/Box'
 import MenuItem from '@mui/material/MenuItem'
 import AppURL from 'src/api/AppURL'
+import Button from '@mui/material/Button'
+import { MicrosoftExcel } from 'mdi-material-ui'
 
 const generateYears = () => {
   const currentYear = new Date().getFullYear()
@@ -125,6 +127,29 @@ const Grafik = () => {
 
        return 0
      })
+      const handleDownload = async () => {
+        try {
+          const response = await fetch(`${AppURL.Submissions}/download-history-user?month=${bulan}&year=${tahun}`, {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+          if (!response.ok) {
+            throw new Error('Network response was not ok')
+          }
+          const blob = await response.blob()
+          const url = window.URL.createObjectURL(new Blob([blob]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', `histori-pengajuan-${bulan}-${tahun}.xlsx`)
+          document.body.appendChild(link)
+          link.click()
+          link.parentNode?.removeChild(link)
+        } catch (error) {
+          console.error('Error downloading file:', error)
+        }
+      }
 
   return (
     <Paper>
@@ -212,6 +237,16 @@ const Grafik = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+      <Button
+        size='large'
+        type='submit'
+        sx={{ ml: 5, mb: 5 }}
+        variant='contained'
+        onClick={handleDownload}
+        startIcon={<MicrosoftExcel />}
+      >
+        Download Data
+      </Button>
     </Paper>
   )
 }

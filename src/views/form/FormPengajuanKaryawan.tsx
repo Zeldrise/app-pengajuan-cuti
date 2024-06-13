@@ -366,7 +366,7 @@ const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
   useEffect(() => {
     const fetchUrgencyOptions = async () => {
       try {
-        const response = await fetch(`${AppURL.LeaveType}?is_emergency=1`, {
+        const response = await fetch(`${AppURL.LeaveType}/get-all?is_emergency=1`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -388,7 +388,7 @@ const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
   useEffect(() => {
     const fetchLeaveOptions = async () => {
       try {
-        const response = await fetch(`${AppURL.LeaveType}?is_emergency=false`, {
+        const response = await fetch(`${AppURL.LeaveType}/get-all?is_emergency=0`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`

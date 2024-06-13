@@ -390,7 +390,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
        useEffect(() => {
          const fetchLeaveOptions = async () => {
            try {
-             const response = await fetch(`${AppURL.LeaveType}?is_emergency=false`, {
+             const response = await fetch(`${AppURL.LeaveType}?is_emergency=0`, {
                method: 'GET',
                headers: {
                  Authorization: `Bearer ${localStorage.getItem('token')}`
