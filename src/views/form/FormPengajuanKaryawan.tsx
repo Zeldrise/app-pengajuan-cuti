@@ -518,7 +518,7 @@ const proceedWithFormSubmission = async () => {
             alignItems: 'center'
           }}
         >
-          Sisa Cuti: {selectedUserId ? users.find(user => user.id === selectedUserId)?.total_days || '...' : '...'} Hari
+          Sisa Cuti: {selectedUserId ? users.find(user => user.id === selectedUserId)?.total_days || '0' : '0'} Hari
         </Typography>
       </Card>
       <Divider sx={{ margin: 0 }} />
