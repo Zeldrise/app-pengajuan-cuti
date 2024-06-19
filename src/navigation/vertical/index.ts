@@ -2,13 +2,14 @@ import AccountGroup from 'mdi-material-ui/AccountGroup'
 import TableAccount from 'mdi-material-ui/TableAccount'
 import TextAccount from 'mdi-material-ui/TextAccount'
 import HomeOutline from 'mdi-material-ui/HomeOutline'
+import UmbrellaBeachOutline from 'mdi-material-ui/UmbrellaBeachOutline'
+import CheckboxMultipleOutline from 'mdi-material-ui/CheckboxMultipleOutline'
+import FormatListChecks from 'mdi-material-ui/FormatListChecks'
 
 // ** Type import
 import { VerticalNavItemsType } from '../../@core/layouts/types'
 import AppURL from '../../api/AppURL'
-import { BeachAccessOutlined } from '@mui/icons-material'
-import { LibraryAddCheckOutlined } from '@mui/icons-material'
-import { RuleOutlined } from '@mui/icons-material'
+
 
 const fetchUserProfile = async () => {
   try {
@@ -59,7 +60,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Ajukan Cuti',
-        icon: BeachAccessOutlined,
+        icon: UmbrellaBeachOutline,
         path: '/ajukan-cuti'
       },
       {
@@ -67,12 +68,12 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Approval Cuti',
-        icon: LibraryAddCheckOutlined,
+        icon: CheckboxMultipleOutline,
         path: '/approval-cuti'
       },
       {
         title: 'Pengajuan Karyawan',
-        icon: RuleOutlined,
+        icon: FormatListChecks,
         path: '/pengajuan-karyawan'
       },
       {
@@ -113,7 +114,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Ajukan Cuti',
-        icon: BeachAccessOutlined,
+        icon: UmbrellaBeachOutline,
         path: '/ajukan-cuti'
       },
       {
@@ -149,7 +150,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Ajukan Cuti',
-        icon: BeachAccessOutlined,
+        icon: UmbrellaBeachOutline,
         path: '/ajukan-cuti'
       },
       {
@@ -178,7 +179,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Ajukan Cuti',
-        icon: BeachAccessOutlined,
+        icon: UmbrellaBeachOutline,
         path: '/ajukan-cuti'
       },
       {
@@ -186,12 +187,12 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Approval Cuti',
-        icon: LibraryAddCheckOutlined,
+        icon: CheckboxMultipleOutline,
         path: '/approval-cuti'
       },
       {
         title: 'Pengajuan Karyawan',
-        icon: RuleOutlined,
+        icon: FormatListChecks,
         path: '/pengajuan-karyawan'
       },
       {
