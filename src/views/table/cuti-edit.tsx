@@ -11,6 +11,9 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
 
 import { TransitionProps } from '@mui/material/transitions'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -214,14 +217,14 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
     const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
   if (Number(cutiType) === 1 && duration > (userData?.total_days || 0)) {
     Swal.fire({
-      title: 'Maaf, jatah cuti Anda tidak mencukupi',
-      text: 'Total hari pengajuan cuti melebihi jatah cuti yang Anda miliki. Ingin tetap mengajukan? Jatah cuti mungkin akan minus.',
+      title: 'Maaf, Jatah Cuti Anda Melebihi Batas Maksimal!',
+      text: 'Pengajuan cuti Anda telah melebihi batas maksimal cuti tahunan, kelebihan cuti Anda berikutnya akan memotong gaji Anda secara pro rata. Apakah Anda setuju?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#6AD01F',
       cancelButtonColor: '#FF6166',
-      confirmButtonText: 'Ajukan',
-      cancelButtonText: 'Batal',
+      confirmButtonText: 'Setuju',
+      cancelButtonText: 'Tidak Setuju',
       customClass: {
         container: 'full-screen-alert'
       }
@@ -250,26 +253,28 @@ const checkUrgencyLeaveDuration = () => {
     } else if (
       urgencyNumber === 4 ||
       urgencyNumber === 5 ||
-      urgencyNumber === 7 ||
       urgencyNumber === 8 ||
       urgencyNumber === 9 ||
-      urgencyNumber === 11
+      urgencyNumber === 10
     ) {
       maxDays = 2
-    } else if (urgencyNumber === 6) {
-      maxDays = 1
+    } else if (urgencyNumber === 7) {
+      maxDays = 100
+    } else if (urgencyNumber === 12) {
+      maxDays = 12
     }
+
 
     if (maxDays !== undefined && duration > maxDays) {
       Swal.fire({
-        title: 'Pengambilan Hari Melebihi Jatah',
-        text: 'Pengambilan hari pada cuti penting melebihi jatah yang ditentukan, ini mungkin akan memotong jatah cuti tahunan. Apa tetap mengajukan?',
+        title: 'Maaf, Pengajuan Cuti Anda Melebihi Batas Maksimal!',
+        text: 'Pengajuan cuti Anda telah melebihi batas maksimal jumlah cuti yang diajukan, kelebihan cuti Anda berikutnya akan memotong sisa jumlah cuti tahunan. Apakah Anda setuju?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#6AD01F',
         cancelButtonColor: '#FF6166',
-        confirmButtonText: 'Ajukan',
-        cancelButtonText: 'Batal',
+        confirmButtonText: 'Setuju',
+        cancelButtonText: 'Tidak Setuju',
         customClass: {
           container: 'full-screen-alert'
         }
@@ -417,15 +422,17 @@ const proceedWithFormSubmission = async () => {
        } else if (
          urgencyNumber === 4 ||
          urgencyNumber === 5 ||
-         urgencyNumber === 7 ||
          urgencyNumber === 8 ||
          urgencyNumber === 9 ||
-         urgencyNumber === 11
+         urgencyNumber === 10
        ) {
          endDate = getNextValidWorkday(date, 1)
          handleChangeEndDate(endDate)
-       } else if (urgencyNumber === 6) {
-         endDate = getNextValidWorkday(date, 0)
+       } else if (urgencyNumber === 7) {
+         endDate = getNextValidWorkday(date, 100)
+         handleChangeEndDate(endDate)
+       } else if (urgencyNumber === 12) {
+         endDate = getNextValidWorkday(date, 11)
          handleChangeEndDate(endDate)
        }
 
@@ -539,7 +546,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchLeaveOptions = async () => {
       try {
-        const response = await fetch(`${AppURL.LeaveType}?is_emergency=false`, {
+        const response = await fetch(`${AppURL.LeaveType}?is_emergency=0`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -549,7 +556,8 @@ useEffect(() => {
           throw new Error('Failed to fetch urgency options')
         }
         const leaveData = await response.json()
-        setLeaveOptions(leaveData)
+        const filteredLeaveOptions = leaveData.filter((option: any) => option.id !== 2)
+        setLeaveOptions(filteredLeaveOptions)
       } catch (error) {
         console.error('Error fetching urgency options:', error)
       }
@@ -599,26 +607,6 @@ useEffect(() => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  type='number'
-                  label='Telepon Darurat'
-                  placeholder='+62-123-456-8790'
-                  error={!!errors.telepon}
-                  helperText={errors.telepon}
-                  value={telepon}
-                  onChange={handleChangeTeleponDarurat}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position='start'>
-                        <Phone />
-                      </InputAdornment>
-                    )
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
                   label='Posisi'
                   error={!!errors.posisi}
                   helperText={errors.posisi}
@@ -655,24 +643,41 @@ useEffect(() => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel id='form-layouts-separator-select-label'>Tipe Cuti</InputLabel>
-                  <Select
-                    label='Tipe Cuti'
-                    defaultValue=''
-                    id='form-layouts-separator-select'
-                    labelId='form-layouts-separator-select-label'
-                    onChange={handleCutiTypeChange}
-                    error={!!errors.cutiType}
+                <TextField
+                  fullWidth
+                  type='number'
+                  label='Telepon Darurat'
+                  placeholder='+62-123-456-8790'
+                  error={!!errors.telepon}
+                  helperText={errors.telepon}
+                  value={telepon}
+                  onChange={handleChangeTeleponDarurat}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position='start'>
+                        <Phone />
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl component='fieldset' fullWidth sx={{ marginLeft: '5px' }}>
+                  <Typography variant='body1' gutterBottom>
+                    Tipe Cuti
+                  </Typography>
+                  <RadioGroup
+                    row
+                    aria-labelledby='form-layouts-separator-radio-label'
+                    name='tipe-cuti-group'
                     value={cutiType}
+                    onChange={handleCutiTypeChange}
                   >
                     {leaveOptions.map(option => (
-                      <MenuItem key={option.id} value={option.id}>
-                        {option.type}
-                      </MenuItem>
+                      <FormControlLabel key={option.id} value={option.id} control={<Radio />} label={option.type} />
                     ))}
-                    <MenuItem value='Cuti urgensi'>Cuti Penting</MenuItem>
-                  </Select>
+                    <FormControlLabel value='Cuti urgensi' control={<Radio />} label='Cuti Penting' />
+                  </RadioGroup>
                   {errors.cutiType && <FormHelperText error>{errors.cutiType}</FormHelperText>}
                 </FormControl>
               </Grid>

@@ -13,6 +13,8 @@ import EditDataKaryawan from './data-edit'
 import AddDataKaryawan from './add-karyawan'
 import Swal from 'sweetalert2'
 import AppURL from '../../api/AppURL'
+import CardHeader from '@mui/material/CardHeader'
+import TextField from '@mui/material/TextField'
 
 
 interface Column {
@@ -58,21 +60,47 @@ const DataKaryawan = () => {
   const [isAddDataKaryawanOpen, setIsAddDataKaryawanOpen] = useState<boolean>(false)
   const [sisaCutiOrder, setSisaCutiOrder] = useState<'asc' | 'desc'>('desc')
   const [orderBySisaCuti, setOrderBySisaCuti] = useState<keyof Data>('total_days')
+  const [userRole, setUserRole] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState<string>('')
 
   const [employees, setEmployees] = useState<Data[]>([])
 
-  useEffect(() => {
-    fetchData()
-  }, [sisaCutiOrder, orderBySisaCuti])
+   useEffect(() => {
+     fetchUserProfile()
+     fetchData()
+   }, [sisaCutiOrder, orderBySisaCuti, searchQuery])
+
+     const fetchUserProfile = async () => {
+       try {
+         const response = await fetch(AppURL.Profile, {
+           method: 'GET',
+           headers: {
+             Authorization: `Bearer ${localStorage.getItem('token')}`
+           }
+         })
+         if (!response.ok) {
+           throw new Error('Failed to fetch user profile')
+         }
+
+         const profileData = await response.json()
+         setUserRole(profileData.role)
+       } catch (error) {
+         console.error(error)
+         return null
+       }
+     }
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${AppURL.Users}?sort_by=${sisaCutiOrder}&sort_field=${orderBySisaCuti}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+      const response = await fetch(
+        `${AppURL.Users}?sort_by=${sisaCutiOrder}&sort_field=${orderBySisaCuti}&search=${searchQuery}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
         }
-      })
+      )
       if (!response.ok) {
         throw new Error('Gagal mengambil data karyawan')
       }
@@ -113,6 +141,10 @@ const DataKaryawan = () => {
   const handleCloseAddDataKaryawan = () => {
     setIsAddDataKaryawanOpen(false)
   }
+
+   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+     setSearchQuery(event.target.value)
+   }
 
   const handleSortSisaCuti = () => {
     const isDesc = orderBySisaCuti === 'total_days' && sisaCutiOrder === 'desc'
@@ -183,50 +215,67 @@ const handleDeleteRow = (rowData: Data) => {
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <CardHeader
+        title='Data Karyawan'
+        titleTypographyProps={{ variant: 'h6' }}
+        action={
+          <TextField
+            label='Cari Nama'
+            variant='outlined'
+            size='small'
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        }
+      />
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label='sticky table'>
           <TableHead>
             <TableRow>
-              {columns.map(column => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  sx={{ minWidth: column.minWidth }}
-                  onClick={() => column.id === 'total_days' && handleSortSisaCuti()}
-                >
-                  {column.id === 'actions' ? <div style={{ textAlign: 'center' }}>Actions</div> : column.label}
-                  {orderBySisaCuti === column.id ? <span>{sisaCutiOrder === 'desc' ? '↓' : '↑'}</span> : null}
-                </TableCell>
-              ))}
+              {columns
+                .filter(column => !(column.id === 'actions' && userRole === 'staff'))
+                .map(column => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    sx={{ minWidth: column.minWidth }}
+                    onClick={() => column.id === 'total_days' && handleSortSisaCuti()}
+                  >
+                    {column.id === 'actions' ? <div style={{ textAlign: 'center' }}>Actions</div> : column.label}
+                    {orderBySisaCuti === column.id ? <span>{sisaCutiOrder === 'desc' ? '↓' : '↑'}</span> : null}
+                  </TableCell>
+                ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {sortedEmployees.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => {
               return (
                 <TableRow hover role='checkbox' tabIndex={-1} key={row.id}>
-                  {columns.map(column => {
-                    const value = row[column.id]
-                    if (column.id === 'actions') {
+                  {columns
+                    .filter(column => !(column.id === 'actions' && userRole === 'staff'))
+                    .map(column => {
+                      const value = row[column.id]
+                      if (column.id === 'actions') {
+                        return (
+                          <TableCell key={column.id} align='center' colSpan={columns.length}>
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                              <Button onClick={() => handleActionClick(row)} style={{ left: '10px' }}>
+                                <PencilBox />
+                              </Button>
+                              <Button onClick={() => handleDeleteRow(row)} style={{ right: '10px' }}>
+                                <TrashCan />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        )
+                      }
+
                       return (
-                        <TableCell key={column.id} align='center' colSpan={columns.length}>
-                          <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button onClick={() => handleActionClick(row)} style={{ left: '10px' }}>
-                              <PencilBox />
-                            </Button>
-                            <Button onClick={() => handleDeleteRow(row)} style={{ right: '10px' }}>
-                              <TrashCan />
-                            </Button>
-                          </div>
+                        <TableCell key={column.id} align={column.align}>
+                          {column.format && typeof value === 'number' ? column.format(value) : value}
                         </TableCell>
                       )
-                    }
-
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format && typeof value === 'number' ? column.format(value) : value}
-                      </TableCell>
-                    )
-                  })}
+                    })}
                 </TableRow>
               )
             })}

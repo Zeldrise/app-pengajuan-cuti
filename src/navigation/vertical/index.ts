@@ -1,14 +1,14 @@
-import FileDocumentEditOutline from 'mdi-material-ui/FileDocumentEditOutline'
 import AccountGroup from 'mdi-material-ui/AccountGroup'
 import TableAccount from 'mdi-material-ui/TableAccount'
 import TextAccount from 'mdi-material-ui/TextAccount'
-import Balloon from 'mdi-material-ui/Balloon'
 import HomeOutline from 'mdi-material-ui/HomeOutline'
 
 // ** Type import
 import { VerticalNavItemsType } from '../../@core/layouts/types'
 import AppURL from '../../api/AppURL'
-import Airballoon from 'mdi-material-ui/Airballoon'
+import BeachAccessOutlinedIcon from '@mui/icons-material/BeachAccessOutlined'
+import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined'
+import RuleOutlinedIcon from '@mui/icons-material/RuleOutlined'
 
 const fetchUserProfile = async () => {
   try {
@@ -59,7 +59,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Ajukan Cuti',
-        icon: Balloon,
+        icon: BeachAccessOutlinedIcon,
         path: '/ajukan-cuti'
       },
       {
@@ -67,12 +67,12 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Approval Cuti',
-        icon: FileDocumentEditOutline,
+        icon: LibraryAddCheckOutlinedIcon,
         path: '/approval-cuti'
       },
       {
         title: 'Pengajuan Karyawan',
-        icon: Airballoon,
+        icon: RuleOutlinedIcon,
         path: '/pengajuan-karyawan'
       },
       {
@@ -113,7 +113,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Ajukan Cuti',
-        icon: Balloon,
+        icon: BeachAccessOutlinedIcon,
         path: '/ajukan-cuti'
       },
       {
@@ -149,7 +149,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         title: 'Ajukan Cuti',
-        icon: Balloon,
+        icon: BeachAccessOutlinedIcon,
         path: '/ajukan-cuti'
       },
       {
@@ -161,9 +161,12 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
   } else if (role == 'owner') {
     menuAccess = [
       '/home',
+      '/ajukan-cuti',
+      '/pengajuan-karyawan',
       '/approval-cuti',
       '/data-karyawan',
       '/cuti-karyawan',
+      '/cuti-pribadi',
       '/user-profile',
       '/account-settings'
     ]
@@ -174,12 +177,22 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
         path: '/home'
       },
       {
+        title: 'Ajukan Cuti',
+        icon: BeachAccessOutlinedIcon,
+        path: '/ajukan-cuti'
+      },
+      {
         sectionTitle: 'Manajemen Cuti'
       },
       {
         title: 'Approval Cuti',
-        icon: FileDocumentEditOutline,
+        icon: LibraryAddCheckOutlinedIcon,
         path: '/approval-cuti'
+      },
+      {
+        title: 'Pengajuan Karyawan',
+        icon: RuleOutlinedIcon,
+        path: '/pengajuan-karyawan'
       },
       {
         title: 'Data Karyawan',
@@ -194,6 +207,11 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
         title: 'Cuti Karyawan',
         icon: TableAccount,
         path: '/cuti-karyawan'
+      },
+      {
+        title: 'Cuti Pribadi',
+        path: '/cuti-pribadi',
+        icon: TextAccount
       }
     ]
   }

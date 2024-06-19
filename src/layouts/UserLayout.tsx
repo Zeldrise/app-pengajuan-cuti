@@ -25,7 +25,7 @@ const UserLayout = ({ children }: Props) => {
        let menuAccess: string[] = []
 
        if (!token) {
-         router.push('/login')
+         router.push('/')
          return
        }
 

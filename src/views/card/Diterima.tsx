@@ -31,7 +31,7 @@ const Diterima = () => {
   }, []) 
 
   return (
-    <Card sx={{ border: 0, boxShadow: 0, color: 'common.black', backgroundColor: 'lawngreen' }}>
+    <Card sx={{ border: 0, boxShadow: 0, color: 'common.white', backgroundColor: '#6FBF00' }}>
       <CardContent sx={{ padding: theme => `${theme.spacing(3.25, 5, 4.5)} !important` }}>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography
@@ -41,13 +41,13 @@ const Diterima = () => {
               fontWeight: 'bold',
               marginBottom: 2.75,
               alignItems: 'center',
-              color: 'common.black'
+              color: 'common.white'
             }}
           >
             Cuti Diterima
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant='h2' sx={{ color: 'common.black' }}>
+            <Typography variant='h2' sx={{ color: 'common.white' }}>
               {totalCount}
             </Typography>
           </Box>

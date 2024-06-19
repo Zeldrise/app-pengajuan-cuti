@@ -16,6 +16,11 @@ import CardActions from '@mui/material/CardActions'
 import FormControl from '@mui/material/FormControl'
 import InputAdornment from '@mui/material/InputAdornment'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 
 // ** Third Party Imports
 import DatePicker from 'react-datepicker'
@@ -134,14 +139,14 @@ const handleSubmit = (e: React.FormEvent) => {
 const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
   if (Number(cutiType) === 1 && duration > (userData?.total_days || 0)) {
     Swal.fire({
-      title: 'Maaf, jatah cuti Anda tidak mencukupi',
-      text: 'Total hari pengajuan cuti melebihi jatah cuti yang Anda miliki. Ingin tetap mengajukan? Jatah cuti mungkin akan minus.',
+      title: 'Maaf, Jatah Cuti Anda Melebihi Batas Maksimal!',
+      text: 'Pengajuan cuti Anda telah melebihi batas maksimal cuti tahunan, kelebihan cuti Anda berikutnya akan memotong gaji Anda secara pro rata. Apakah Anda setuju?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#6AD01F',
       cancelButtonColor: '#FF6166',
-      confirmButtonText: 'Ajukan',
-      cancelButtonText: 'Batal',
+      confirmButtonText: 'Setuju',
+      cancelButtonText: 'Tidak Setuju',
       customClass: {
         container: 'full-screen-alert'
       }
@@ -159,6 +164,8 @@ const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1
   }
 }
 
+
+
 const checkUrgencyLeaveDuration = () => {
   const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
 
@@ -171,26 +178,27 @@ const checkUrgencyLeaveDuration = () => {
     } else if (
       urgencyNumber === 4 ||
       urgencyNumber === 5 ||
-      urgencyNumber === 7 ||
       urgencyNumber === 8 ||
       urgencyNumber === 9 ||
-      urgencyNumber === 11
+      urgencyNumber === 10
     ) {
       maxDays = 2
-    } else if (urgencyNumber === 6) {
-      maxDays = 1
+    } else if (urgencyNumber === 7) {
+      maxDays = 100
+    } else if (urgencyNumber === 12) {
+      maxDays = 12
     }
 
     if (maxDays !== undefined && duration > maxDays) {
       Swal.fire({
-        title: 'Pengambilan Hari Melebihi Jatah',
-        text: 'Pengambilan hari pada cuti penting melebihi jatah yang ditentukan, ini mungkin akan memotong jatah cuti tahunan. Apa tetap mengajukan?',
+        title: 'Maaf, Pengajuan Cuti Anda Melebihi Batas Maksimal!',
+        text: 'Pengajuan cuti Anda telah melebihi batas maksimal jumlah cuti yang diajukan, kelebihan cuti Anda berikutnya akan memotong sisa jumlah cuti tahunan. Apakah Anda setuju?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#6AD01F',
         cancelButtonColor: '#FF6166',
-        confirmButtonText: 'Ajukan',
-        cancelButtonText: 'Batal',
+        confirmButtonText: 'Setuju',
+        cancelButtonText: 'Tidak Setuju',
         customClass: {
           container: 'full-screen-alert'
         }
@@ -304,15 +312,17 @@ const proceedWithFormSubmission = async () => {
         } else if (
           urgencyNumber === 4 ||
           urgencyNumber === 5 ||
-          urgencyNumber === 7 ||
           urgencyNumber === 8 ||
           urgencyNumber === 9 ||
-          urgencyNumber === 11
+          urgencyNumber === 10
         ) {
           endDate = getNextValidWorkday(date, 1)
           handleChangeEndDate(endDate)
-        } else if (urgencyNumber === 6) {
-          endDate = getNextValidWorkday(date, 0)
+        } else if (urgencyNumber === 7) {
+          endDate = getNextValidWorkday(date, 100)
+          handleChangeEndDate(endDate)
+        } else if (urgencyNumber === 12) {
+          endDate = getNextValidWorkday(date, 11)
           handleChangeEndDate(endDate)
         }
 
@@ -473,7 +483,8 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                throw new Error('Failed to fetch urgency options')
              }
              const leaveData = await response.json()
-             setLeaveOptions(leaveData)
+               const filteredLeaveOptions = leaveData.filter((option: any) => option.id !== 2)
+               setLeaveOptions(filteredLeaveOptions)
            } catch (error) {
              console.error('Error fetching urgency options:', error)
            }
@@ -482,6 +493,9 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
          fetchLeaveOptions()
        }, [])
 
+
+     const theme = useTheme()
+     const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
  
   return (
     <Card>
@@ -522,25 +536,6 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type='number'
-                label='Telepon Darurat'
-                placeholder='+62-123-456-8790'
-                error={!!errors.telepon}
-                helperText={errors.telepon}
-                value={telepon}
-                onChange={handleChangeTeleponDarurat}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position='start'>
-                      <Phone />
-                    </InputAdornment>
-                  )
-                }}
-              />
-            </Grid>
 
             <Grid item xs={12} sm={6}>
               <TextField
@@ -561,44 +556,106 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                 }}
               />
             </Grid>
+            {isMobile ? (
+              <>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label='Departemen'
+                    error={!!errors.departemen}
+                    helperText={errors.departemen}
+                    placeholder='Masukkan Departemen'
+                    value={departemen}
+                    onChange={handleChangeDepartemen}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position='start'>
+                          <AccountTie />
+                        </InputAdornment>
+                      ),
+                      readOnly: true
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    type='number'
+                    label='Telepon Darurat'
+                    placeholder='+62-123-456-8790'
+                    error={!!errors.telepon}
+                    helperText={errors.telepon}
+                    value={telepon}
+                    onChange={handleChangeTeleponDarurat}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position='start'>
+                          <Phone />
+                        </InputAdornment>
+                      )
+                    }}
+                  />
+                </Grid>
+              </>
+            ) : (
+              <>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    type='number'
+                    label='Telepon Darurat'
+                    placeholder='+62-123-456-8790'
+                    error={!!errors.telepon}
+                    helperText={errors.telepon}
+                    value={telepon}
+                    onChange={handleChangeTeleponDarurat}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position='start'>
+                          <Phone />
+                        </InputAdornment>
+                      )
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label='Departemen'
+                    error={!!errors.departemen}
+                    helperText={errors.departemen}
+                    placeholder='Masukkan Departemen'
+                    value={departemen}
+                    onChange={handleChangeDepartemen}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position='start'>
+                          <AccountTie />
+                        </InputAdornment>
+                      ),
+                      readOnly: true
+                    }}
+                  />
+                </Grid>
+              </>
+            )}
             <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label='Departemen'
-                error={!!errors.departemen}
-                helperText={errors.departemen}
-                placeholder='Masukkan Departemen'
-                value={departemen}
-                onChange={handleChangeDepartemen}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position='start'>
-                      <AccountTie />
-                    </InputAdornment>
-                  ),
-                  readOnly: true
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel id='form-layouts-separator-select-label'>Tipe Cuti</InputLabel>
-                <Select
-                  label='Tipe Cuti'
-                  defaultValue=''
-                  id='form-layouts-separator-select'
-                  labelId='form-layouts-separator-select-label'
-                  onChange={handleCutiTypeChange}
-                  error={!!errors.cutiType}
+              <FormControl component='fieldset' fullWidth sx={{ marginLeft: '5px' }}>
+                <Typography variant='body1' gutterBottom>
+                  Tipe Cuti
+                </Typography>
+                <RadioGroup
+                  row
+                  aria-labelledby='form-layouts-separator-radio-label'
+                  name='tipe-cuti-group'
                   value={cutiType}
+                  onChange={handleCutiTypeChange}
                 >
                   {leaveOptions.map(option => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.type}
-                    </MenuItem>
+                    <FormControlLabel key={option.id} value={option.id} control={<Radio />} label={option.type} />
                   ))}
-                  <MenuItem value='Cuti urgensi'>Cuti Penting</MenuItem>
-                </Select>
+                  <FormControlLabel value='Cuti urgensi' control={<Radio />} label='Cuti Penting' />
+                </RadioGroup>
                 {errors.cutiType && <FormHelperText error>{errors.cutiType}</FormHelperText>}
               </FormControl>
             </Grid>

@@ -426,6 +426,13 @@
     clsx "^2.1.0"
     prop-types "^15.8.1"
 
+"@mui/icons-material@^5.15.20":
+  version "5.15.20"
+  resolved "https://registry.npmjs.org/@mui/icons-material/-/icons-material-5.15.20.tgz"
+  integrity sha512-oGcKmCuHaYbAAoLN67WKSXtHmEgyWcJToT1uRtmPyxMj9N5uqwc/mRtEnst4Wj/eGr+zYH2FiZQ79v9k7kSk1Q==
+  dependencies:
+    "@babel/runtime" "^7.23.9"
+
 "@mui/lab@^5.0.0-alpha.70":
   version "5.0.0-alpha.170"
   resolved "https://registry.npmjs.org/@mui/lab/-/lab-5.0.0-alpha.170.tgz"

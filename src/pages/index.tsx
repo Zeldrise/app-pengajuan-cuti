@@ -1,19 +1,27 @@
-// ** MUI Imports
 import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button'
-import Link from 'next/link'
+import LoginPage from 'src/views/login'
 
 const Dashboard = () => {
   return (
-    <Grid container spacing={3} className='content-center'>
-      <Grid item xs={12}>
-        <h1>Selamat datang!</h1>
-        <p>Ajukan cuti dengan mudah dan praktis untuk perencanaan liburan atau keperluan pribadi Anda.</p>
-        <Link href='/login' passHref>
-          <Button variant='contained' color='primary'>
-            Masuk
-          </Button>
-        </Link>
+    <Grid container spacing={6}>
+      <Grid
+        item
+        xs={12}
+        sm={4}
+        sx={{
+          backgroundColor: '#292964',
+          display: {
+            xs: 'none', 
+            sm: 'flex'
+          },
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
+        <img src='/images/deptech.png' alt='Deptech' style={{ maxWidth: '100%', height: 'auto' }} />
+      </Grid>
+      <Grid item xs={12} sm={8}>
+        <LoginPage />
       </Grid>
     </Grid>
   )
