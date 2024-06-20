@@ -153,7 +153,7 @@ const CutiKaryawan = () => {
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <CardHeader
-        title='Laporan Cuti'
+        title='Laporan Cuti Karyawan'
         titleTypographyProps={{ variant: 'h6' }}
         action={
           <Grid container spacing={2}>

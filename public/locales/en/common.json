@@ -1,0 +1,13 @@
+{
+  "loginPage": {
+    "title": "Login",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "rememberMeLabel": "Remember Me",
+    "forgotPasswordLabel": "Forgot Password?",
+    "loginButton": "Login"
+  },
+  "employeeLeaveToday": {
+    "title": "Employees on Leave Today"
+  }
+}

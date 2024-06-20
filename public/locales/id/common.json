@@ -1,0 +1,13 @@
+{
+  "loginPage": {
+    "title": "Login",
+    "emailLabel": "Email",
+    "passwordLabel": "Kata Sandi",
+    "rememberMeLabel": "Ingat Saya",
+    "forgotPasswordLabel": "Lupa Kata Sandi?",
+    "loginButton": "Masuk"
+  },
+  "employeeLeaveToday": {
+    "title": "Karyawan Cuti Hari Ini"
+  }
+}

@@ -80,7 +80,7 @@ const FormPengajuanCuti = () => {
     if (!departemen) errors.departemen = 'Departemen harus diisi'
     if (!cutiType) errors.cutiType = 'Jenis cuti harus dipilih'
     if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
-    if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
+    if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti penting'
     if (!startDate) errors.startDate = 'Tanggal awal harus diisi' 
     if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
     
@@ -180,7 +180,8 @@ const checkUrgencyLeaveDuration = () => {
       urgencyNumber === 5 ||
       urgencyNumber === 8 ||
       urgencyNumber === 9 ||
-      urgencyNumber === 10
+      urgencyNumber === 10 ||
+      urgencyNumber === 6
     ) {
       maxDays = 2
     } else if (urgencyNumber === 7) {
@@ -314,7 +315,8 @@ const proceedWithFormSubmission = async () => {
           urgencyNumber === 5 ||
           urgencyNumber === 8 ||
           urgencyNumber === 9 ||
-          urgencyNumber === 10
+          urgencyNumber === 10 ||
+          urgencyNumber === 6
         ) {
           endDate = getNextValidWorkday(date, 1)
           handleChangeEndDate(endDate)
