@@ -99,7 +99,7 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
 
   const handleAccept = () => {
     Swal.fire({
-      title: 'Terima pengajuan cuti?',
+      title: 'Apakah Pengajuan Cuti Diterima?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#6AD01F',
@@ -114,7 +114,7 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
         try {
           await updateSubmissionStatus(rowData.id, 'accept')
           Swal.fire({
-            title: 'Pengajuan Diterima!',
+            title: 'Pengajuan Cuti Diterima!',
             icon: 'success',
             confirmButtonColor: '#6AD01F',
             customClass: {
@@ -140,7 +140,7 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
 
   const handleReject = () => {
     Swal.fire({
-      title: 'Tolak pengajuan cuti?',
+      title: 'Apakah Pengajuan Cuti Ditolak?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#6AD01F',
@@ -155,7 +155,7 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
         try {
           await updateSubmissionStatus(rowData.id, 'reject')
           Swal.fire({
-            title: 'Pengajuan Ditolak',
+            title: 'Pengajuan Cuti Ditolak',
             icon: 'success',
             confirmButtonColor: '#6AD01F',
             customClass: {
@@ -231,7 +231,7 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
               <span style={{ display: 'inline-block', width: 180 }}>Lama Cuti</span>: {rowData?.totalDays} Hari
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Tipe Cuti</span>: {rowData?.leaveType}
+              <span style={{ display: 'inline-block', width: 180 }}>Jenis Cuti</span>: {rowData?.leaveType}
             </p>
             {attachmentUrl && (
               <div>

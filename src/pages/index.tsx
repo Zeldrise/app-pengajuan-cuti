@@ -11,14 +11,16 @@ const Dashboard = () => {
         sx={{
           backgroundColor: '#292964',
           display: {
-            xs: 'none', 
+            xs: 'none',
             sm: 'flex'
           },
+          flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center'
         }}
       >
-        <img src='/images/deptech.png' alt='Deptech' style={{ maxWidth: '100%', height: 'auto' }} />
+        <img src='/images/deptech.png' alt='Deptech' style={{ maxWidth: '100%', height: 'auto', margin: '10px' }} />
+        <img src='/images/Login.png' alt='Login' style={{ maxWidth: '80%', height: 'auto' }} />
       </Grid>
       <Grid item xs={12} sm={8}>
         <LoginPage />

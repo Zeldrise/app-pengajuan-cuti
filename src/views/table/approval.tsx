@@ -26,7 +26,7 @@ const columns: readonly Column[] = [
   { id: 'startDate', label: 'Tanggal Mulai', minWidth: 100 },
   { id: 'endDate', label: 'Tanggal Akhir', minWidth: 100 },
   { id: 'totalDays', label: 'Lama Cuti', minWidth: 100 },
-  { id: 'leaveType', label: 'Tipe Cuti', minWidth: 100 },
+  { id: 'leaveType', label: 'Jenis Cuti', minWidth: 100 },
   { id: 'leaveAllowance', label: 'Sisa Cuti', minWidth: 100 },
   { id: 'actions', label: 'Actions', minWidth: 100 }
 ]

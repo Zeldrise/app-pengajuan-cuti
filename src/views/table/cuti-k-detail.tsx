@@ -140,7 +140,7 @@ const CutiKaryawanDetail: React.FC<PropsCutiKaryawanDetail> = ({ open, onClose, 
               <span style={{ display: 'inline-block', width: 180 }}>Lama Cuti</span>: {rowData?.totalDays} Hari
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Tipe Cuti</span>: {rowData?.leaveType}
+              <span style={{ display: 'inline-block', width: 180 }}>Jenis Cuti</span>: {rowData?.leaveType}
             </p>
             {attachmentUrl && (
               <div>

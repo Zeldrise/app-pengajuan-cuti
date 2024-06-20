@@ -151,9 +151,6 @@ const LoginPage = () => {
               Login
             </Typography>
           </Box>
-          <Box sx={{ mb: 6 }}>
-            <Typography variant='body2'>Silakan masuk ke akun Anda dan mulai petualangan</Typography>
-          </Box>
           <form noValidate autoComplete='off' onSubmit={handleSubmit}>
             <div>
               <TextField
@@ -196,9 +193,9 @@ const LoginPage = () => {
             <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
-              <FormControlLabel control={<Checkbox />} label='Ingat saya' />
+              <FormControlLabel control={<Checkbox />} label='Ingatkan Saya' />
               <Link passHref href='/forgot'>
-                <LinkStyled>Forgot Password?</LinkStyled>
+                <LinkStyled>Lupa Kata Sandi?</LinkStyled>
               </Link>
             </Box>
             <Button fullWidth size='large' variant='contained' type='submit' sx={{ marginBottom: 7 }}>

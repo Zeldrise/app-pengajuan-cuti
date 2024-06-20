@@ -119,7 +119,7 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
     if (!telepon) errors.telepon = 'Nomor telepon darurat harus diisi'
     if (!posisi) errors.posisi = 'Posisi harus diisi'
     if (!departemen) errors.departemen = 'Departemen harus diisi'
-    if (!cutiType) errors.cutiType = 'Tipe cuti harus dipilih'
+    if (!cutiType) errors.cutiType = 'Jenis cuti harus dipilih'
     if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
     if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
     if (!startDate) errors.startDate = 'Tanggal awal harus diisi'
@@ -664,7 +664,7 @@ useEffect(() => {
               <Grid item xs={12}>
                 <FormControl component='fieldset' fullWidth sx={{ marginLeft: '5px' }}>
                   <Typography variant='body1' gutterBottom>
-                    Tipe Cuti
+                    Jenis Cuti
                   </Typography>
                   <RadioGroup
                     row
@@ -684,9 +684,9 @@ useEffect(() => {
               {showUrgencyFields && (
                 <Grid item xs={12}>
                   <FormControl fullWidth>
-                    <InputLabel id='form-layouts-separator-select-label'>Tipe Cuti Penting</InputLabel>
+                    <InputLabel id='form-layouts-separator-select-label'>Jenis Cuti Penting</InputLabel>
                     <Select
-                      label='Tipe Cuti Penting'
+                      label='Jenis Cuti Penting'
                       defaultValue=''
                       id='form-layouts-separator-select'
                       labelId='form-layouts-separator-select-label'

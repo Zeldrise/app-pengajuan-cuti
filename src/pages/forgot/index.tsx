@@ -126,7 +126,7 @@ const ForgotPage = () => {
                 fontSize: '1.5rem !important'
               }}
             >
-              Forgot Password
+              Lupa Kata Sandi
             </Typography>
           </Box>
           <Box sx={{ mb: 6 }}>

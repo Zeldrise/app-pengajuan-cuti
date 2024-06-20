@@ -98,7 +98,7 @@ const FormPengajuanKaryawan = () => {
     if (!telepon) errors.telepon = 'Nomor telepon darurat harus diisi'
     if (!posisi) errors.posisi = 'Posisi harus diisi'
     if (!departemen) errors.departemen = 'Departemen harus diisi'
-    if (!cutiType) errors.cutiType = 'Tipe cuti harus dipilih'
+    if (!cutiType) errors.cutiType = 'Jenis cuti harus dipilih'
     if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
     if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
     if (!startDate) errors.startDate = 'Tanggal awal harus diisi'
@@ -234,7 +234,7 @@ const checkUrgencyLeaveDuration = () => {
 
 const proceedWithFormSubmission = async () => {
   Swal.fire({
-    title: 'Apa Pengajuan Sudah Benar?',
+    title: 'Apakah Anda Akan Tetap Melanjutkan Prosesnya?',
     icon: 'question',
     showCancelButton: true,
     confirmButtonColor: '#6AD01F',
@@ -252,11 +252,11 @@ const proceedWithFormSubmission = async () => {
         if (Number(cutiType) !== 2 || doctorNoteImage) {
           attachment = doctorNoteImage ? await uploadDoctorNote(doctorNoteImage) : null
         }
-         if (selectedUserId === null) {
-           // Handle the case where selectedUserId is null
-           console.error('selectedUserId cannot be null')
-           return
-         }
+        if (selectedUserId === null) {
+          // Handle the case where selectedUserId is null
+          console.error('selectedUserId cannot be null')
+          return
+        }
         const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
         const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
         const dataPengajuan: FormData = {
@@ -274,7 +274,7 @@ const proceedWithFormSubmission = async () => {
         await submitFormData(dataPengajuan, selectedUserId)
         console.log('data yang disubmit :', dataPengajuan)
         Swal.fire({
-          title: 'Pengajuan Berhasil Disubmit!',
+          title: 'Pengajuan Cuti Anda Telah Berhasil Disubmit!',
           icon: 'success',
           confirmButtonColor: '#6AD01F',
           customClass: {
@@ -670,7 +670,7 @@ const proceedWithFormSubmission = async () => {
             <Grid item xs={12} sm={6}>
               <FormControl component='fieldset' fullWidth sx={{ marginLeft: '5px' }}>
                 <Typography variant='body1' gutterBottom>
-                  Tipe Cuti
+                  Jenis Cuti
                 </Typography>
                 <RadioGroup
                   row
@@ -711,9 +711,9 @@ const proceedWithFormSubmission = async () => {
             {showUrgencyFields && (
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel id='form-layouts-separator-select-label'>Tipe Cuti Penting</InputLabel>
+                  <InputLabel id='form-layouts-separator-select-label'>Jenis Cuti Penting</InputLabel>
                   <Select
-                    label='Tipe Cuti Penting'
+                    label='Jenis Cuti Penting'
                     defaultValue=''
                     id='form-layouts-separator-select'
                     labelId='form-layouts-separator-select-label'

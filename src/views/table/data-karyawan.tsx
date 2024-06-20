@@ -15,6 +15,10 @@ import Swal from 'sweetalert2'
 import AppURL from '../../api/AppURL'
 import CardHeader from '@mui/material/CardHeader'
 import TextField from '@mui/material/TextField'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
 
 
 interface Column {
@@ -62,13 +66,14 @@ const DataKaryawan = () => {
   const [orderBySisaCuti, setOrderBySisaCuti] = useState<keyof Data>('total_days')
   const [userRole, setUserRole] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState<string>('')
+  const [filterBy, setFilterBy] = useState<string>('name')
 
   const [employees, setEmployees] = useState<Data[]>([])
 
    useEffect(() => {
      fetchUserProfile()
      fetchData()
-   }, [sisaCutiOrder, orderBySisaCuti, searchQuery])
+   }, [sisaCutiOrder, orderBySisaCuti, searchQuery, filterBy])
 
      const fetchUserProfile = async () => {
        try {
@@ -93,7 +98,7 @@ const DataKaryawan = () => {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `${AppURL.Users}?sort_by=${sisaCutiOrder}&sort_field=${orderBySisaCuti}&search=${searchQuery}`,
+        `${AppURL.Users}?sort_by=${sisaCutiOrder}&sort_field=${orderBySisaCuti}&search=${searchQuery}&filter_by=${filterBy}`,
         {
           method: 'GET',
           headers: {
@@ -145,6 +150,9 @@ const DataKaryawan = () => {
    const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
      setSearchQuery(event.target.value)
    }
+     const handleFilterChange = (event: SelectChangeEvent<string>) => {
+       setFilterBy(event.target.value as string)
+     }
 
   const handleSortSisaCuti = () => {
     const isDesc = orderBySisaCuti === 'total_days' && sisaCutiOrder === 'desc'
@@ -219,13 +227,17 @@ const handleDeleteRow = (rowData: Data) => {
         title='Data Karyawan'
         titleTypographyProps={{ variant: 'h6' }}
         action={
-          <TextField
-            label='Cari Nama'
-            variant='outlined'
-            size='small'
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <FormControl variant='outlined' size='small'>
+              <InputLabel id='filter-label'>Filter</InputLabel>
+              <Select labelId='filter-label' value={filterBy} onChange={handleFilterChange} label='Filter'>
+                <MenuItem value='name'>Nama</MenuItem>
+                <MenuItem value='email'>Email</MenuItem>
+                <MenuItem value='telephone'>No Telepon</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField label='Cari' variant='outlined' size='small' value={searchQuery} onChange={handleSearchChange} />
+          </div>
         }
       />
       <TableContainer sx={{ maxHeight: 440 }}>

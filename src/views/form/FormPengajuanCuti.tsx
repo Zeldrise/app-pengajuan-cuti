@@ -78,7 +78,7 @@ const FormPengajuanCuti = () => {
     if (!telepon) errors.telepon = 'Nomor telepon darurat harus diisi'
     if (!posisi) errors.posisi = 'Posisi harus diisi'
     if (!departemen) errors.departemen = 'Departemen harus diisi'
-    if (!cutiType) errors.cutiType = 'Tipe cuti harus dipilih'
+    if (!cutiType) errors.cutiType = 'Jenis cuti harus dipilih'
     if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
     if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti urgensi'
     if (!startDate) errors.startDate = 'Tanggal awal harus diisi' 
@@ -216,7 +216,7 @@ const checkUrgencyLeaveDuration = () => {
 
 const proceedWithFormSubmission = async () => {
   Swal.fire({
-    title: 'Apa Pengajuan Sudah Benar?',
+    title: 'Apakah Anda Akan Tetap Melanjutkan Prosesnya?',
     icon: 'question',
     showCancelButton: true,
     confirmButtonColor: '#6AD01F',
@@ -235,24 +235,24 @@ const proceedWithFormSubmission = async () => {
           attachment = doctorNoteImage ? await uploadDoctorNote(doctorNoteImage) : null
         }
 
-         const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
-          const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
-           const dataPengajuan: FormData = {
-             start_date: startDate,
-             end_date: endDate,
-             leave_type: finalCutiType,
-             emergency_call: telepon,
-             description: deskripsi,
-             attachment: attachment
-           }
-           if (duration > userData?.total_days) {
-             dataPengajuan.force_submit = true
-           }
+        const finalCutiType = cutiType === 'Cuti urgensi' ? `${urgency}` : cutiType
+        const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
+        const dataPengajuan: FormData = {
+          start_date: startDate,
+          end_date: endDate,
+          leave_type: finalCutiType,
+          emergency_call: telepon,
+          description: deskripsi,
+          attachment: attachment
+        }
+        if (duration > userData?.total_days) {
+          dataPengajuan.force_submit = true
+        }
 
         await submitFormData(dataPengajuan)
         console.log('data yang disubmit :', dataPengajuan)
         Swal.fire({
-          title: 'Pengajuan Berhasil Disubmit!',
+          title: 'Pengajuan Cuti Anda Telah Berhasil Disubmit!',
           icon: 'success',
           confirmButtonColor: '#6AD01F',
           customClass: {
@@ -642,7 +642,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             <Grid item xs={12} sm={6}>
               <FormControl component='fieldset' fullWidth sx={{ marginLeft: '5px' }}>
                 <Typography variant='body1' gutterBottom>
-                  Tipe Cuti
+                  Jenis Cuti
                 </Typography>
                 <RadioGroup
                   row
@@ -683,9 +683,9 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             {showUrgencyFields && (
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel id='form-layouts-separator-select-label'>Tipe Cuti Penting</InputLabel>
+                  <InputLabel id='form-layouts-separator-select-label'>Jenis Cuti Penting</InputLabel>
                   <Select
-                    label='Tipe Cuti Penting'
+                    label='Jenis Cuti Penting'
                     defaultValue=''
                     id='form-layouts-separator-select'
                     labelId='form-layouts-separator-select-label'

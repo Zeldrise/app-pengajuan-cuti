@@ -64,8 +64,15 @@ const Index = () => {
         <Grid item xs={12} sm={6}>
           <Ditolak />
         </Grid>
-        <Grid item xs={12}>
-          <KaryawanCuti />
+        <Grid
+          item
+          xs={12}
+          container
+          justifyContent='center'
+        >
+          <Grid item xs={12} sm={6}>
+            <KaryawanCuti />
+          </Grid>
         </Grid>
       </Grid>
     ]
