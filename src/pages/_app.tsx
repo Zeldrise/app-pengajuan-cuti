@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { Router } from 'next/router'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
+import { appWithTranslation } from 'next-i18next'
 
 // ** Loader Import
 import NProgress from 'nprogress'
@@ -78,4 +79,4 @@ const App = (props: ExtendedAppProps) => {
   )
 }
 
-export default App
+export default appWithTranslation(App)

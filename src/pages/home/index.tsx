@@ -7,6 +7,7 @@ import UserLayout from '../../layouts/UserLayout'
 import Grafik from 'src/views/table/grafik'
 import React, { useEffect, useState } from 'react'
 import AppURL from '../../api/AppURL'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 
 const Index = () => {
@@ -112,5 +113,11 @@ const Index = () => {
   return dashboard
 }
 Index.getLayout = (page: React.ReactNode) => <UserLayout>{page}</UserLayout>
+
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ['common']))
+  }
+})
 
 export default Index

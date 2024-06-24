@@ -33,13 +33,9 @@ import Typography from '@mui/material/Typography'
 import FormHelperText from '@mui/material/FormHelperText'
 import Swal from 'sweetalert2'
 import AppURL from '../../api/AppURL'
+import { useTranslation } from 'next-i18next'
 
-const TglAwal = forwardRef((props, ref) => {
-  return <TextField fullWidth {...props} inputRef={ref} label='Tanggal Awal' autoComplete='off' />
-})
-const TglAkhir = forwardRef((props, ref) => {
-  return <TextField fullWidth {...props} inputRef={ref} label='Tanggal Akhir' autoComplete='off' />
-})
+
 
 interface User {
   id: number
@@ -89,7 +85,15 @@ const FormPengajuanKaryawan = () => {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
   const [errors, setErrors] = useState<any>({})
   const [users, setUsers] = useState<User[]>([])
+   const { t } = useTranslation('common')
 
+
+     const TglAwal = forwardRef((props, ref) => {
+       return <TextField fullWidth {...props} inputRef={ref} label={t('pengajuan.awal')} autoComplete='off' />
+     })
+     const TglAkhir = forwardRef((props, ref) => {
+       return <TextField fullWidth {...props} inputRef={ref} label={t('pengajuan.akhir')} autoComplete='off' />
+     })
 
 
   const validateForm = () => {
@@ -522,7 +526,7 @@ const proceedWithFormSubmission = async () => {
   return (
     <Card>
       <Card sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <CardHeader title='Form Pengajuan Karyawan' titleTypographyProps={{ variant: 'h6' }} />
+        <CardHeader title={t('pengajuan.titleK')} titleTypographyProps={{ variant: 'h6' }} />
         <Typography
           variant='body1'
           sx={{
@@ -532,7 +536,9 @@ const proceedWithFormSubmission = async () => {
             alignItems: 'center'
           }}
         >
-          Sisa Cuti: {selectedUserId ? users.find(user => user.id === selectedUserId)?.total_days || '0' : '0'} Hari
+          {t('pengajuan.sisa')}:{' '}
+          {selectedUserId ? users.find(user => user.id === selectedUserId)?.total_days || '0' : '0'}{' '}
+          {t('pengajuan.hari')}
         </Typography>
       </Card>
       <Divider sx={{ margin: 0 }} />
@@ -541,7 +547,7 @@ const proceedWithFormSubmission = async () => {
           <Grid container spacing={5}>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
-                <InputLabel htmlFor='nama'>Nama</InputLabel>
+                <InputLabel htmlFor='nama'>{t('pengajuan.nama')}</InputLabel>
                 <Select
                   value={selectedUserId ? selectedUserId.toString() : ''}
                   onChange={e => {
@@ -554,7 +560,7 @@ const proceedWithFormSubmission = async () => {
                       setDepartemen(selectedUser.department)
                     }
                   }}
-                  label='Nama'
+                  label={t('pengajuan.nama')}
                   id='nama'
                   error={!!errors.nama}
                 >
@@ -570,7 +576,7 @@ const proceedWithFormSubmission = async () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label='Posisi'
+                label={t('pengajuan.posisi')}
                 error={!!errors.posisi}
                 helperText={errors.posisi}
                 placeholder='Masukkan Posisi'
@@ -591,7 +597,7 @@ const proceedWithFormSubmission = async () => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label='Departemen'
+                    label={t('pengajuan.departemen')}
                     error={!!errors.departemen}
                     helperText={errors.departemen}
                     placeholder='Masukkan Departemen'
@@ -611,7 +617,7 @@ const proceedWithFormSubmission = async () => {
                   <TextField
                     fullWidth
                     type='number'
-                    label='Telepon Darurat'
+                    label={t('pengajuan.telepon')}
                     placeholder='+62-123-456-8790'
                     error={!!errors.telepon}
                     helperText={errors.telepon}
@@ -633,7 +639,7 @@ const proceedWithFormSubmission = async () => {
                   <TextField
                     fullWidth
                     type='number'
-                    label='Telepon Darurat'
+                    label={t('pengajuan.telepon')}
                     placeholder='+62-123-456-8790'
                     error={!!errors.telepon}
                     helperText={errors.telepon}
@@ -651,7 +657,7 @@ const proceedWithFormSubmission = async () => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label='Departemen'
+                    label={t('pengajuan.departemen')}
                     error={!!errors.departemen}
                     helperText={errors.departemen}
                     placeholder='Masukkan Departemen'
@@ -672,7 +678,7 @@ const proceedWithFormSubmission = async () => {
             <Grid item xs={12} sm={6}>
               <FormControl component='fieldset' fullWidth sx={{ marginLeft: '5px' }}>
                 <Typography variant='body1' gutterBottom>
-                  Jenis Cuti
+                  {t('pengajuan.jenis')}
                 </Typography>
                 <RadioGroup
                   row
@@ -694,7 +700,7 @@ const proceedWithFormSubmission = async () => {
                 fullWidth
                 multiline
                 minRows={3}
-                label='Deskripsi'
+                label={t('pengajuan.des')}
                 error={!!errors.deskripsi}
                 helperText={errors.deskripsi}
                 value={deskripsi}
@@ -789,7 +795,7 @@ const proceedWithFormSubmission = async () => {
         <Divider sx={{ margin: 0 }} />
         <CardActions>
           <Button size='large' type='submit' sx={{ mr: 2 }} variant='contained'>
-            Submit
+            {t('pengajuan.submit')}
           </Button>
         </CardActions>
       </form>

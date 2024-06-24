@@ -1,4 +1,3 @@
-// ** React Imports
 import { ChangeEvent, MouseEvent, ReactNode, useState } from 'react'
 
 // ** Next Imports
@@ -6,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import AppURL from '../../api/AppURL'
+import { useTranslation } from 'next-i18next'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -25,7 +25,6 @@ import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 
 // ** Layout Import
 import BlankLayout from '../../@core/layouts/BlankLayout'
-
 
 interface State {
   email: string
@@ -64,10 +63,10 @@ const LoginPage = () => {
     passwordError: '',
     serverError: null
   })
- 
 
   // ** Hook
   const router = useRouter()
+  const { t } = useTranslation('common')
 
   const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value })
@@ -84,13 +83,13 @@ const LoginPage = () => {
   const validateForm = () => {
     let isValid = true
     if (!values.email.trim()) {
-      setValues(prevState => ({ ...prevState, emailError: 'Email diperlukan' }))
+      setValues(prevState => ({ ...prevState, emailError: t('loginPage.emailError') }))
       isValid = false
     } else {
       setValues(prevState => ({ ...prevState, emailError: '' }))
     }
     if (!values.password.trim()) {
-      setValues(prevState => ({ ...prevState, passwordError: 'Password dibutuhkan' }))
+      setValues(prevState => ({ ...prevState, passwordError: t('loginPage.passwordError') }))
       isValid = false
     } else {
       setValues(prevState => ({ ...prevState, passwordError: '' }))
@@ -111,27 +110,30 @@ const LoginPage = () => {
           localStorage.setItem('token', response.data.token)
           router.push('/home')
         } else {
-          setValues(prevState => ({ ...prevState, serverError: 'An unexpected error occurred' }))
+          setValues(prevState => ({ ...prevState, serverError: t('loginPage.serverError') }))
         }
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
           if (error.response) {
             const errorMessage = error.response.data.error
             if (errorMessage === 'User not found') {
-              setValues(prevState => ({ ...prevState, emailError: errorMessage, passwordError: '' }))
+              setValues(prevState => ({ ...prevState, emailError: t('loginPage.userNotFound'), passwordError: '' }))
             } else if (errorMessage === 'Incorrect password') {
-              setValues(prevState => ({ ...prevState, emailError: '', passwordError: errorMessage }))
+              setValues(prevState => ({
+                ...prevState,
+                emailError: '',
+                passwordError: t('loginPage.incorrectPassword')
+              }))
             } else {
-              console.log('An unexpected error occurred')
+              setValues(prevState => ({ ...prevState, serverError: t('loginPage.unexpectedError') }))
             }
           } else {
-            console.log('An unexpected error occurred')
+            setValues(prevState => ({ ...prevState, serverError: t('loginPage.unexpectedError') }))
           }
         }
       }
     }
   }
-
 
   return (
     <Box className='content-center'>
@@ -148,7 +150,7 @@ const LoginPage = () => {
                 fontSize: '1.5rem !important'
               }}
             >
-              Login
+              {t('loginPage.title')}
             </Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={handleSubmit}>
@@ -157,7 +159,7 @@ const LoginPage = () => {
                 autoFocus
                 fullWidth
                 id='email'
-                label='Email'
+                label={t('loginPage.emailLabel')}
                 value={values.email}
                 onChange={handleChange('email')}
                 error={!!values.emailError}
@@ -167,7 +169,7 @@ const LoginPage = () => {
               <TextField
                 fullWidth
                 id='auth-login-password'
-                label='Password'
+                label={t('loginPage.passwordLabel')}
                 value={values.password}
                 onChange={handleChange('password')}
                 type={values.showPassword ? 'text' : 'password'}
@@ -193,13 +195,12 @@ const LoginPage = () => {
             <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
-              <FormControlLabel control={<Checkbox />} label='Ingatkan Saya' />
               <Link passHref href='/forgot'>
-                <LinkStyled>Lupa Kata Sandi?</LinkStyled>
+                <LinkStyled>{t('loginPage.forgotPasswordLabel')}</LinkStyled>
               </Link>
             </Box>
             <Button fullWidth size='large' variant='contained' type='submit' sx={{ marginBottom: 7 }}>
-              Login
+              {t('loginPage.loginButton')}
             </Button>
           </form>
         </CardContent>

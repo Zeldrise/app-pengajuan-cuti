@@ -33,6 +33,7 @@ import Typography from '@mui/material/Typography'
 import FormHelperText from '@mui/material/FormHelperText'
 import Swal from 'sweetalert2'
 import AppURL from '../../api/AppURL'
+import { useTranslation } from 'next-i18next'
 
 interface FormData {
   start_date: Date | null | undefined
@@ -45,12 +46,7 @@ interface FormData {
 }
 
 
-const TglAwal = forwardRef((props, ref) => {
-  return <TextField fullWidth {...props} inputRef={ref} label='Tanggal Awal' autoComplete='off' />
-})
-const TglAkhir = forwardRef((props, ref) => {
-  return <TextField fullWidth {...props} inputRef={ref} label='Tanggal Akhir' autoComplete='off' />
-})
+
 
 const FormPengajuanCuti = () => {
   // ** States
@@ -70,6 +66,14 @@ const FormPengajuanCuti = () => {
   const [urgency, setUrgency] = useState<string>('')
   const [userData, setUserData] = useState<any>(null)
   const [errors, setErrors] = useState<any>({})
+  const { t } = useTranslation('common')
+
+  const TglAwal = forwardRef((props, ref) => {
+    return <TextField fullWidth {...props} inputRef={ref} label={t('pengajuan.awal')} autoComplete='off' />
+  })
+  const TglAkhir = forwardRef((props, ref) => {
+    return <TextField fullWidth {...props} inputRef={ref} label={t('pengajuan.akhir')} autoComplete='off' />
+  })
   
 
   const validateForm = () => {
@@ -502,7 +506,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   return (
     <Card>
       <Card sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <CardHeader title='Form Pengajuan Cuti' titleTypographyProps={{ variant: 'h6' }} />
+        <CardHeader title={t('pengajuan.title')} titleTypographyProps={{ variant: 'h6' }} />
         <Typography
           variant='body1'
           sx={{
@@ -512,7 +516,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             alignItems: 'center'
           }}
         >
-          Sisa Cuti : {userData ? userData.total_days : '...'} Hari
+          {t('pengajuan.sisa')} : {userData ? userData.total_days : '...'} {t('pengajuan.hari')}
         </Typography>
       </Card>
       <Divider sx={{ margin: 0 }} />
@@ -522,7 +526,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label='Nama'
+                label={t('pengajuan.nama')}
                 error={!!errors.nama}
                 helperText={errors.nama}
                 placeholder='Masukkan Nama'
@@ -542,7 +546,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label='Posisi'
+                label={t('pengajuan.posisi')}
                 error={!!errors.posisi}
                 helperText={errors.posisi}
                 placeholder='Masukkan Posisi'
@@ -563,7 +567,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label='Departemen'
+                    label={t('pengajuan.departemen')}
                     error={!!errors.departemen}
                     helperText={errors.departemen}
                     placeholder='Masukkan Departemen'
@@ -583,7 +587,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                   <TextField
                     fullWidth
                     type='number'
-                    label='Telepon Darurat'
+                    label={t('pengajuan.telepon')}
                     placeholder='+62-123-456-8790'
                     error={!!errors.telepon}
                     helperText={errors.telepon}
@@ -605,7 +609,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                   <TextField
                     fullWidth
                     type='number'
-                    label='Telepon Darurat'
+                    label={t('pengajuan.telepon')}
                     placeholder='+62-123-456-8790'
                     error={!!errors.telepon}
                     helperText={errors.telepon}
@@ -623,7 +627,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label='Departemen'
+                    label={t('pengajuan.departemen')}
                     error={!!errors.departemen}
                     helperText={errors.departemen}
                     placeholder='Masukkan Departemen'
@@ -644,7 +648,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             <Grid item xs={12} sm={6}>
               <FormControl component='fieldset' fullWidth sx={{ marginLeft: '5px' }}>
                 <Typography variant='body1' gutterBottom>
-                  Jenis Cuti
+                  {t('pengajuan.jenis')}
                 </Typography>
                 <RadioGroup
                   row
@@ -666,7 +670,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                 fullWidth
                 multiline
                 minRows={3}
-                label='Deskripsi'
+                label={t('pengajuan.des')}
                 error={!!errors.deskripsi}
                 helperText={errors.deskripsi}
                 value={deskripsi}
@@ -761,7 +765,7 @@ const handleDoctorNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         <Divider sx={{ margin: 0 }} />
         <CardActions>
           <Button size='large' type='submit' sx={{ mr: 2 }} variant='contained'>
-            Submit
+            {t('pengajuan.submit')}
           </Button>
         </CardActions>
       </form>

@@ -5,9 +5,70 @@
     "passwordLabel": "Kata Sandi",
     "rememberMeLabel": "Ingat Saya",
     "forgotPasswordLabel": "Lupa Kata Sandi?",
-    "loginButton": "Masuk"
+    "loginButton": "Masuk",
+    "emailError": "Email diperlukan",
+    "passwordError": "Password dibutuhkan",
+    "serverError": "Terjadi kesalahan yang tidak terduga",
+    "userNotFound": "Pengguna tidak ditemukan",
+    "incorrectPassword": "Kata sandi salah",
+    "unexpectedError": "Terjadi kesalahan yang tidak terduga"
   },
   "employeeLeaveToday": {
     "title": "Karyawan Cuti Hari Ini"
+  },
+  "leaveRequest": {
+    "title": "Permintaan Cuti"
+  },
+  "leaveAccepted": {
+    "title": "Cuti Diterima"
+  },
+  "leaveDenied": {
+    "title": "Cuti Ditolak"
+  },
+  "grafik": {
+    "title": "Grafik Pengajuan",
+    "tahun": "Tahun",
+    "bulan": "Bulan",
+    "all": "Semua Bulan",
+    "nama": "Nama",
+    "pengajuan": "Total Pengajuan",
+    "diterima": "Diterima",
+    "ditolak": "Ditolak",
+    "pending": "Dalam Proses",
+    "sisa": "Sisa Cuti",
+    "unduh": "Unduh Data"
+  },
+  "pengajuan": {
+    "title": "Form Pengajuan Cuti",
+    "titleK": "Form Pengajuan Karyawan",
+    "sisa": "Sisa Cuti",
+    "hari": "Hari",
+    "submit": "Kirim",
+    "nama": "Nama",
+    "posisi": "Posisi",
+    "departemen": "Departemen",
+    "telepon": "Telepon Darurat",
+    "jenis": "Jenis Cuti",
+    "des": "Deskripsi",
+    "awal": "Tanggal Awal",
+    "akhir": "Tanggal Akhir"
+  },
+  "table": {
+    "approve": "Persetujuan Cuti",
+    "approveDetail": "Detail Pengajuan Cuti",
+    "nama": "Nama",
+    "pengajuan": "Tanggal Pengajuan",
+    "telepon": "Telepon Darurat",
+    "posisi": "Posisi",
+    "departemen": "Departemen",
+    "awal": "Tanggal Awal",
+    "akhir": "Tanggal Akhir",
+    "lama": "Lama Cuti",
+    "jenis": "Jenis Cuti",
+    "sisa": "Sisa Cuti",
+    "des": "Deskripsi",
+    "aksi": "Tindakan",
+    "terima": "Accept",
+    "tolak": "Reject"
   }
 }

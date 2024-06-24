@@ -5,9 +5,70 @@
     "passwordLabel": "Password",
     "rememberMeLabel": "Remember Me",
     "forgotPasswordLabel": "Forgot Password?",
-    "loginButton": "Login"
+    "loginButton": "Login",
+    "emailError": "Email is required",
+    "passwordError": "Password is required",
+    "serverError": "An unexpected error occurred",
+    "userNotFound": "User not found",
+    "incorrectPassword": "Incorrect password",
+    "unexpectedError": "An unexpected error occurred"
   },
   "employeeLeaveToday": {
     "title": "Employees on Leave Today"
+  },
+  "leaveRequest": {
+    "title": "Leave Request"
+  },
+  "leaveAccepted": {
+    "title": "Leave Accepted"
+  },
+  "leaveDenied": {
+    "title": "Leave Denied"
+  },
+  "grafik": {
+    "title": "Submission Chart",
+    "tahun": "Year",
+    "bulan": "Month",
+    "all": "All Months",
+    "nama": "Name",
+    "pengajuan": "Total Submissions",
+    "diterima": "Accepted",
+    "ditolak": "Rejected",
+    "pending": "Pending",
+    "sisa": "Remaining days off",
+    "unduh": "Download Data"
+  },
+  "pengajuan": {
+    "title": "Leave Application Form",
+    "titleK": "Employee Application Form",
+    "sisa": "Remaining days off",
+    "hari": "Days",
+    "submit": "Submit",
+    "nama": "Name",
+    "posisi": "Position",
+    "departemen": "Department",
+    "telepon": "Emergency Telephone",
+    "jenis": "Types of Leave",
+    "des": "Description",
+    "awal": "Start Date",
+    "akhir": "End Date"
+  },
+  "table": {
+    "approve": "Leave Approval",
+    "approveDetail": "Leave Application Details",
+    "nama": "Name",
+    "pengajuan": "Date of Filing",
+    "telepon": "Emergency Telephone",
+    "posisi": "Position",
+    "departemen": "Department",
+    "awal": "Start Date",
+    "akhir": "End Date",
+    "lama": "Length of Leave",
+    "jenis": "Types of Leave",
+    "sisa": "Remaining days off",
+    "des": "Description",
+    "aksi": "Actions",
+    "terima": "Accept",
+    "tolak": "Reject"
   }
 }

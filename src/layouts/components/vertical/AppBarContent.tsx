@@ -3,6 +3,8 @@ import Box from '@mui/material/Box'
 import { Theme } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import useMediaQuery from '@mui/material/useMediaQuery'
+import Button from '@mui/material/Button'
+import { useRouter } from 'next/router'
 
 // ** Icons Imports
 import Menu from 'mdi-material-ui/Menu'
@@ -22,6 +24,11 @@ interface Props {
 }
 
 const AppBarContent = (props: Props) => {
+  const router = useRouter()
+
+   const changeLanguage = (locale: string) => {
+     router.push(router.pathname, router.asPath, { locale })
+   }
   // ** Props
   const { hidden, settings, saveSettings, toggleNavVisibility } = props
 
@@ -70,6 +77,18 @@ const AppBarContent = (props: Props) => {
         )} */}
         {/* <ModeToggler settings={settings} saveSettings={saveSettings} /> */}
         {/* <NotificationDropdown /> */}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end'}}>
+          <Button
+            variant={router.locale === 'id' ? 'contained' : 'outlined'}
+            onClick={() => changeLanguage('id')}
+            sx={{ marginRight: '0.5rem' }}
+          >
+            ID
+          </Button>
+          <Button variant={router.locale === 'en' ? 'contained' : 'outlined'} onClick={() => changeLanguage('en')}>
+            EN
+          </Button>
+        </Box>
         <UserDropdown />
       </Box>
     </Box>

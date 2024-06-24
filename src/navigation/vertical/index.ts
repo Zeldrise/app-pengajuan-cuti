@@ -101,6 +101,7 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
     menuAccess = [
       '/home',
       '/ajukan-cuti',
+      '/pengajuan-karyawan',
       '/data-karyawan',
       '/cuti-karyawan',
       '/cuti-pribadi',
@@ -120,6 +121,11 @@ const buildNavigationMenu = async (): Promise<VerticalNavItemsType> => {
       },
       {
         sectionTitle: 'Manajemen Cuti'
+      },
+      {
+        title: 'Pengajuan Karyawan',
+        icon: FormatListChecks,
+        path: '/pengajuan-karyawan'
       },
       {
         title: 'Data Karyawan',

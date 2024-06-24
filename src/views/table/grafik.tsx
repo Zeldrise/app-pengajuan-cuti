@@ -14,6 +14,9 @@ import MenuItem from '@mui/material/MenuItem'
 import AppURL from 'src/api/AppURL'
 import Button from '@mui/material/Button'
 import { MicrosoftExcel } from 'mdi-material-ui'
+import { useTranslation } from 'next-i18next'
+
+
 
 const generateYears = () => {
   const currentYear = new Date().getFullYear()
@@ -33,14 +36,15 @@ interface Column {
   format?: (value: any) => string
 }
 
-const columns: readonly Column[] = [
-  { id: 'name', label: 'Nama', minWidth: 170 },
-  { id: 'totalCuti', label: 'Total Pengajuan', minWidth: 100 },
-  { id: 'cutiDiterima', label: 'Diterima', minWidth: 100 },
-  { id: 'cutiDitolak', label: 'Ditolak', minWidth: 100 },
-  { id: 'cutiPending', label: 'Pending', minWidth: 100 },
-  { id: 'sisaCuti', label: 'Sisa Cuti', minWidth: 100 }
-]
+
+// const columns: readonly Column[] = [
+//   { id: 'name', label: t('grafik.nama'), minWidth: 170 },
+//   { id: 'totalCuti', label: 'Total Pengajuan', minWidth: 100 },
+//   { id: 'cutiDiterima', label: 'Diterima', minWidth: 100 },
+//   { id: 'cutiDitolak', label: 'Ditolak', minWidth: 100 },
+//   { id: 'cutiPending', label: 'Pending', minWidth: 100 },
+//   { id: 'sisaCuti', label: 'Sisa Cuti', minWidth: 100 }
+// ]
 
 interface Data {
   id: number
@@ -53,6 +57,7 @@ interface Data {
 }
 
 const Grafik = () => {
+  const { t } = useTranslation('common')
   // ** Hook
 
   const [tahun, setTahun] = useState(new Date().getFullYear().toString())
@@ -151,13 +156,22 @@ const Grafik = () => {
         }
       }
 
+      const columns: readonly Column[] = [
+        { id: 'name', label: t('grafik.nama'), minWidth: 170 },
+        { id: 'totalCuti', label: t('grafik.pengajuan'), minWidth: 100 },
+        { id: 'cutiDiterima', label: t('grafik.diterima'), minWidth: 100 },
+        { id: 'cutiDitolak', label: t('grafik.ditolak'), minWidth: 100 },
+        { id: 'cutiPending', label: t('grafik.pending'), minWidth: 100 },
+        { id: 'sisaCuti', label: t('grafik.sisa'), minWidth: 100 }
+      ]
+
   return (
     <Paper>
       <CardHeader
         item
         xs={12}
         sm={6}
-        title='Grafik Pengajuan'
+        title={t("grafik.title")}
         titleTypographyProps={{
           sx: { lineHeight: '2rem !important', letterSpacing: '0.15px !important' }
         }}
@@ -173,15 +187,15 @@ const Grafik = () => {
               }
             }}
           >
-            <TextField select label='Tahun' variant='outlined' size='small' value={tahun} onChange={handleChangeTahun}>
+            <TextField select label={t('grafik.tahun')} variant='outlined' size='small' value={tahun} onChange={handleChangeTahun}>
               {generateYears().map(year => (
                 <MenuItem key={year} value={year}>
                   {year}
                 </MenuItem>
               ))}
             </TextField>
-            <TextField select label='Bulan' variant='outlined' size='small' value={bulan} onChange={handleChangeBulan}>
-              <MenuItem value={0}>Semua Bulan</MenuItem>
+            <TextField select label={t('grafik.bulan')} variant='outlined' size='small' value={bulan} onChange={handleChangeBulan}>
+              <MenuItem value={0}>{t('grafik.all')}</MenuItem>
               {Array.from({ length: 12 }, (_, i) => (
                 <MenuItem key={i + 1} value={i + 1}>
                   {new Date(0, i).toLocaleString('id-ID', { month: 'long' })}
@@ -245,7 +259,7 @@ const Grafik = () => {
         onClick={handleDownload}
         startIcon={<MicrosoftExcel />}
       >
-        Unduh Data
+        {t('grafik.unduh')}
       </Button>
     </Paper>
   )

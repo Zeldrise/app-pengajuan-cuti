@@ -12,6 +12,7 @@ import { useTheme } from '@mui/material/styles'
 import { CloseCircle } from 'mdi-material-ui'
 import Swal from 'sweetalert2'
 import AppURL from '../../api/AppURL'
+import { useTranslation } from 'next-i18next'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -51,6 +52,7 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
   const [attachmentUrl, setAttachmentUrl] = useState<string | null>(null)
    const [previewOpen, setPreviewOpen] = useState(false)
    const [previewImage, setPreviewImage] = useState<string | null>(null)
+    const { t } = useTranslation('common')
 
   useEffect(() => {
     if (rowData && rowData.attachment) {
@@ -199,7 +201,7 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
         keepMounted
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          Detail Pengajuan Cuti
+          {t('table.approveDetail')}
           <Button onClick={handleClose} color='inherit'>
             <CloseCircle />
           </Button>
@@ -207,31 +209,34 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
         <DialogContent>
           <div>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Nama</span>: {rowData?.name}
+              <span style={{ display: 'inline-block', width: 180 }}>{t('table.nama')}</span>: {rowData?.name}
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Tanggal Pengajuan</span>: {rowData?.submissionDate}
+              <span style={{ display: 'inline-block', width: 180 }}>{t('table.pengajuan')}</span>:{' '}
+              {rowData?.submissionDate}
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Telepon Darurat</span>: {rowData?.emergencyCall}
+              <span style={{ display: 'inline-block', width: 180 }}>{t('table.telepon')}</span>:{' '}
+              {rowData?.emergencyCall}
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Posisi</span>: {rowData?.position}
+              <span style={{ display: 'inline-block', width: 180 }}>{t('table.posisi')}</span>: {rowData?.position}
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Departemen</span>: {rowData?.department}
+              <span style={{ display: 'inline-block', width: 180 }}>{t('table.departemen')}</span>:{' '}
+              {rowData?.department}
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Tanggal Mulai</span>: {rowData?.startDate}
+              <span style={{ display: 'inline-block', width: 180 }}>{t('table.awal')}</span>: {rowData?.startDate}
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Tanggal Akhir</span>: {rowData?.endDate}
+              <span style={{ display: 'inline-block', width: 180 }}>{t('table.akhir')}</span>: {rowData?.endDate}
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Lama Cuti</span>: {rowData?.totalDays} Hari
+              <span style={{ display: 'inline-block', width: 180 }}>{t('table.lama')}</span>: {rowData?.totalDays} Hari
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Jenis Cuti</span>: {rowData?.leaveType}
+              <span style={{ display: 'inline-block', width: 180 }}>{t('table.jenis')}</span>: {rowData?.leaveType}
             </p>
             {attachmentUrl && (
               <div>
@@ -245,20 +250,21 @@ const ApprovalDetail: React.FC<PropsApprovalDetail> = ({ open, onClose, rowData,
               </div>
             )}
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Sisa Cuti</span>: {rowData?.leaveAllowance} Hari
+              <span style={{ display: 'inline-block', width: 180 }}>{t('table.sisa')}</span>: {rowData?.leaveAllowance}{' '}
+              Hari
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>Deskripsi</span>:{' '}
+              <span style={{ display: 'inline-block', width: 180 }}>{t('table.des')}</span>:{' '}
               <span style={{ display: 'inline-flex', width: 300 }}>{rowData?.description}</span>
             </p>
           </div>
         </DialogContent>
         <DialogActions>
           <Button variant='contained' color='success' onClick={handleAccept}>
-            Terima
+            {t('table.terima')}
           </Button>
           <Button variant='contained' color='error' onClick={handleReject}>
-            Tolak
+            {t('table.tolak')}
           </Button>
         </DialogActions>
       </Dialog>

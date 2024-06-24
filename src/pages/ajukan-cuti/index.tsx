@@ -8,6 +8,7 @@ import DatePickerWrapper from '../../@core/styles/libs/react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import FormPengajuanCuti from '../../views/form/FormPengajuanCuti'
 import UserLayout from '../../layouts/UserLayout'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 
 const index = () => {
@@ -22,4 +23,9 @@ const index = () => {
   )
 }
 index.getLayout = (page: React.ReactNode) => <UserLayout>{page}</UserLayout>
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ['common']))
+  }
+})
 export default index

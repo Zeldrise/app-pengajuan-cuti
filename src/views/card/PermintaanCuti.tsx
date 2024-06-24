@@ -4,8 +4,10 @@ import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import AppURL from '../../api/AppURL'
+import { useTranslation } from 'next-i18next'
 
 const PermintaanCuti = () => {
+    const { t } = useTranslation('common')
     const [totalCount, setTotalCount] = useState(0)
 
     useEffect(() => {
@@ -44,7 +46,7 @@ const PermintaanCuti = () => {
               color: 'common.white'
             }}
           >
-            Permintaan Cuti
+            {t('leaveRequest.title')}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant='h2' sx={{ color: 'common.white' }}>

@@ -11,6 +11,7 @@ import Button from '@mui/material/Button'
 import { FileEye } from 'mdi-material-ui'
 import ApprovalDetail from './approval-detail'
 import AppURL from '../../api/AppURL'
+import { useTranslation } from 'next-i18next'
 
 interface Column {
   id: keyof Data
@@ -20,16 +21,6 @@ interface Column {
   format?: (value: any) => string
 }
 
-const columns: readonly Column[] = [
-  { id: 'name', label: 'Nama', minWidth: 170 },
-  { id: 'submissionDate', label: 'Tanggal Pengajuan', minWidth: 100 },
-  { id: 'startDate', label: 'Tanggal Mulai', minWidth: 100 },
-  { id: 'endDate', label: 'Tanggal Akhir', minWidth: 100 },
-  { id: 'totalDays', label: 'Lama Cuti', minWidth: 100 },
-  { id: 'leaveType', label: 'Jenis Cuti', minWidth: 100 },
-  { id: 'leaveAllowance', label: 'Sisa Cuti', minWidth: 100 },
-  { id: 'actions', label: 'Actions', minWidth: 100 }
-]
 
 interface Data {
   id: number
@@ -57,6 +48,20 @@ const Approval = () => {
   const [order, setOrder] = useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = useState<keyof Data>('submissionDate')
   const [rows, setRows] = useState<Data[]>([])
+   const { t } = useTranslation('common')
+
+
+  const columns: readonly Column[] = [
+    { id: 'name', label: t('table.nama'), minWidth: 170 },
+    { id: 'submissionDate', label: t('table.pengajuan'), minWidth: 100 },
+    { id: 'startDate', label: t('table.awal'), minWidth: 100 },
+    { id: 'endDate', label: t('table.akhir'), minWidth: 100 },
+    { id: 'totalDays', label: t('table.lama'), minWidth: 100 },
+    { id: 'leaveType', label: t('table.jenis'), minWidth: 100 },
+    { id: 'leaveAllowance', label: t('table.sisa'), minWidth: 100 },
+    { id: 'actions', label: t('table.aksi'), minWidth: 100 }
+  ]
+
 
   useEffect(() => {
     fetchSubmissions()
