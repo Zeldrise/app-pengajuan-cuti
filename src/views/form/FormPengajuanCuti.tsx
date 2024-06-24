@@ -76,24 +76,27 @@ const FormPengajuanCuti = () => {
   })
   
 
-  const validateForm = () => {
-    const errors: any = {}
-    if (!nama) errors.nama = 'Nama harus diisi'
-    if (!telepon) errors.telepon = 'Nomor telepon darurat harus diisi'
-    if (!posisi) errors.posisi = 'Posisi harus diisi'
-    if (!departemen) errors.departemen = 'Departemen harus diisi'
-    if (!cutiType) errors.cutiType = 'Jenis cuti harus dipilih'
-    if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
-    if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti penting'
-    if (!startDate) errors.startDate = 'Tanggal awal harus diisi' 
-    if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
-    
-    if (startDate && endDate && startDate > endDate)
-      errors.date = 'Tanggal awal tidak boleh lebih besar dari tanggal akhir'
-    setErrors(errors)
+ const validateForm = () => {
+   const errors: any = {}
 
-    return Object.keys(errors).length === 0
-  }
+   if (!nama) errors.nama = 'Nama harus diisi'
+   if (!telepon) errors.telepon = 'Nomor telepon darurat harus diisi'
+   if (telepon && telepon.length < 10) errors.telepon = 'Nomor telepon minimal harus terdiri dari 10 karakter'
+   if (!posisi) errors.posisi = 'Posisi harus diisi'
+   if (!departemen) errors.departemen = 'Departemen harus diisi'
+   if (!cutiType) errors.cutiType = 'Jenis cuti harus dipilih'
+   if (!deskripsi || deskripsi.length < 20) errors.deskripsi = 'Deskripsi minimal harus terdiri dari 20 karakter'
+   if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti penting'
+   if (!startDate) errors.startDate = 'Tanggal awal harus diisi'
+   if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
+   if (startDate && endDate && startDate > endDate)
+     errors.date = 'Tanggal awal tidak boleh lebih besar dari tanggal akhir'
+
+   setErrors(errors)
+
+   return Object.keys(errors).length === 0
+ }
+
 
     const uploadDoctorNote = async (file: File) => {
       const formData = new FormData()
@@ -140,6 +143,9 @@ const FormPengajuanCuti = () => {
   
 const handleSubmit = (e: React.FormEvent) => {
   e.preventDefault()
+  if (!validateForm()) {
+    return
+  }
 const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
   if (Number(cutiType) === 1 && duration > (userData?.total_days || 0)) {
     Swal.fire({
@@ -160,11 +166,9 @@ const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1
       }
     })
   } else {
-    if (validateForm()) {
       if (checkUrgencyLeaveDuration()) {
         proceedWithFormSubmission()
       }
-    }
   }
 }
 
@@ -226,7 +230,7 @@ const proceedWithFormSubmission = async () => {
     showCancelButton: true,
     confirmButtonColor: '#6AD01F',
     cancelButtonColor: '#FF6166',
-    confirmButtonText: 'Ajukan',
+    confirmButtonText: 'Lanjut',
     cancelButtonText: 'Batal',
     customClass: {
       container: 'full-screen-alert'

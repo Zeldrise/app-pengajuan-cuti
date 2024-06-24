@@ -99,11 +99,19 @@ const FormPengajuanKaryawan = () => {
   const validateForm = () => {
     const errors: any = {}
     if (!nama) errors.nama = 'Nama harus diisi'
-    if (!telepon) errors.telepon = 'Nomor telepon darurat harus diisi'
+     if (!telepon) {
+       errors.telepon = 'Nomor telepon darurat harus diisi'
+     } else if (telepon.length < 10) {
+       errors.telepon = 'Nomor telepon minimal harus terdiri dari 10 karakter'
+     }
     if (!posisi) errors.posisi = 'Posisi harus diisi'
     if (!departemen) errors.departemen = 'Departemen harus diisi'
     if (!cutiType) errors.cutiType = 'Jenis cuti harus dipilih'
-    if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
+    if (!deskripsi) {
+      errors.deskripsi = 'Deskripsi harus diisi'
+    } else if (deskripsi.length < 20) {
+      errors.deskripsi = 'Deskripsi minimal harus terdiri dari 20 karakter'
+    }
     if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti penting'
     if (!startDate) errors.startDate = 'Tanggal awal harus diisi'
     if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
@@ -158,6 +166,9 @@ const FormPengajuanKaryawan = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+     if (!validateForm()) {
+       return
+     }
     const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
   if (
     Number(cutiType) === 1 &&
@@ -181,7 +192,7 @@ const FormPengajuanKaryawan = () => {
       }
     })
   } else {
-    if (validateForm() && selectedUserId !== null) {
+    if (selectedUserId !== null) {
       if (checkUrgencyLeaveDuration()) {
         proceedWithFormSubmission()
       }
@@ -244,7 +255,7 @@ const proceedWithFormSubmission = async () => {
     showCancelButton: true,
     confirmButtonColor: '#6AD01F',
     cancelButtonColor: '#FF6166',
-    confirmButtonText: 'Ajukan',
+    confirmButtonText: 'Lanjut',
     cancelButtonText: 'Batal',
     customClass: {
       container: 'full-screen-alert'

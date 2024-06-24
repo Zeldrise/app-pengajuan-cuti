@@ -33,11 +33,11 @@ const Ditolak = () => {
     }, []) 
 
   return (
-    <Card sx={{ border: 0, boxShadow: 0, color: 'common.white', backgroundColor: '#a33321' }}>
+    <Card sx={{ border: 0, boxShadow: 0, color: 'common.white', backgroundColor: '#d6351b' }}>
       <CardContent sx={{ padding: theme => `${theme.spacing(3.25, 5, 4.5)} !important` }}>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography
-            variant='h4'
+            variant='h5'
             sx={{
               display: 'flex',
               fontWeight: 'bold',

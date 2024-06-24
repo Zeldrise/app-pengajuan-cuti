@@ -59,22 +59,15 @@ const Index = () => {
   } else if (position == 'staff') {
     dashboard = [
       <Grid container spacing={3} key='dashboard'>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}>
           <Diterima />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}>
           <Ditolak />
         </Grid>
-        <Grid
-          item
-          xs={12}
-          container
-          justifyContent='center'
-        >
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={4}>
             <KaryawanCuti />
           </Grid>
-        </Grid>
       </Grid>
     ]
   } else if (position == 'karyawan') {

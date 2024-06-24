@@ -116,11 +116,19 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
   const validateForm = () => {
     const errors: any = {}
     if (!nama) errors.nama = 'Nama harus diisi'
-    if (!telepon) errors.telepon = 'Nomor telepon darurat harus diisi'
+     if (!telepon) {
+       errors.telepon = 'Nomor telepon darurat harus diisi'
+     } else if (telepon.length < 10) {
+       errors.telepon = 'Nomor telepon minimal harus terdiri dari 10 karakter'
+     }
     if (!posisi) errors.posisi = 'Posisi harus diisi'
     if (!departemen) errors.departemen = 'Departemen harus diisi'
     if (!cutiType) errors.cutiType = 'Jenis cuti harus dipilih'
-    if (!deskripsi) errors.deskripsi = 'Deskripsi harus diisi'
+    if (!deskripsi) {
+      errors.deskripsi = 'Deskripsi harus diisi'
+    } else if (deskripsi.length < 20) {
+      errors.deskripsi = 'Deskripsi minimal harus terdiri dari 20 karakter'
+    }
     if (cutiType === 'Cuti urgensi' && !urgency) errors.urgency = 'Pilih jenis cuti penting'
     if (!startDate) errors.startDate = 'Tanggal awal harus diisi'
     if (!endDate) errors.endDate = 'Tanggal akhir harus diisi'
@@ -214,6 +222,9 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+     if (!validateForm()) {
+       return
+     }
     const duration = startDate && endDate ? differenceInDays(endDate, startDate) + 1 : 0
   if (Number(cutiType) === 1 && duration > (userData?.total_days || 0)) {
     Swal.fire({
@@ -234,11 +245,9 @@ const EditCutiPribadi: React.FC<PropsEditCutiPribadi> = ({ open, onClose, rowDat
       }
     })
   } else {
-    if (validateForm()) {
       if (checkUrgencyLeaveDuration()) {
         proceedWithFormSubmission()
       }
-    }
   }
 }
 const checkUrgencyLeaveDuration = () => {

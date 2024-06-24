@@ -60,7 +60,6 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
   const [department, setDepartment] = useState(rowData?.department || '')
   const [gender, setGender] = useState(rowData?.gender || '')
   const [join_date, setJoin_date] = useState(rowData?.join_date || '')
-  const [leaveAllowance, setLeaveAllowance] = useState(rowData?.total_days || 0)
   const [errors, setErrors] = useState<any>({})
   useEffect(() => {
     if (rowData) {
@@ -72,7 +71,6 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
       setDepartment(rowData.department || '')
       setGender(rowData.gender || '')
       setJoin_date(rowData.join_date || '')
-       setLeaveAllowance(rowData.total_days || 0)
     }
   }, [rowData])
   const handleClose = () => {
@@ -92,7 +90,6 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
     if (!department) errors.department = 'Departemen harus diisi'
     if (!gender) errors.gender = 'Jenis kelamin harus dipilih'
     if (!join_date) errors.join_date = 'Tanggal bergabung harus diisi'
-    if (!leaveAllowance) errors.leaveAllowance = 'Sisa cuti harus diisi'
     setErrors(errors)
 
     return Object.keys(errors).length === 0
@@ -113,8 +110,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
           position,
           department,
           gender,
-          join_date,
-          leave_allowance: leaveAllowance
+          join_date
         })
       })
       if (!response.ok) {
@@ -138,7 +134,6 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
       setDepartment('')
       setGender('')
       setJoin_date('')
-      setLeaveAllowance(0)
       onClose()
       onEditEmployeeSuccess()
     } catch (error) {
@@ -228,12 +223,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
       setErrors({ ...errors, join_date: '' })
     }
   }
-   const handleChangeLeaveAllowance = (event: React.ChangeEvent<HTMLInputElement>) => {
-     setLeaveAllowance(Number(event.target.value))
-     if (errors.leaveAllowance) {
-       setErrors({ ...errors, leaveAllowance: '' })
-     }
-   }
+
 
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
@@ -393,7 +383,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
               )
             }}
           />
-          <TextField
+          {/* <TextField
             fullWidth
             sx={{ marginTop: 5 }}
             label='Sisa Cuti'
@@ -409,7 +399,7 @@ const EditDataKaryawan: React.FC<PropsEditDataKaryawan> = ({ open, onClose, rowD
                 </InputAdornment>
               )
             }}
-          />
+          /> */}
         </div>
       </DialogContent>
       <DialogActions>

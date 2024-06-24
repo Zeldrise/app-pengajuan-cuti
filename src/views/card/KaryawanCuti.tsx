@@ -37,7 +37,7 @@ const KaryawanCuti = () => {
       <CardContent sx={{ padding: theme => `${theme.spacing(3.25, 5, 4.5)} !important` }}>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography
-            variant='h4'
+            variant='h5'
             sx={{
               display: 'flex',
               fontWeight: 'bold',
