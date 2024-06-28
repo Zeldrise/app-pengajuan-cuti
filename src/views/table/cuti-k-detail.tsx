@@ -119,7 +119,7 @@ const CutiKaryawanDetail: React.FC<PropsCutiKaryawanDetail> = ({ open, onClose, 
               <span style={{ display: 'inline-block', width: 180 }}>Tanggal Pengajuan</span>: {rowData?.submissionDate}
             </p>
             <p>
-              <span style={{ display: 'inline-block', width: 180 }}>No Telepom</span>: {rowData?.telephone}
+              <span style={{ display: 'inline-block', width: 180 }}>No Telepon</span>: {rowData?.telephone}
             </p>
             <p>
               <span style={{ display: 'inline-block', width: 180 }}>Telepon Darurat</span>: {rowData?.emergencyCall}
